@@ -15,5 +15,16 @@ namespace ClientNode
         {
             InitializeComponent();
         }
+
+        private void sendButton_Click(object sender, EventArgs e)
+        {
+            chatListBox.Items.Add(messageTextBox.Text);
+            messageTextBox.Text = "";
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            messageTextBox.Text = "";
+        }
     }
 }
