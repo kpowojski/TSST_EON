@@ -37,24 +37,6 @@ namespace ClientNode
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-
-            using (ServiceHost host = new ServiceHost(
-            typeof(StringReverser),
-            new Uri[]{
-              new Uri("net.pipe://localhost")
-            }))
-            {
-                host.AddServiceEndpoint(typeof(IStringReverser), new NetNamedPipeBinding(), "Pipa");
-
-                host.Open();
-
-                Form1
-
-                Console.WriteLine("Service is available. " + "Press <ENTER> to exit.");
-                Console.ReadLine();
-
-                host.Close();
-            }
         }
     }
 }

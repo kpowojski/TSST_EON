@@ -21,6 +21,7 @@ namespace NetworkNode
 
                 host.Open();
 
+                // TUTAJ TRZEBA WRZUCIC KOMUNIKACJE TJ ODBIERANIE I WYSYLANIE
                 Console.WriteLine("Service is available. " + "Press <ENTER> to exit.");
                 Console.ReadLine();
 

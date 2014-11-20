@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.ServiceModel;
 
 namespace ClientNode
 {
@@ -14,6 +15,16 @@ namespace ClientNode
         public Form1()
         {
             InitializeComponent();
+
+            ChannelFactory<IStringReverser> pipeFactory = new ChannelFactory<IStringReverser>(new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/Pipa"));
+            IStringReverser pipeProxy = pipeFactory.CreateChannel();
+
+            while (true)
+            {
+                // TUTAJ TRZEBA WRZUCIC KOMUNIKACJE TJ ODBIERANIE I WYSYLANIE
+                string str = Console.ReadLine();
+                Console.WriteLine("pipe: " + pipeProxy.ReverseString(str));
+            }
         }
 
         private void sendButton_Click(object sender, EventArgs e)
