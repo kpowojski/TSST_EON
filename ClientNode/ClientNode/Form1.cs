@@ -14,8 +14,11 @@ namespace ClientNode
 
     public partial class Form1 : Form
     {
-        private PipeClient pipeClient;
+        public const int INFO = 0;
+        public const int TEXT = 1;
+        public const int ERROR = 2;
 
+        private PipeClient pipeClient;
 
         public Form1()
         {
@@ -48,7 +51,7 @@ namespace ClientNode
 
         void DisplayReceivedMessage(byte [] message)
         {
-            this.chatListBox.Items.Add("Wiadomosc odebrana: " + message);
+            addLog("Received: "+message, true, 1);
         }
 
 
@@ -64,12 +67,10 @@ namespace ClientNode
             }
             if (this.pipeClient.Connected)
             {
-                this.chatListBox.Items.Add("dzialam i sie polaczylem");
+                addLog("dzialam i sie polaczylem", true, 0);
             }
             byte[] myByte = encoder.GetBytes(this.messageTextBox.Text);
             this.pipeClient.SendMessage(myByte);
-            
-            
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -82,6 +83,45 @@ namespace ClientNode
             //// Determine if text has changed in the textbox by comparing to original text.
             //this.pipeClient.closing = true;
             //this.pipeClient.close();
+        }
+
+        private void configButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+        }
+
+        public void addLog(String log, Boolean time, int flag)
+        {
+            ListViewItem item = new ListViewItem();
+            switch (flag)
+            {
+                case 0:
+                    item.ForeColor = Color.Blue;
+                    break;
+                case 1:
+                    item.ForeColor = Color.Black;
+                    break;
+                case 2:
+                    item.ForeColor = Color.Red;
+                    break;
+            }
+            if (time)
+                item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
+            else
+                item.Text = log;
+            logsListView.Items.Add(item);
+        }
+
+        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            logsListView.Enabled = true;
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            messageTextBox.Enabled = true;
+            sendButton.Enabled = true;
+            clearButton.Enabled = true;
         }
     }
 }
