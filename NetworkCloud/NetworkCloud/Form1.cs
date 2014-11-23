@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -22,12 +23,16 @@ namespace NetworkCloud
         {
             InitializeComponent();
             linksList = new List<Link>();
-            linksList.Add(new Link("CN1", "NN1", "CP1", "NP1"));
-            linksList.Add(new Link("NN1", "NN4", "NP2", "NP3"));
-            linksList.Add(new Link("NN1", "NN2", "NP1", "NP3"));
-            linksList.Add(new Link("NN2", "NN3", "NP1", "NP3"));
-            linksList.Add(new Link("NN2", "NN4", "NP2", "NP1"));
-            linksList.Add(new Link("CN2", "NN4", "CP1", "NP2"));
+            foreach(string key in ConfigurationManager.AppSettings)
+            {
+                string all = ConfigurationManager.AppSettings[key];
+                string[] tmp = all.Split(':');
+                addLog("Dodano Link: " + all, true, INFO);
+                linksList.Add(new Link(tmp[0], tmp[1], tmp[2], tmp[3]));
+                addLog("Rozmiar LinksList: " + linksList.Count,true,INFO);
+                Array.Clear(tmp, 0, tmp.Length);
+                all = null;
+            }
         }
 
         private void startButton_Click(object sender, EventArgs e)
