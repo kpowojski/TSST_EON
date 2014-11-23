@@ -84,8 +84,8 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "ClientNodeConfig.dll";
-            this.openFileDialog.Filter = "Config (*.dll)|(*.dll)";
+            this.openFileDialog.FileName = "Config.xml";
+            this.openFileDialog.Filter = "Config (*.xml)|(*.xml)";
             this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog_FileOk);
             // 
             // statusStrip
