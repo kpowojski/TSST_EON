@@ -58,19 +58,9 @@ namespace ClientNode
         private void sendButton_Click(object sender, EventArgs e)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-            if (!this.pipeClient.Connected)
-            {
-                this.pipeClient.Connect(@"\\.\pipe\myNamedPipe10");
-                string str = "startmessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeClient.SendMessage(mess);
-            }
-            if (this.pipeClient.Connected)
-            {
-                addLog("dzialam i sie polaczylem", true, 0);
-            }
             byte[] myByte = encoder.GetBytes(this.messageTextBox.Text);
             this.pipeClient.SendMessage(myByte);
+            this.messageTextBox.Text = "";
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -122,6 +112,20 @@ namespace ClientNode
             messageTextBox.Enabled = true;
             sendButton.Enabled = true;
             clearButton.Enabled = true;
+ 
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            if (!this.pipeClient.Connected)
+            {
+                this.pipeClient.Connect(@"\\.\pipe\myNamedPipe15");
+                string str = "startmessage";
+                byte[] mess = encoder.GetBytes(str);
+                this.pipeClient.SendMessage(mess);
+            }
+            if (this.pipeClient.Connected)
+                addLog("Connected", true, INFO);
+            else
+                addLog("Erorr!", true, ERROR);
+
         }
     }
 }

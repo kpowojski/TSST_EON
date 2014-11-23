@@ -25,11 +25,11 @@ namespace NetworkNode
 
         void pipeServer_ClientDisconnected()
         {
-            //Invoke(new PipeServer.ClientDisconnectedHandler(ClientDisconnected));
+            Invoke(new PipeServer.ClientDisconnectedHandler(ClientDisconnected));
         }
         void ClientDisconnected()
         {
-            //MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -55,7 +55,7 @@ namespace NetworkNode
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
 
             if (!this.pipeServer.Running)
-                this.pipeServer.Start(@"\\.\pipe\myNamedPipe10");
+                this.pipeServer.Start(@"\\.\pipe\myNamedPipe15");
 
             if (this.pipeServer.Running)
                 addLog("NetworkNode started", true, INFO);
