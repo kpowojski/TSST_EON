@@ -16,6 +16,7 @@ namespace NetworkCloud
         public const int ERROR = 2;
 
         private List<Link> linksList;
+        private PipeServer pipeServer;
 
         public NetworkCloud()
         {
@@ -32,14 +33,50 @@ namespace NetworkCloud
         private void startButton_Click(object sender, EventArgs e)
         {
             statusLabel.Text = "Active"; 
+            
+            
+            this.pipeServer = new PipeServer();
+            pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
+            this.pipeServer.MessageReceived += pipeServer_messageReceived;
+
+            if (!this.pipeServer.Running)
+                this.pipeServer.Start(@"\\.\pipe\myNamedPipe15");
+
+            if (this.pipeServer.Running)
+                addLog("NetworkNode started", true, INFO);
+            else
+                addLog("An error occurred during start NetworkNode", true, ERROR);
+
+            addLog("NetworkCloud was started", true, INFO);
             startButton.Enabled = false;
             configButton.Enabled = false;
-            addLog("NetworkCloud was started", true, INFO);
+            
         }
 
         private void configButton_Click(object sender, EventArgs e)
         {
             openFileDialog.ShowDialog();
+        }
+
+        void pipeServer_ClientDisconnected()
+        {
+            Invoke(new PipeServer.ClientDisconnectedHandler(ClientDisconnected));
+        }
+        void ClientDisconnected()
+        {
+            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+        }
+
+        void pipeServer_messageReceived(byte[] message)
+        {
+            this.Invoke(new PipeServer.MessageReceivedHandler(DisplayMessageReceived), new object[] { message });
+        }
+
+        void DisplayMessageReceived(byte[] message)
+        {
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            string str = encoder.GetString(message, 0, message.Length);
+            addLog("Received: " + str, true, TEXT);
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace NetworkNode
+namespace NetworkCloud
 {
     class PipeServer
     {
@@ -299,4 +299,5 @@ namespace NetworkNode
         }
     }
 }
+
 

@@ -15,27 +15,37 @@ namespace NetworkNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
-        
-        private PipeServer pipeServer;
+        private PipeClient pipeClient;
+        private string pipeName;
+
         
         public Form1()
         {
             InitializeComponent();
+            
         }
 
-        void pipeServer_ClientDisconnected()
+        void pipeClient_ServerDisconnected()
         {
-            Invoke(new PipeServer.ClientDisconnectedHandler(ClientDisconnected));
-        }
-        void ClientDisconnected()
-        {
-            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+            Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
         }
 
-        void pipeServer_messageReceived(byte[] message)
+        void EnableStart()
         {
-            this.Invoke (new PipeServer.MessageReceivedHandler(DisplayMessageReceived), new object[] {message});
+            
         }
+
+        void pipeClient_MessageReceived(byte[] message)
+        {
+            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessage), new object[] { message });
+        }
+
+        void DisplayReceivedMessage(byte[] message)
+        {
+            addLog("Received: " + message, true, 1);
+        }
+
+        
 
         void DisplayMessageReceived(byte[] message)
         {
@@ -49,18 +59,19 @@ namespace NetworkNode
             statusLabel.Text = "Active";
             stopButton.Enabled = true;
             configButton.Enabled = false;
+            
+            pipeName = @"\\.\pipe\myNamedPipe15";
+            if (pipeClient != null)
+            {
+                pipeClient.MessageReceived -= pipeClient_MessageReceived;
+                pipeClient.ServerDisconnected -= pipeClient_ServerDisconnected;
+            }
 
-            this.pipeServer = new PipeServer();
-            pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
-            this.pipeServer.MessageReceived += pipeServer_messageReceived;
-
-            if (!this.pipeServer.Running)
-                this.pipeServer.Start(@"\\.\pipe\myNamedPipe15");
-
-            if (this.pipeServer.Running)
-                addLog("NetworkNode started", true, INFO);
-            else
-                addLog("An error occurred during start NetworkNode", true, ERROR);
+            pipeClient = new PipeClient();
+            pipeClient.MessageReceived += pipeClient_MessageReceived;
+            pipeClient.ServerDisconnected += pipeClient_ServerDisconnected;
+            
+            startButton.Enabled = false;
 
         }
 

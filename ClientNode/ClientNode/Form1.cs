@@ -17,17 +17,18 @@ namespace ClientNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
-
+        private string pipeName;
         private PipeClient pipeClient;
 
         public Form1()
         {
             InitializeComponent();
-            //if (pipeClient != null)
-            //{
-            //    pipeClient.MessageReceived -= pipeClient_MessageReceived;
-            //    pipeClient.ServerDisconnected -= pipeClient_ServerDisconnected;
-            //}
+            pipeName = @"\\.\pipe\myNamedPipe15";
+            if (pipeClient != null)
+            {
+                pipeClient.MessageReceived -= pipeClient_MessageReceived;
+                pipeClient.ServerDisconnected -= pipeClient_ServerDisconnected;
+            }
 
             pipeClient = new PipeClient();
             pipeClient.MessageReceived += pipeClient_MessageReceived;
@@ -116,8 +117,8 @@ namespace ClientNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             if (!this.pipeClient.Connected)
             {
-                this.pipeClient.Connect(@"\\.\pipe\myNamedPipe15");
-                string str = "startmessage";
+                this.pipeClient.Connect(pipeName);
+                string str = "StartMessage";
                 byte[] mess = encoder.GetBytes(str);
                 this.pipeClient.SendMessage(mess);
             }
