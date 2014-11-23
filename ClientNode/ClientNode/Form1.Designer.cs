@@ -30,31 +30,31 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.configButton = new System.Windows.Forms.Button();
-            this.chatListBox = new System.Windows.Forms.ListBox();
             this.messageTextBox = new System.Windows.Forms.TextBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.sendButton = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.logsListView = new System.Windows.Forms.ListView();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // configButton
             // 
             this.configButton.Location = new System.Drawing.Point(12, 12);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(129, 23);
+            this.configButton.Size = new System.Drawing.Size(182, 23);
             this.configButton.TabIndex = 0;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
-            // 
-            // chatListBox
-            // 
-            this.chatListBox.FormattingEnabled = true;
-            this.chatListBox.Location = new System.Drawing.Point(12, 44);
-            this.chatListBox.Name = "chatListBox";
-            this.chatListBox.Size = new System.Drawing.Size(368, 264);
-            this.chatListBox.TabIndex = 1;
+            this.configButton.Click += new System.EventHandler(this.configButton_Click);
             // 
             // messageTextBox
             // 
+            this.messageTextBox.Enabled = false;
             this.messageTextBox.Location = new System.Drawing.Point(12, 316);
             this.messageTextBox.Name = "messageTextBox";
             this.messageTextBox.Size = new System.Drawing.Size(205, 20);
@@ -62,6 +62,7 @@
             // 
             // clearButton
             // 
+            this.clearButton.Enabled = false;
             this.clearButton.Location = new System.Drawing.Point(305, 314);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(75, 23);
@@ -72,6 +73,7 @@
             // 
             // sendButton
             // 
+            this.sendButton.Enabled = false;
             this.sendButton.Location = new System.Drawing.Point(224, 314);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(75, 23);
@@ -80,20 +82,76 @@
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "ClientNodeConfig.dll";
+            this.openFileDialog.Filter = "Config (*.dll)|(*.dll)";
+            this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog_FileOk);
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 345);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(392, 22);
+            this.statusStrip.TabIndex = 4;
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(48, 17);
+            this.statusLabel.Text = "Inactive";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 38);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(30, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Logs";
+            // 
+            // logsListView
+            // 
+            this.logsListView.Enabled = false;
+            this.logsListView.Location = new System.Drawing.Point(12, 55);
+            this.logsListView.Name = "logsListView";
+            this.logsListView.Size = new System.Drawing.Size(368, 255);
+            this.logsListView.TabIndex = 6;
+            this.logsListView.UseCompatibleStateImageBehavior = false;
+            this.logsListView.View = System.Windows.Forms.View.List;
+            // 
+            // connectButton
+            // 
+            this.connectButton.Location = new System.Drawing.Point(200, 12);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(180, 23);
+            this.connectButton.TabIndex = 7;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(392, 349);
+            this.ClientSize = new System.Drawing.Size(392, 367);
+            this.Controls.Add(this.connectButton);
+            this.Controls.Add(this.logsListView);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.sendButton);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.messageTextBox);
-            this.Controls.Add(this.chatListBox);
             this.Controls.Add(this.configButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ClientNode";
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -102,10 +160,15 @@
         #endregion
 
         private System.Windows.Forms.Button configButton;
-        private System.Windows.Forms.ListBox chatListBox;
         private System.Windows.Forms.TextBox messageTextBox;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button sendButton;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListView logsListView;
+        private System.Windows.Forms.Button connectButton;
     }
 }
 
