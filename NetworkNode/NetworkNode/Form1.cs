@@ -34,7 +34,7 @@ namespace NetworkNode
 
         void pipeServer_messageReceived(byte[] message)
         {
-            //this.Invoke (new PipeServer.MessageReceivedHandler(DisplayMessageReceived), new object[] {message});
+            this.Invoke (new PipeServer.MessageReceivedHandler(DisplayMessageReceived), new object[] {message});
         }
 
         void DisplayMessageReceived(byte[] message)
