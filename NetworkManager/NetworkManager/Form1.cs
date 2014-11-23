@@ -16,7 +16,7 @@ namespace NetworkManager
         public const int ERROR = 2;
 
         private PipeServer pipeServer;
-
+        
         public Form1()
         {
             InitializeComponent();
@@ -51,11 +51,11 @@ namespace NetworkManager
             
             
             this.pipeServer = new PipeServer();
-            pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
+            this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
 
             if (!this.pipeServer.Running)
-                this.pipeServer.Start(@"\\.\pipe\myNamedPipe15");
+                this.pipeServer.Start(@"\\.\pipe\NetworkManger");
 
             if (this.pipeServer.Running)
                 addLog("NetworkNode started", true, INFO);

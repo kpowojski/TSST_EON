@@ -17,10 +17,13 @@ namespace NetworkCloud
 
         private List<Link> linksList;
         private PipeServer pipeServer;
+        private string pipeServerName;
+
 
         public NetworkCloud()
         {
             InitializeComponent();
+            pipeServerName = @"\\.\pipe\NetworkCloud";
             linksList = new List<Link>();
             linksList.Add(new Link("CN1", "NN1", "CP1", "NP1"));
             linksList.Add(new Link("NN1", "NN4", "NP2", "NP3"));
@@ -40,7 +43,7 @@ namespace NetworkCloud
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
 
             if (!this.pipeServer.Running)
-                this.pipeServer.Start(@"\\.\pipe\myNamedPipe15");
+                this.pipeServer.Start(pipeServerName);
 
             if (this.pipeServer.Running)
                 addLog("NetworkNode started", true, INFO);

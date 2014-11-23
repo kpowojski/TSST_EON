@@ -15,62 +15,111 @@ namespace NetworkNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
-        private PipeClient pipeClient;
-        private string pipeName;
+        private PipeClient pipeManagerClient;
+        private string pipeManagerName;
+
+        private PipeClient pipeCloudClient;
+        private string pipeCloudName;
 
         
         public Form1()
         {
             InitializeComponent();
+            pipeCloudName = @"\\.\pipe\NetworkCloud";
+            if (pipeCloudClient != null)
+            {
+                pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
+                pipeCloudClient.ServerDisconnected -= pipeCloudClient_ServerDisconnected;
+            }
+
+            pipeCloudClient = new PipeClient();
+            pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
+            pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
+
+            pipeManagerName = @"\\.\pipe\NetworkManager";
+            if (pipeManagerClient != null)
+            {
+                pipeManagerClient.MessageReceived -= pipeManagerClient_MessageReceived;
+                pipeManagerClient.ServerDisconnected -= pipeManagerClient_ServerDisconnected;
+            }
+
+            pipeManagerClient = new PipeClient();
+            pipeManagerClient.MessageReceived += pipeManagerClient_MessageReceived;
+            pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;
             
         }
 
-        void pipeClient_ServerDisconnected()
+        void pipeCloudClient_ServerDisconnected()
         {
             Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
         }
 
         void EnableStart()
         {
-            
+            this.startButton.Enabled = true;
         }
 
-        void pipeClient_MessageReceived(byte[] message)
+        void pipeCloudClient_MessageReceived(byte[] message)
         {
-            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessage), new object[] { message });
+            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageCloud), new object[] { message });
         }
 
-        void DisplayReceivedMessage(byte[] message)
-        {
-            addLog("Received: " + message, true, 1);
-        }
-
-        
-
-        void DisplayMessageReceived(byte[] message)
+        void DisplayReceivedMessageCloud(byte[] message)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            addLog("Received: " + str, true, TEXT);
+            addLog("Received from cloud: " + str, true, TEXT);
         }
 
+        void pipeManagerClient_ServerDisconnected()
+        {
+            Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
+        }
+
+        void pipeManagerClient_MessageReceived(byte[] message)
+        {
+            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageManager), new object[] { message });
+        }
+
+        void DisplayReceivedMessageManager(byte[] message)
+        {
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            string str = encoder.GetString(message, 0, message.Length);
+            addLog("Received from manager: " + str, true, TEXT);
+        }
+
+        
         private void startButton_Click(object sender, EventArgs e)
         {
             statusLabel.Text = "Active";
             stopButton.Enabled = true;
             configButton.Enabled = false;
-            
-            pipeName = @"\\.\pipe\myNamedPipe15";
-            if (pipeClient != null)
-            {
-                pipeClient.MessageReceived -= pipeClient_MessageReceived;
-                pipeClient.ServerDisconnected -= pipeClient_ServerDisconnected;
-            }
 
-            pipeClient = new PipeClient();
-            pipeClient.MessageReceived += pipeClient_MessageReceived;
-            pipeClient.ServerDisconnected += pipeClient_ServerDisconnected;
-            
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            if (!this.pipeCloudClient.Connected)
+            {
+                this.pipeCloudClient.Connect(pipeCloudName);
+                string str = "StartMessage";
+                byte[] mess = encoder.GetBytes(str);
+                this.pipeCloudClient.SendMessage(mess);
+            }
+            if (this.pipeCloudClient.Connected)
+                addLog("Already connected to cloud", true, INFO);
+            else
+                addLog("Erorr while trying to connect to cloud!", true, ERROR);
+
+            if (!this.pipeManagerClient.Connected)
+            {
+                this.pipeManagerClient.Connect(pipeManagerName);
+                string str = "StartMessage";
+                byte[] mess = encoder.GetBytes(str);
+                this.pipeManagerClient.SendMessage(mess);
+            }
+            if (this.pipeManagerClient.Connected)
+                addLog("Already connected to manager", true, INFO);
+            else
+                addLog("Erorr while trying to connect to manager!", true, ERROR);
+
             startButton.Enabled = false;
 
         }
