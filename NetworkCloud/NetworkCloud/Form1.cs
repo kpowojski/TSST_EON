@@ -26,16 +26,7 @@ namespace NetworkCloud
             InitializeComponent();
             pipeServerName = @"\\.\pipe\NetworkCloud";
             linksList = new List<Link>();
-            foreach(string key in ConfigurationManager.AppSettings)
-            {
-                string all = ConfigurationManager.AppSettings[key];
-                string[] tmp = all.Split(':');
-                addLog("Dodano Link: " + all, true, INFO);
-                linksList.Add(new Link(tmp[0], tmp[1], tmp[2], tmp[3]));
-                addLog("Rozmiar LinksList: " + linksList.Count,true,INFO);
-                Array.Clear(tmp, 0, tmp.Length);
-                all = null;
-            }
+
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -62,8 +53,8 @@ namespace NetworkCloud
         }
 
         private void configButton_Click(object sender, EventArgs e)
-        {
-            openFileDialog.ShowDialog();
+        { 
+            DialogResult result = openFileDialog.ShowDialog();
         }
 
         void pipeServer_ClientDisconnected()
@@ -92,6 +83,20 @@ namespace NetworkCloud
             // przykladowe uzupelnienie linksListView
             //string[] subitems = { "Node Name", "Node Name", "1001", "1002" };
             //linksListView.Items.Add("1").SubItems.AddRange(subitems);
+                ExeConfigurationFileMap fileMap;
+                fileMap = new ExeConfigurationFileMap { ExeConfigFilename = openFileDialog.FileName };
+                Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+                for (int i = 0; i < 6; i++)
+                {
+                    string all = config.AppSettings.Settings["Node" + (i + 1)].Value;
+                    string[] tmp = all.Split(':');
+                    addLog("Dodano Link: " + all, true, INFO);
+                    linksList.Add(new Link(tmp[0], tmp[1], tmp[2], tmp[3]));
+                    addLog("Rozmiar LinksList: " + linksList.Count, true, INFO);
+                    Array.Clear(tmp, 0, tmp.Length);
+                    all = null;
+                }
+            
 
             for (int i = 1; i <= linksList.Count; i++)
             {
@@ -104,6 +109,7 @@ namespace NetworkCloud
             startButton.Enabled = true;
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
         }
+    
 
         private void addLog(String log, Boolean time, int flag)
         {
