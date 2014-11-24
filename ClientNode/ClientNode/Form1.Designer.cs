@@ -84,8 +84,7 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "Config.xml";
-            this.openFileDialog.Filter = "Config (*.xml)|(*.xml)";
+            this.openFileDialog.Filter = "Config (*.xml)|*.xml|All Files (*.*)|*.*";
             this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog_FileOk);
             // 
             // statusStrip

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.ServiceModel;
+using System.Xml;
 
 namespace NetworkNode
 {
@@ -21,7 +22,16 @@ namespace NetworkNode
         private PipeClient pipeCloudClient;
         private string pipeCloudName;
 
-        
+        //id noda
+        private string nodeId;
+
+        //porty
+        private List<String> portIn;
+        private List<String> portOut;
+        private int[] comutation;
+
+
+
         public Form1()
         {
             InitializeComponent();
@@ -134,15 +144,32 @@ namespace NetworkNode
 
         private void configButton_Click(object sender, EventArgs e)
         {
-            openFileDialog.ShowDialog();
+            DialogResult result = openFileDialog.ShowDialog();
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(openFileDialog.FileName);
+            
+            List<string> nodeConf = new List<string>();
+            nodeConf = Configuration.readConfig(xml);
+            this.nodeId = nodeConf[0];
+            this.pipeCloudName = nodeConf[1];
+            this.pipeManagerName = nodeConf[2];
+
+            this.portIn = Configuration.readPortIn(xml);
+            this.portOut = Configuration.readPortOut(xml);
+
+
             logsListView.Enabled = true;
             startButton.Enabled = true;
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
         }
+
+        
+
 
         public void addLog(String log, Boolean time, int flag)
         {

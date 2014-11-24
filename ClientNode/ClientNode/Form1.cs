@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.ServiceModel;
+using System.Xml;
 
 namespace ClientNode
 {
@@ -24,9 +25,20 @@ namespace ClientNode
         private string pipeCloudName;
         private PipeClient pipeCloudClient;
 
+
+        //id noda
+        private string nodeId;
+
+        //porty
+        private List<String> portIn;
+        private List<String> portOut;
+
         public Form1()
         {
             InitializeComponent();
+            portIn = new List<String>();
+            portOut = new List<String>();
+
             pipeCloudName = @"\\.\pipe\NetworkCloud";
             if (pipeCloudClient != null)
             {
@@ -108,7 +120,7 @@ namespace ClientNode
 
         private void configButton_Click(object sender, EventArgs e)
         {
-            openFileDialog.ShowDialog();
+            DialogResult result = openFileDialog.ShowDialog();
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -135,8 +147,21 @@ namespace ClientNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            logsListView.Enabled = true;
+            XmlDocument xml = new XmlDocument();
+            xml.Load(openFileDialog.FileName);
+            List<string> nodeConf = new List<string>();
+            nodeConf = Configuration.readConfig(xml);
+            this.nodeId = nodeConf[0];
+            this.pipeCloudName = nodeConf[1];
+            this.pipeManagerName = nodeConf[2];
+
+            this.portIn = Configuration.readPortIn(xml);
+            this.portOut = Configuration.readPortOut(xml);
+
+            this.logsListView.Items.Add("Configuration loaded form file: " + openFileDialog.FileName);
         }
+
+
 
         private void connectButton_Click(object sender, EventArgs e)
         {

@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Windows.Forms;
+
+namespace NetworkCloud
+{
+    class Configuration
+    {
+
+        public static ListView readLinks(XmlDocument xml, string nodeName, ListView linksListView)
+        {
+            foreach (XmlNode xnode in xml.SelectNodes(nodeName))
+            {
+                string id = xnode.Attributes["ID"].Value;
+                string srcId = xnode.Attributes["SrcID"].Value;
+                string dstId = xnode.Attributes["DstID"].Value;
+                string srcPortId = xnode.Attributes["SrcPortID"].Value;
+                string dstPortId = xnode.Attributes["DstPortID"].Value;
+
+                string[] row = { srcId, dstId, srcPortId, dstPortId };
+                linksListView.Items.Add(id).SubItems.AddRange(row);
+            }
+
+            return linksListView;
+        }
+        
+    }
+}

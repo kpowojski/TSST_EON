@@ -88,16 +88,13 @@ namespace NetworkCloud
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            // przykladowe uzupelnienie linksListView
-            //string[] subitems = { "Node Name", "Node Name", "1001", "1002" };
-            //linksListView.Items.Add("1").SubItems.AddRange(subitems);
 
             linksListView.Items.Clear();
             XmlDocument xml = new XmlDocument();
             xml.Load(openFileDialog.FileName);
 
             //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-            readLinks(xml, "//Link[@ID]");
+            Configuration.readLinks(xml, "//Link[@ID]", linksListView);
 
             linksListView.Enabled = true;
             logsListView.Enabled = true;
@@ -106,21 +103,7 @@ namespace NetworkCloud
         }
 
         //metoda do wczytywania linkow, wydzialem to do oddzielnej metody bo potem bedzie czytalniejszy ten kod
-        private void readLinks(XmlDocument xml, string nodeName)
-        {
-            foreach (XmlNode xnode in xml.SelectNodes(nodeName))
-            {
-                string id = xnode.Attributes["ID"].Value;
-                string srcId = xnode.Attributes["SrcID"].Value;
-                string dstId = xnode.Attributes["DstID"].Value;
-                string srcPortId = xnode.Attributes["SrcPortID"].Value;
-                string dstPortId = xnode.Attributes["DstPortID"].Value;
-
-                linksList.Add(new Link(id, srcId, dstId, srcPortId, dstPortId));
-                string[] row = { srcId, dstId, srcPortId, dstPortId };
-                linksListView.Items.Add(id).SubItems.AddRange(row);
-            }
-        }
+        
 
         private void addLog(String log, Boolean time, int flag)
         {
