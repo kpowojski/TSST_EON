@@ -97,7 +97,18 @@ namespace NetworkCloud
             xml.Load(openFileDialog.FileName);
 
             //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-            foreach (XmlNode xnode in xml.SelectNodes("//Link[@ID]"))
+            readLinks(xml, "//Link[@ID]");
+
+            linksListView.Enabled = true;
+            logsListView.Enabled = true;
+            startButton.Enabled = true;
+            addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
+        }
+
+        //metoda do wczytywania linkow, wydzialem to do oddzielnej metody bo potem bedzie czytalniejszy ten kod
+        private void readLinks(XmlDocument xml, string nodeName)
+        {
+            foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
                 string id = xnode.Attributes["ID"].Value;
                 string srcId = xnode.Attributes["SrcID"].Value;
@@ -105,18 +116,11 @@ namespace NetworkCloud
                 string srcPortId = xnode.Attributes["SrcPortID"].Value;
                 string dstPortId = xnode.Attributes["DstPortID"].Value;
 
-                linksList.Add(new Link(id,srcId, dstId, srcPortId, dstPortId));
+                linksList.Add(new Link(id, srcId, dstId, srcPortId, dstPortId));
                 string[] row = { srcId, dstId, srcPortId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);
             }
-
-
-            linksListView.Enabled = true;
-            logsListView.Enabled = true;
-            startButton.Enabled = true;
-            addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
         }
-    
 
         private void addLog(String log, Boolean time, int flag)
         {
