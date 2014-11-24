@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ClientNode
+namespace NetworkNode
 {
     class Checker
     {
         private string nodeId;
         private List<string> portIn;
+
 
         public Checker(string nodeId, List<string> portIn)
         {
@@ -18,15 +19,17 @@ namespace ClientNode
 
         public string checkDestination(string message)
         {
+            
             string[] words = message.Split(' ');
             string dstId = words[0];
+            Console.WriteLine(dstId);
             string dstPortId = words[1];
-
+            Console.WriteLine(dstPortId);
             bool destitantionReached = false;
 
             if (this.nodeId == dstId)
             {
-                if(this.portIn.Contains(dstPortId))
+                if (this.portIn.Contains(dstPortId))
                 {
                     destitantionReached = true;
                 }
@@ -47,9 +50,9 @@ namespace ClientNode
                 message = "null";
             }
 
-            
+            Console.WriteLine(message);
             return message;
         }
-    
+
     }
 }
