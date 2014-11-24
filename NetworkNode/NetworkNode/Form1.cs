@@ -106,7 +106,7 @@ namespace NetworkNode
             {
                 if (response[i] != "null")
                     this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                    addLog("Wyslano: " + response[i], true, TEXT);
+                    //addLog("Wyslano: " + response[i], true, TEXT);
             }
         }
 
