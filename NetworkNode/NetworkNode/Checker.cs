@@ -44,7 +44,10 @@ namespace NetworkNode
                     originalMessage += " " + words[i];
                 }
                 message = null;
-                message = originalMessage;
+                if(commutation[this.portIn.IndexOf(dstPortId)] != -1)
+                    message = this.nodeId + " " + this.portOut.ElementAt(commutation[this.portIn.IndexOf(dstPortId)]) + " " + originalMessage;
+                else
+                    message = "NO_REDIRECTION " + originalMessage;
             }
             else
             {
@@ -54,9 +57,15 @@ namespace NetworkNode
             return message;
         }
 
-        //IN1-OUT1 IN2-OUT3 IN3-0:OUT1 OUT2 OUT3
-        //command from manager GET NODE_NAME
-        //SET NODE_NAME PORT_IN PORT_OUT
+        public bool forwardMessage(string msg)
+        {
+            string[] words = msg.Split(' ');
+            if (words[0].Equals("NO_REDIRECTION"))
+                return false;
+            else
+                return true;
+        }
+
         public string[] checkManagerCommand(string message)
         {
             string[] words = message.Split(' ');

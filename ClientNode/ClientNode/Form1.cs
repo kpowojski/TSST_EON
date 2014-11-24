@@ -110,7 +110,7 @@ namespace ClientNode
 
         void DisplayReceivedMessageManager(byte[] message)
         {
-            addLog("Received from manager: " + message, true, 1);
+            //addLog("Received from manager: " + message, true, 1);
         }
 
         private void sendButton_Click(object sender, EventArgs e)
@@ -162,6 +162,8 @@ namespace ClientNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
+            logsListView.Enabled = true;
+
             XmlDocument xml = new XmlDocument();
             xml.Load(openFileDialog.FileName);
             List<string> nodeConf = new List<string>();

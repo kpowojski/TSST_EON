@@ -91,9 +91,15 @@ namespace NetworkNode
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            string forwardedMessage = this.checker.checkDestination(str); 
-            if( forwardedMessage != "null")
+            string forwardedMessage = this.checker.checkDestination(str);
+            if (forwardedMessage != "null")
+            {
+                if (this.checker.forwardMessage(forwardedMessage))
+                {
+                    this.pipeCloudClient.SendMessage(encoder.GetBytes(forwardedMessage));
+                }
                 addLog("Received from cloud: " + forwardedMessage, true, TEXT);
+            }
         }
 
         void pipeManagerClient_ServerDisconnected()
