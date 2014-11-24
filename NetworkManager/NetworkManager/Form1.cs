@@ -20,6 +20,8 @@ namespace NetworkManager
         private PipeServer pipeServer;
         private string pipeManagerName;
 
+        private string lastCommand = "";
+
         private CommandChecker commandChecker;
 
         private string managerId;
@@ -110,6 +112,7 @@ namespace NetworkManager
                     addLog("Command: " + command, true, ERROR);
                     addLog("Error: " + commandChecker.getErrorMsg(), false, ERROR);
                 }
+                lastCommand = command;
                 commandTextBox.Text = "";
             }
         }
@@ -174,6 +177,15 @@ namespace NetworkManager
         {
             logsListView.Items.Clear();
 
+        }
+
+        private void commandTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                commandTextBox.Text = lastCommand;
+                commandTextBox.Select(commandTextBox.Text.Length, 0);
+            }
         }
     }
 }

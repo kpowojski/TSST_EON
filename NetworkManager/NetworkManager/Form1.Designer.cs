@@ -71,6 +71,7 @@
             this.commandTextBox.Name = "commandTextBox";
             this.commandTextBox.Size = new System.Drawing.Size(522, 20);
             this.commandTextBox.TabIndex = 3;
+            this.commandTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.commandTextBox_KeyDown);
             // 
             // sendButton
             // 
