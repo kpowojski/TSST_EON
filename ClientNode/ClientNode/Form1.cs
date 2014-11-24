@@ -18,6 +18,7 @@ namespace ClientNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
+        public const int RECEIVE = 3;
 
         private string pipeManagerName;
         private PipeClient pipeManagerClient;
@@ -95,7 +96,7 @@ namespace ClientNode
             string checkedMessage = checker.checkDestination(str);
 
             if (checkedMessage != "null")
-                addLog("Received from cloud: "+message, true, 1);
+                addLog("Received from cloud: "+str, true, RECEIVE);
         }
 
         void pipeManagerClient_ServerDisconnected()
@@ -110,7 +111,9 @@ namespace ClientNode
 
         void DisplayReceivedMessageManager(byte[] message)
         {
-            //addLog("Received from manager: " + message, true, 1);
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            string str = encoder.GetString(message);
+            //addLog("Received from manager: " + str, true, 1);
         }
 
         private void sendButton_Click(object sender, EventArgs e)
@@ -118,6 +121,7 @@ namespace ClientNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             byte[] myByte = encoder.GetBytes(this.nodeId + " "+ this.portOut[0]+ " " +this.messageTextBox.Text);
             this.pipeCloudClient.SendMessage(myByte);
+            this.addLog("Sended: " + this.messageTextBox.Text, true, TEXT);
             this.messageTextBox.Text = "";
         }
 
@@ -151,6 +155,9 @@ namespace ClientNode
                     break;
                 case 2:
                     item.ForeColor = Color.Red;
+                    break;
+                case 3:
+                    item.ForeColor = Color.Green;
                     break;
             }
             if (time)
