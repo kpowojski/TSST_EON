@@ -97,13 +97,16 @@ namespace NetworkManager
                         for (int i = 1; i < words.Length; i++)
                         {
                             tmp2 = words[i].Split('-');
-                            if(tmp2[1].Equals("0"))
+                            if (tmp2.Length > 1)
                             {
-                                tmp = tmp2[0] + " not redirect";
-                            }
-                            else
-                            {
-                                tmp = tmp2[0] + " redirect to " + tmp2[1];
+                                if (tmp2[1].Equals("0"))
+                                {
+                                    tmp = tmp2[0] + " not redirect";
+                                }
+                                else
+                                {
+                                    tmp = tmp2[0] + " redirect to " + tmp2[1];
+                                }
                             }
                         }
                         break;
