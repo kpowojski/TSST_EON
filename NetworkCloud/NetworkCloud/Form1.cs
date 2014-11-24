@@ -86,7 +86,7 @@ namespace NetworkCloud
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            if (!str.Equals("StartMessage"))
+            if (!str.Contains("StartMessage"))
             {
                 addLog("Received: " + str, true, TEXT);
                 string forwardedMessage = forwarder.forwardMessage(str);

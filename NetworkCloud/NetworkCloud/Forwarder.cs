@@ -35,6 +35,11 @@ namespace NetworkCloud
                 message = null;
                 message = dest + originalMessage;
 
+                if (originalMessage == "StartMessage")
+                {
+                    return null;
+                }
+
                 return message;
             }
             else
