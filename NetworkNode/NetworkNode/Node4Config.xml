@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Node ID="NetworkNode4" pipeCloudName="\\.\pipe\NetworkCloud" pipeManagerName="\\.\pipe\NetworkManager" >
+<Ports>
+    <InputPorts>
+      	<Port ID="CI1" />
+      	<Port ID="CI2" />
+	<Port ID="CI3" />
+	<Port ID="CI4" />
+    </InputPorts>
+    <OutputPorts>
+      	<Port ID="CO1" />
+      	<Port ID="CO2" />
+	<Port ID="CO3" />
+	<Port ID="CO4" />
+    </OutputPorts>
+  </Ports>
+</Node>
