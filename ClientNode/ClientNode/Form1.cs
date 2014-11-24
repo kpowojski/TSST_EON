@@ -96,7 +96,7 @@ namespace ClientNode
             string checkedMessage = checker.checkDestination(str);
 
             if (checkedMessage != "null")
-                addLog("Received from cloud: "+message, true, RECEIVE);
+                addLog("Received from cloud: "+str, true, RECEIVE);
         }
 
         void pipeManagerClient_ServerDisconnected()
@@ -111,7 +111,9 @@ namespace ClientNode
 
         void DisplayReceivedMessageManager(byte[] message)
         {
-            //addLog("Received from manager: " + message, true, 1);
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            string str = encoder.GetString(message);
+            //addLog("Received from manager: " + str, true, 1);
         }
 
         private void sendButton_Click(object sender, EventArgs e)
