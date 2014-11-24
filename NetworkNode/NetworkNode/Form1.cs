@@ -105,10 +105,7 @@ namespace NetworkNode
             for (int i = 0; i < response.Length; i++)
             {
                 if (response[i] != null)
-                {
-                    byte[] msg = encoder.GetBytes(response[i]);
-                    this.pipeManagerClient.SendMessage(msg);
-                }
+                addLog("Received from manager: " + response[i], true, TEXT);
             }
         }
 
