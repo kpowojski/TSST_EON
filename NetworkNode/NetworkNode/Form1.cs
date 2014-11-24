@@ -98,20 +98,20 @@ namespace NetworkNode
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message);
-            addLog("Received from manager: " + str, true, TEXT);
-
 
             string[] response = this.checker.checkManagerCommand(str);
-            if (response != null)
+            if (response[0] != "null")
             {
+                addLog("Odebrano: " + str, true, TEXT);
                 for (int i = 0; i < response.Length; i++)
                 {
                     if (response[i] != "null")
                         this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                        addLog("Wyslano: " + response[i], true, TEXT);
+                    addLog("Wyslano: " + response[i], true, TEXT);
                 }
             }
         }
+        
 
         
         private void startButton_Click(object sender, EventArgs e)

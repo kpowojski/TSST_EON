@@ -84,14 +84,14 @@ namespace NetworkNode
                         string portIn = words[2];
                         string portOut = words[3];
                         setCommutation(portIn, portOut);
-                        result = null;
+                        result[0] = "null";
                         return result;
 
                     case "DELETE":
                         string deletePortIn = words[2];
                         string deletePortOut = words[3];
                         deleteCommutation(deletePortIn, deletePortOut);
-                        result = null;
+                        result[0] = "null";
                         return result;
                 }
             }
