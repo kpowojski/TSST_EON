@@ -87,6 +87,12 @@ namespace NetworkNode
                         string portOut = words[3];
                         setCommutation(portIn, portOut);
                         break;
+
+                    case "DELETE":
+                        string deletePortIn = words[2];
+                        string deletePortOut = words[3];
+                        deleteCommutation(deletePortIn, deletePortOut);
+                        break;
                 }
             }
 
@@ -135,6 +141,15 @@ namespace NetworkNode
 
             commutation[input] = output;
 
+        }
+
+        public void deleteCommutation(string deletePortIn, string deletePortOut)
+        {
+            int input = this.portIn.IndexOf(deletePortIn);
+            int output = this.portOut.IndexOf(deletePortOut);
+
+            if (commutation[input] == output)
+                commutation[input] = -1;
         }
     }
 }
