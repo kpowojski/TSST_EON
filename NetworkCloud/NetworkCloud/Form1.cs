@@ -6,7 +6,9 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Windows.Forms;
+using System.IO;
 
 namespace NetworkCloud
 {
@@ -26,7 +28,13 @@ namespace NetworkCloud
             InitializeComponent();
             pipeServerName = @"\\.\pipe\NetworkCloud";
             linksList = new List<Link>();
-
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = "";
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -83,26 +91,25 @@ namespace NetworkCloud
             // przykladowe uzupelnienie linksListView
             //string[] subitems = { "Node Name", "Node Name", "1001", "1002" };
             //linksListView.Items.Add("1").SubItems.AddRange(subitems);
-                ExeConfigurationFileMap fileMap;
-                fileMap = new ExeConfigurationFileMap { ExeConfigFilename = openFileDialog.FileName };
-                Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                for (int i = 0; i < 6; i++)
-                {
-                    string all = config.AppSettings.Settings["Node" + (i + 1)].Value;
-                    string[] tmp = all.Split(':');
-                    addLog("Dodano Link: " + all, true, INFO);
-                    linksList.Add(new Link(tmp[0], tmp[1], tmp[2], tmp[3]));
-                    addLog("Rozmiar LinksList: " + linksList.Count, true, INFO);
-                    Array.Clear(tmp, 0, tmp.Length);
-                    all = null;
-                }
-            
+                
 
-            for (int i = 1; i <= linksList.Count; i++)
+            XmlDocument xml = new XmlDocument();
+            xml.Load(openFileDialog.FileName);
+
+            //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
+            foreach (XmlNode xnode in xml.SelectNodes("//Link[@ID]"))
             {
-                string[] subitems = { linksList.ElementAt(i - 1).nodeIn, linksList.ElementAt(i - 1).nodeOut, linksList.ElementAt(i - 1).portIn, linksList.ElementAt(i - 1).portOut };
-                linksListView.Items.Add(i.ToString()).SubItems.AddRange(subitems);
+                string id = xnode.Attributes["ID"].Value;
+                string srcId = xnode.Attributes["SrcID"].Value;
+                string dstId = xnode.Attributes["DstID"].Value;
+                string srcPortId = xnode.Attributes["SrcPortID"].Value;
+                string dstPortId = xnode.Attributes["DstPortID"].Value;
+
+                linksList.Add(new Link(id,srcId, dstId, srcPortId, dstPortId));
+                string[] row = { srcId, dstId, srcPortId, dstPortId };
+                linksListView.Items.Add(id).SubItems.AddRange(row);
             }
+
 
             linksListView.Enabled = true;
             logsListView.Enabled = true;
@@ -131,6 +138,7 @@ namespace NetworkCloud
             else
                 item.Text = log;
             logsListView.Items.Add(item);
+            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible(); //to zapewnia ze bedzie sie zawsze scrollowac do ostatniego dodanego log'a
         }
     }
 }

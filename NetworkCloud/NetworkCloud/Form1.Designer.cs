@@ -125,7 +125,7 @@
             // 
             // id
             // 
-            this.id.Text = "id";
+            this.id.Text = "ID";
             this.id.Width = 40;
             // 
             // node_in
