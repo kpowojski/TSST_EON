@@ -16,6 +16,8 @@ namespace NetworkNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
+        public const int RECEIVED = 3;
+
         private PipeClient pipeManagerClient;
         private string pipeManagerName;
 
@@ -62,12 +64,13 @@ namespace NetworkNode
 
         void pipeCloudClient_ServerDisconnected()
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
+            Invoke(new PipeClient.ServerDisconnectedHandler(EnableCloudStart));
         }
 
-        void EnableStart()
+        void EnableCloudStart()
         {
             this.startButton.Enabled = true;
+            addLog("NetworkCloude has been disconnected", true, ERROR);
         }
 
         void pipeCloudClient_MessageReceived(byte[] message)
@@ -86,7 +89,13 @@ namespace NetworkNode
 
         void pipeManagerClient_ServerDisconnected()
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
+            Invoke(new PipeClient.ServerDisconnectedHandler(EnableManagerStart));
+        }
+
+        void EnableManagerStart()
+        {
+            this.startButton.Enabled = true;
+            addLog("NetworkManager has been disconnected", true, ERROR);
         }
 
         void pipeManagerClient_MessageReceived(byte[] message)
@@ -98,17 +107,16 @@ namespace NetworkNode
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message);
-            addLog("Received from manager: " + str, true, TEXT);
-
 
             string[] response = this.checker.checkManagerCommand(str);
             if (response != null)
             {
-                for (int i = 0; i < response.Length; i++)
+                addLog("Received from manager: " + response[0], true, RECEIVED);
+                for (int i = 1; i < response.Length; i++)
                 {
-                    if (response[i] != "null")
+                    if (response[i] != "null" && response[i] != null)
                         this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                        addLog("Wyslano: " + response[i], true, TEXT);
+                        //addLog("Wyslano: " + response[i], true, TEXT);
                 }
             }
         }
@@ -154,6 +162,8 @@ namespace NetworkNode
             statusLabel.Text = "Inactive";
             stopButton.Enabled = false;
             configButton.Enabled = true;
+            pipeCloudClient.Disconnect();
+            pipeManagerClient.Disconnect();
             addLog("NetworkNode stopped", true, INFO);
         }
 
@@ -189,9 +199,6 @@ namespace NetworkNode
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
         }
 
-        
-
-
         public void addLog(String log, Boolean time, int flag)
         {
             ListViewItem item = new ListViewItem();
@@ -205,6 +212,9 @@ namespace NetworkNode
                     break;
                 case 2:
                     item.ForeColor = Color.Red;
+                    break;
+                case 3:
+                    item.ForeColor = Color.Green;
                     break;
             }
             if (time)

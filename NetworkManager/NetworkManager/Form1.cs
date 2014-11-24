@@ -44,7 +44,7 @@ namespace NetworkManager
         }
         void ClientDisconnected()
         {
-            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+            addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)

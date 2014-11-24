@@ -63,7 +63,7 @@ namespace NetworkNode
             string command = words[0];
             string nodeId = words[1];
             
-            string[] result = new string[3];
+            string[] result = new string[4];
             if (this.nodeId != nodeId)
             {
                 result = null;
@@ -71,27 +71,34 @@ namespace NetworkNode
             }
             else
             {
+
+                result[0] = message;
+
                 switch (command)
                 {
                     case "GET":
-                        result[0] = getPortsIn();
-                        result[1] = getPortsOut();
-                        result[2] = getCommutation();
+                        result[1] = getPortsIn();
+                        result[2] = getPortsOut();
+                        result[3] = getCommutation();
                         return result;
                     
                     case "SET":
 
                         string portIn = words[2];
                         string portOut = words[3];
-                        setCommutation(portIn, portOut);
-                        result = null;
+                        if(setCommutation(portIn, portOut))
+                            result[1] = "SET_RESPONSE SUCCESS";
+                        else
+                            result[1] = "SET_RESPONSE ERROR";
                         return result;
 
                     case "DELETE":
                         string deletePortIn = words[2];
                         string deletePortOut = words[3];
-                        deleteCommutation(deletePortIn, deletePortOut);
-                        result = null;
+                        if(deleteCommutation(deletePortIn, deletePortOut))
+                            result[1] = "DELETE_RESPONSE SUCESS";
+                        else
+                            result[1] = "DELETE_RESPONSE ERROR";
                         return result;
                 }
             }
@@ -132,23 +139,37 @@ namespace NetworkNode
         }
 
 
-        public void setCommutation(string portIn, string portOut)
+        public bool setCommutation(string portIn, string portOut)
         {
             int input = this.portIn.IndexOf(portIn);
             int output = this.portOut.IndexOf(portOut);
 
-
-            commutation[input] = output;
+            if (commutation[input] == -1)
+            {
+                commutation[input] = output;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
         }
 
-        public void deleteCommutation(string deletePortIn, string deletePortOut)
+        public bool deleteCommutation(string deletePortIn, string deletePortOut)
         {
             int input = this.portIn.IndexOf(deletePortIn);
             int output = this.portOut.IndexOf(deletePortOut);
 
             if (commutation[input] == output)
+            {
                 commutation[input] = -1;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
