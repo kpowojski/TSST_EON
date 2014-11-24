@@ -19,10 +19,20 @@ namespace NetworkManager
         private PipeServer pipeServer;
         private string pipeManagerName;
 
+        private CommandChecker commandChecker;
+
         private string managerId;
         public Form1()
         {
             InitializeComponent();
+
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = "Logs";
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
         }
 
         void pipeServer_ClientDisconnected()
@@ -50,9 +60,7 @@ namespace NetworkManager
         private void startButton_Click(object sender, EventArgs e)
         {
             statusLabel.Text = "Active";
-            
-            
-            
+           
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
@@ -67,9 +75,12 @@ namespace NetworkManager
             
             startButton.Enabled = false;
             sendButton.Enabled = true;
+            helpButton.Enabled = true;
+            clearButton.Enabled = true;
             configButton.Enabled = false;
             commandTextBox.Enabled = true;
 
+            commandChecker = new CommandChecker();
         }
 
         private void configButton_Click(object sender, EventArgs e)
@@ -79,9 +90,21 @@ namespace NetworkManager
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            if (commandTextBox.Text != "")
+            string command = commandTextBox.Text;
+            if (command != "")
             {
-                addLog("Command: " + commandTextBox.Text, true, TEXT);
+                if (commandChecker.checkCommand(command))
+                {
+                    addLog("Command: " + command, true, TEXT);
+                    ASCIIEncoding encoder = new ASCIIEncoding();
+                    byte[] commandByte = encoder.GetBytes(command);
+                    pipeServer.SendMessage(commandByte);
+                }
+                else
+                {
+                    addLog("Command: " + command, true, ERROR);
+                    addLog("Error: " + commandChecker.getErrorMsg(), false, ERROR);
+                }
                 commandTextBox.Text = "";
             }
         }
@@ -120,6 +143,29 @@ namespace NetworkManager
             else
                 item.Text = log;
             logsListView.Items.Add(item);
+            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+        }
+
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            addLog(" ", false, INFO);
+            addLog("LIST OF COMMANDS:", false, INFO);
+            addLog(" ", false, INFO);
+            addLog("'GETALLNAMES'", false, INFO);
+            addLog("-> Shows all names of network nodes.", false, INFO);
+            addLog("'GET NODE_NAME'", false, INFO);
+            addLog("-> Shows commutation matrix in specified network node.", false, INFO);
+            addLog("'SET NODE_NAME PORT_IN PORT_OUT'", false, INFO);
+            addLog("-> Sets commutation between inner and outer ports in specified network node.", false, INFO);
+            addLog("'DELETE NODE_NAME PORT_IN PORT_OUT'", false, INFO);
+            addLog("-> Deletes commutation between inner and outer ports in specified network node.", false, INFO);
+            addLog(" ", false, INFO);
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            logsListView.Items.Clear();
+
         }
     }
 }

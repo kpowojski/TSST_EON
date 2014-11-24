@@ -33,12 +33,13 @@
             this.startButton = new System.Windows.Forms.Button();
             this.commandTextBox = new System.Windows.Forms.TextBox();
             this.sendButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.logsListView = new System.Windows.Forms.ListView();
+            this.helpButton = new System.Windows.Forms.Button();
+            this.clearButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,28 +69,19 @@
             this.commandTextBox.Enabled = false;
             this.commandTextBox.Location = new System.Drawing.Point(12, 286);
             this.commandTextBox.Name = "commandTextBox";
-            this.commandTextBox.Size = new System.Drawing.Size(350, 20);
+            this.commandTextBox.Size = new System.Drawing.Size(522, 20);
             this.commandTextBox.TabIndex = 3;
             // 
             // sendButton
             // 
             this.sendButton.Enabled = false;
-            this.sendButton.Location = new System.Drawing.Point(368, 284);
+            this.sendButton.Location = new System.Drawing.Point(540, 284);
             this.sendButton.Name = "sendButton";
-            this.sendButton.Size = new System.Drawing.Size(76, 23);
+            this.sendButton.Size = new System.Drawing.Size(65, 23);
             this.sendButton.TabIndex = 4;
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Logs";
             // 
             // label2
             // 
@@ -106,7 +98,7 @@
             this.statusLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 340);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(455, 22);
+            this.statusStrip.Size = new System.Drawing.Size(688, 22);
             this.statusStrip.TabIndex = 7;
             // 
             // statusLabel
@@ -124,22 +116,47 @@
             // logsListView
             // 
             this.logsListView.Enabled = false;
-            this.logsListView.Location = new System.Drawing.Point(12, 26);
+            this.logsListView.FullRowSelect = true;
+            this.logsListView.Location = new System.Drawing.Point(12, 12);
             this.logsListView.Name = "logsListView";
-            this.logsListView.Size = new System.Drawing.Size(431, 238);
+            this.logsListView.Size = new System.Drawing.Size(664, 252);
             this.logsListView.TabIndex = 8;
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.List;
             // 
+            // helpButton
+            // 
+            this.helpButton.Enabled = false;
+            this.helpButton.Location = new System.Drawing.Point(449, 312);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(227, 23);
+            this.helpButton.TabIndex = 9;
+            this.helpButton.Text = "Help";
+            this.helpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            // 
+            // clearButton
+            // 
+            this.clearButton.Enabled = false;
+            this.clearButton.Location = new System.Drawing.Point(611, 284);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(65, 23);
+            this.clearButton.TabIndex = 10;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
             // Form1
             // 
+            this.AcceptButton = this.sendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(455, 362);
+            this.ClientSize = new System.Drawing.Size(688, 362);
+            this.Controls.Add(this.clearButton);
+            this.Controls.Add(this.helpButton);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.sendButton);
             this.Controls.Add(this.commandTextBox);
             this.Controls.Add(this.startButton);
@@ -162,12 +179,13 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TextBox commandTextBox;
         private System.Windows.Forms.Button sendButton;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ListView logsListView;
+        private System.Windows.Forms.Button helpButton;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 
