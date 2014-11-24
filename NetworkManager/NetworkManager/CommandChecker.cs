@@ -101,12 +101,13 @@ namespace NetworkManager
                             {
                                 if (tmp2[1].Equals("0"))
                                 {
-                                    tmp = tmp2[0] + " not redirect";
+                                    tmp = tmp2[0] + " do not redirect";
                                 }
                                 else
                                 {
                                     tmp = tmp2[0] + " redirect to " + tmp2[1];
                                 }
+                                logsList.Add(tmp);
                             }
                         }
                         break;
