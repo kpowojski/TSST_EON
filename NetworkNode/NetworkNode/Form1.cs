@@ -102,11 +102,14 @@ namespace NetworkNode
 
 
             string[] response = this.checker.checkManagerCommand(str);
-            for (int i = 0; i < response.Length; i++)
+            if (response != null)
             {
-                if (response[i] != "null")
-                    this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                    //addLog("Wyslano: " + response[i], true, TEXT);
+                for (int i = 0; i < response.Length; i++)
+                {
+                    if (response[i] != "null")
+                        this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
+                        addLog("Wyslano: " + response[i], true, TEXT);
+                }
             }
         }
 
