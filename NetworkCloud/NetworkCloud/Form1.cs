@@ -91,8 +91,8 @@ namespace NetworkCloud
             // przykladowe uzupelnienie linksListView
             //string[] subitems = { "Node Name", "Node Name", "1001", "1002" };
             //linksListView.Items.Add("1").SubItems.AddRange(subitems);
-                
 
+            linksListView.Items.Clear();
             XmlDocument xml = new XmlDocument();
             xml.Load(openFileDialog.FileName);
 
