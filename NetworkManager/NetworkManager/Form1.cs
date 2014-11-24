@@ -20,7 +20,9 @@ namespace NetworkManager
         private PipeServer pipeServer;
         private string pipeManagerName;
 
-        private string lastCommand = "";
+        //private string lastCommand = "";
+        private List<string> lastCommands = new List<string>();
+        private int commandListPosition = 0;
 
         private CommandChecker commandChecker;
 
@@ -112,7 +114,8 @@ namespace NetworkManager
                     addLog("Command: " + command, true, ERROR);
                     addLog("Error: " + commandChecker.getErrorMsg(), false, ERROR);
                 }
-                lastCommand = command;
+                lastCommands.Add(command);
+                commandListPosition = lastCommands.Count;
                 commandTextBox.Text = "";
             }
         }
@@ -183,8 +186,21 @@ namespace NetworkManager
         {
             if (e.KeyCode == Keys.Up)
             {
-                commandTextBox.Text = lastCommand;
-                commandTextBox.Select(commandTextBox.Text.Length, 0);
+                if(commandListPosition > 0)
+                {
+                    commandListPosition -= 1;
+                    commandTextBox.Text = lastCommands.ElementAt(commandListPosition);
+                    commandTextBox.Select(commandTextBox.Text.Length, 0);
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (commandListPosition < lastCommands.Count-1)
+                {
+                    commandListPosition += 1;
+                    commandTextBox.Text = lastCommands.ElementAt(commandListPosition);
+                    commandTextBox.Select(commandTextBox.Text.Length, 0);
+                }
             }
         }
     }

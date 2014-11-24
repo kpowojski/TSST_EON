@@ -161,6 +161,7 @@ namespace NetworkNode
         {
             statusLabel.Text = "Inactive";
             stopButton.Enabled = false;
+            startButton.Enabled = true;
             configButton.Enabled = true;
             pipeCloudClient.Disconnect();
             pipeManagerClient.Disconnect();
