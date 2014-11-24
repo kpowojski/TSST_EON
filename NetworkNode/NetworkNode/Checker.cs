@@ -25,9 +25,7 @@ namespace NetworkNode
             
             string[] words = message.Split(' ');
             string dstId = words[0];
-            Console.WriteLine(dstId);
             string dstPortId = words[1];
-            Console.WriteLine(dstPortId);
             bool destitantionReached = false;
 
             if (this.nodeId == dstId)
@@ -68,7 +66,7 @@ namespace NetworkNode
             string[] result = new string[3];
             if (this.nodeId != nodeId)
             {
-                result[0] = "null";
+                result = null;
                 return result;
             }
             else
@@ -79,23 +77,24 @@ namespace NetworkNode
                         result[0] = getPortsIn();
                         result[1] = getPortsOut();
                         result[2] = getCommutation();
-                        break;
+                        return result;
                     
                     case "SET":
 
                         string portIn = words[2];
                         string portOut = words[3];
                         setCommutation(portIn, portOut);
-                        break;
+                        result = null;
+                        return result;
 
                     case "DELETE":
                         string deletePortIn = words[2];
                         string deletePortOut = words[3];
                         deleteCommutation(deletePortIn, deletePortOut);
-                        break;
+                        result = null;
+                        return result;
                 }
             }
-
             return result;
 
         }
