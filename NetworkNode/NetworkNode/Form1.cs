@@ -79,7 +79,7 @@ namespace NetworkNode
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            addLog("Received from cloud: " + str, true, TEXT);
+            //addLog("Received from cloud: " + str, true, TEXT);
             string forwardedMessage = this.checker.checkDestination(str);
             if( forwardedMessage != "null")
                 addLog("Received from cloud: " + forwardedMessage, true, TEXT);
