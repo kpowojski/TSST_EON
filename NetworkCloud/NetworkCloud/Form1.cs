@@ -86,14 +86,17 @@ namespace NetworkCloud
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            addLog("Received: " + str, true, TEXT);
-            string forwardedMessage = forwarder.forwardMessage(str);
-
-            if (forwardedMessage != null)
+            if (!str.Equals("StartMessage"))
             {
-                byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
-                pipeServer.SendMessage(forwardedByte);
-                addLog("Send: " + forwardedMessage, true, TEXT);
+                addLog("Received: " + str, true, TEXT);
+                string forwardedMessage = forwarder.forwardMessage(str);
+
+                if (forwardedMessage != null)
+                {
+                    byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
+                    pipeServer.SendMessage(forwardedByte);
+                    addLog("Send: " + forwardedMessage, true, TEXT);
+                }
             }
 
         }

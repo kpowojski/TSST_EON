@@ -58,11 +58,13 @@ namespace NetworkManager
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            //addLog("Received: " + str, true, RECEIVED);
-            List<string> ports = commandChecker.parseMessage(str);
-            foreach (string port in ports)
+            if(!str.Equals("StartMessage"))
             {
-                addLog(port, false, RECEIVED);
+                List<string> msgs = commandChecker.parseMessage(str);
+                foreach (string msg in msgs)
+                {
+                    addLog(msg, false, RECEIVED);
+                }
             }
         }
 
