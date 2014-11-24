@@ -124,7 +124,7 @@ namespace NetworkNode
             string str = encoder.GetString(message);
 
             string[] response = this.checker.checkManagerCommand(str);
-            if (response != null)
+            if (response[0] != "null")
             {
                 addLog("Received from manager: " + response[0], true, RECEIVED);
                 for (int i = 1; i < response.Length; i++)
@@ -135,6 +135,7 @@ namespace NetworkNode
                 }
             }
         }
+        
 
         
         private void startButton_Click(object sender, EventArgs e)
