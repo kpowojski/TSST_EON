@@ -20,6 +20,10 @@ namespace NetworkManager
         private PipeServer pipeServer;
         private string pipeManagerName;
 
+        //private string lastCommand = "";
+        private List<string> lastCommands = new List<string>();
+        private int commandListPosition = 0;
+
         private CommandChecker commandChecker;
 
         private string managerId;
@@ -42,7 +46,7 @@ namespace NetworkManager
         }
         void ClientDisconnected()
         {
-            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+            addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -110,6 +114,8 @@ namespace NetworkManager
                     addLog("Command: " + command, true, ERROR);
                     addLog("Error: " + commandChecker.getErrorMsg(), false, ERROR);
                 }
+                lastCommands.Add(command);
+                commandListPosition = lastCommands.Count;
                 commandTextBox.Text = "";
             }
         }
@@ -174,6 +180,28 @@ namespace NetworkManager
         {
             logsListView.Items.Clear();
 
+        }
+
+        private void commandTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                if(commandListPosition > 0)
+                {
+                    commandListPosition -= 1;
+                    commandTextBox.Text = lastCommands.ElementAt(commandListPosition);
+                    commandTextBox.Select(commandTextBox.Text.Length, 0);
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (commandListPosition < lastCommands.Count-1)
+                {
+                    commandListPosition += 1;
+                    commandTextBox.Text = lastCommands.ElementAt(commandListPosition);
+                    commandTextBox.Select(commandTextBox.Text.Length, 0);
+                }
+            }
         }
     }
 }

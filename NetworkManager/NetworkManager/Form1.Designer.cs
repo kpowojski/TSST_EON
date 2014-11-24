@@ -71,6 +71,7 @@
             this.commandTextBox.Name = "commandTextBox";
             this.commandTextBox.Size = new System.Drawing.Size(522, 20);
             this.commandTextBox.TabIndex = 3;
+            this.commandTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.commandTextBox_KeyDown);
             // 
             // sendButton
             // 
@@ -161,6 +162,7 @@
             this.Controls.Add(this.commandTextBox);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.configButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";

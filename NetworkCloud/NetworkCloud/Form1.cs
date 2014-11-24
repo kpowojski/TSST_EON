@@ -36,7 +36,7 @@ namespace NetworkCloud
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
             header.Width = logsListView.Size.Width;
-            header.Text = "";
+            header.Text = "Logs";
             header.Name = "col1";
             logsListView.Columns.Add(header);
         }
@@ -74,7 +74,7 @@ namespace NetworkCloud
         }
         void ClientDisconnected()
         {
-            MessageBox.Show("Total connected clients: " + pipeServer.TotalConnectedClients);
+            addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -88,10 +88,13 @@ namespace NetworkCloud
             string str = encoder.GetString(message, 0, message.Length);
             addLog("Received: " + str, true, TEXT);
             string forwardedMessage = forwarder.forwardMessage(str);
- 
-            byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
-            pipeServer.SendMessage(forwardedByte);
-            addLog("Send: " +forwardedMessage, true, TEXT);
+
+            if (forwardedMessage != null)
+            {
+                byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
+                pipeServer.SendMessage(forwardedByte);
+                addLog("Send: " + forwardedMessage, true, TEXT);
+            }
 
         }
 

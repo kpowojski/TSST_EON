@@ -32,7 +32,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.configButton = new System.Windows.Forms.Button();
             this.startButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -75,15 +74,6 @@
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 186);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(30, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Logs";
             // 
             // statusStrip
             // 
@@ -154,9 +144,9 @@
             // logsListView
             // 
             this.logsListView.Enabled = false;
-            this.logsListView.Location = new System.Drawing.Point(12, 203);
+            this.logsListView.Location = new System.Drawing.Point(12, 185);
             this.logsListView.Name = "logsListView";
-            this.logsListView.Size = new System.Drawing.Size(525, 159);
+            this.logsListView.Size = new System.Drawing.Size(525, 177);
             this.logsListView.TabIndex = 9;
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.List;
@@ -169,10 +159,10 @@
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.linksListView);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.configButton);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "NetworkCloud";
@@ -190,7 +180,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button configButton;
         private System.Windows.Forms.Button startButton;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.OpenFileDialog openFileDialog;

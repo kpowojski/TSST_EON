@@ -76,6 +76,12 @@ namespace NetworkManager
                 string[] tmp2 = null;
                 switch (words[0])
                 {
+                    case "SET_RESPONSE":
+                        logsList.Add(words[1]);
+                        break;
+                    case "DELETE_RESPONSE":
+                        logsList.Add(words[1]);
+                        break;
                     case "PORTS_IN":
                         tmp = "Input ports: ";
                         for (int i = 1; i < words.Length; i++)
