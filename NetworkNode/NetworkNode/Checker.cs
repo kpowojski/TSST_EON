@@ -22,7 +22,7 @@ namespace NetworkNode
 
         public string checkDestination(string message)
         {
-            
+
             string[] words = message.Split(' ');
             string dstId = words[0];
             string dstPortId = words[1];
@@ -44,7 +44,7 @@ namespace NetworkNode
                     originalMessage += " " + words[i];
                 }
                 message = null;
-                if(commutation[this.portIn.IndexOf(dstPortId)] != -1)
+                if (commutation[this.portIn.IndexOf(dstPortId)] != -1)
                     message = this.nodeId + " " + this.portOut.ElementAt(commutation[this.portIn.IndexOf(dstPortId)]) + " " + originalMessage;
                 else
                     message = "NO_REDIRECTION " + originalMessage;
@@ -71,7 +71,7 @@ namespace NetworkNode
             string[] words = message.Split(' ');
             string command = words[0];
             string nodeId = words[1];
-            
+
             string[] result = new string[4];
             if (this.nodeId != nodeId)
             {
@@ -90,12 +90,12 @@ namespace NetworkNode
                         result[2] = getPortsOut();
                         result[3] = getCommutation();
                         return result;
-                    
+
                     case "SET":
 
                         string portIn = words[2];
                         string portOut = words[3];
-                        if(setCommutation(portIn, portOut))
+                        if (setCommutation(portIn, portOut))
                             result[1] = "SET_RESPONSE SUCCESS";
                         else
                             result[1] = "SET_RESPONSE ERROR";
@@ -104,7 +104,7 @@ namespace NetworkNode
                     case "DELETE":
                         string deletePortIn = words[2];
                         string deletePortOut = words[3];
-                        if(deleteCommutation(deletePortIn, deletePortOut))
+                        if (deleteCommutation(deletePortIn, deletePortOut))
                             result[1] = "DELETE_RESPONSE SUCESS";
                         else
                             result[1] = "DELETE_RESPONSE ERROR";
@@ -132,12 +132,12 @@ namespace NetworkNode
 
         public string getCommutation()
         {
-            string configuration ="COMMUTATION ";
+            string configuration = "COMMUTATION ";
             for (int i = 0; i < portIn.Count; i++)
             {
                 if (commutation[i] != -1)
                 {
-                    configuration += portIn[i] + "-" + portOut[commutation[i]]+" ";
+                    configuration += portIn[i] + "-" + portOut[commutation[i]] + " ";
                 }
                 else
                 {
