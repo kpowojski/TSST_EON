@@ -105,7 +105,8 @@ namespace NetworkNode
             for (int i = 0; i < response.Length; i++)
             {
                 if (response[i] != null)
-                addLog("Received from manager: " + response[i], true, TEXT);
+                    this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
+                    addLog("Wyslano: " + response[i], true, TEXT);
             }
         }
 

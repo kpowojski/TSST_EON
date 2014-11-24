@@ -85,6 +85,7 @@ namespace NetworkNode
 
                         string portIn = words[2];
                         string portOut = words[3];
+                        setCommutation(portIn, portOut);
                         break;
                 }
             }
@@ -123,6 +124,17 @@ namespace NetworkNode
                 }
             }
             return configuration;
+        }
+
+
+        public void setCommutation(string portIn, string portOut)
+        {
+            int input = this.portIn.IndexOf(portIn);
+            int output = this.portOut.IndexOf(portOut);
+
+
+            commutation[input] = output;
+
         }
     }
 }
