@@ -66,7 +66,6 @@ namespace NetworkManager
         private void startButton_Click(object sender, EventArgs e)
         {
             statusLabel.Text = "Active";
-           
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;

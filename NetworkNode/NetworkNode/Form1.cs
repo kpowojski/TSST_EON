@@ -79,8 +79,7 @@ namespace NetworkNode
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            //addLog("Received from cloud: " + str, true, TEXT);
-            string forwardedMessage = this.checker.checkDestination(str);
+            string forwardedMessage = this.checker.checkDestination(str); 
             if( forwardedMessage != "null")
                 addLog("Received from cloud: " + forwardedMessage, true, TEXT);
         }
@@ -98,8 +97,22 @@ namespace NetworkNode
         void DisplayReceivedMessageManager(byte[] message)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-            string str = encoder.GetString(message, 0, message.Length);
+            string str = encoder.GetString(message);
             addLog("Received from manager: " + str, true, TEXT);
+
+
+            //string[] response = this.checker.checkManagerCommand(str);
+            //for (int i =0; i< response.Length; i++)
+            //{
+            //    if(response[i] != null)
+            //    {
+            //        byte[] msg = encoder.GetBytes(response[i]);
+            //        this.pipeManagerClient.SendMessage(msg);
+            //    }
+            //    addLog("Received from manager: " + response[i], true, TEXT);
+            //}
+            
+            //addLog("Received from manager: " + response[, true, TEXT);
         }
 
         
@@ -165,7 +178,13 @@ namespace NetworkNode
 
             this.portIn = Configuration.readPortIn(xml);
             this.portOut = Configuration.readPortOut(xml);
-            this.checker = new Checker(this.nodeId, this.portIn);
+
+            this.comutation = new int[portIn.Count];
+            for (int i = 0; i < this.portIn.Count; i++)
+            {
+                this.comutation[i] = -1;
+            }
+            this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
 
             logsListView.Enabled = true;
             startButton.Enabled = true;

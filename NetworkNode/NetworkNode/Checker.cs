@@ -9,12 +9,15 @@ namespace NetworkNode
     {
         private string nodeId;
         private List<string> portIn;
+        private List<string> portOut;
+        private int[] commutation;
 
-
-        public Checker(string nodeId, List<string> portIn)
+        public Checker(string nodeId, List<string> portIn, List<string> portOut, int[] commutation)
         {
             this.nodeId = nodeId;
             this.portIn = portIn;
+            this.portOut = portOut;
+            this.commutation = commutation;
         }
 
         public string checkDestination(string message)
@@ -50,9 +53,75 @@ namespace NetworkNode
                 message = "null";
             }
 
-            Console.WriteLine(message);
             return message;
         }
 
+        //IN1-OUT1 IN2-OUT3 IN3-0:OUT1 OUT2 OUT3
+        //command from manager GET NODE_NAME
+        public string[] checkManagerCommand(string message)
+        {
+            string[] words = message.Split(' ');
+            string command = words[0];
+            string nodeId = words[1];
+            
+            string[] result = new string[3];
+            Console.WriteLine(nodeId);
+            if (this.nodeId != nodeId)
+            {
+                result[0] = "null";
+                return result;
+            }
+            else
+            {
+                switch (command)
+                {
+                    case "GET":
+                        result[0] = getPortsIn();
+                        result[1] = getPortsOut();
+                        result[2] = getCommutation();
+                        break;
+                    
+                    case "SET":
+                        string portIn = words[2];
+                        string portOut = words[3];
+                        break;
+                }
+            }
+
+            return result;
+
+        }
+
+        private string getPortsIn()
+        {
+            string portsIn = string.Join(" ", this.portIn.ToArray());
+            string result = "PORTS_IN " + portsIn;
+            return result;
+        }
+
+        private string getPortsOut()
+        {
+            string portsOut = string.Join(" ", this.portOut.ToArray());
+            string result = "PORTS_OUT " + portsOut;
+            return result;
+        }
+
+
+        public string getCommutation()
+        {
+            string configuration ="COMMUTATION ";
+            for (int i = 0; i < portIn.Count; i++)
+            {
+                if (commutation[i] != -1)
+                {
+                    configuration += portIn[i] + "-" + portOut[commutation[i]]+" ";
+                }
+                else
+                {
+                    configuration += portIn[i] + "-" + "0 ";
+                }
+            }
+            return configuration;
+        }
     }
 }

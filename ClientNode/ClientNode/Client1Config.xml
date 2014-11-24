@@ -7,7 +7,7 @@
     </InputPorts>
     <OutputPorts>
       	<Port ID="CO1" />
-	<Port ID="CO2" />
+		<Port ID="CO2" />
     </OutputPorts>
   </Ports>
 </Node>
