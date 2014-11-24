@@ -24,8 +24,10 @@ namespace NetworkCloud
 
 
 
-        public static ListView readLinks(XmlDocument xml, string nodeName, ListView linksListView)
+        public static Dictionary<string, string> readLinks(XmlDocument xml, string nodeName, ListView linksListView)
         {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
                 string id = xnode.Attributes["ID"].Value;
@@ -36,8 +38,14 @@ namespace NetworkCloud
 
                 string[] row = { srcId, dstId, srcPortId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);
+
+                string key = srcId + " " + srcPortId;
+                string value = dstId + " " + dstPortId;
+                dic.Add(key, value);
             }
-            return linksListView;
+            return dic;
         }
+
+
     }
 }

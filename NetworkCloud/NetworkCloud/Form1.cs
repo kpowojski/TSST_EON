@@ -22,6 +22,11 @@ namespace NetworkCloud
         private PipeServer pipeServer;
         private string pipeServerName;
         private string cloudId;
+        
+        //slownik ktory mapuje nam wszystko, klucz (odKogo ktorymPortem) wartosc (doKogo ktorymPortem)
+        private Dictionary<string, string> dic;
+
+        private Forwarder forwarder;
 
         public NetworkCloud()
         {
@@ -82,6 +87,12 @@ namespace NetworkCloud
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
             addLog("Received: " + str, true, TEXT);
+            string forwardedMessage = forwarder.forwardMessage(str);
+ 
+            byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
+            pipeServer.SendMessage(forwardedByte);
+            addLog("Send: " +forwardedMessage, true, TEXT);
+
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -91,17 +102,24 @@ namespace NetworkCloud
             XmlDocument xml = new XmlDocument();
             xml.Load(openFileDialog.FileName);
 
+            //podstawowe informacje o cloudzie (id, nazwy pipow)
             List<string> config = new List<string>();
             config = Configuration.readConfig(xml);
             this.cloudId = config[0];
             this.pipeServerName = config[1];
             //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-            Configuration.readLinks(xml, "//Link[@ID]", linksListView); //metody do wczytania cofiguracji wyniosłem do oddzielnych plików zeby syfu nie robić
+            dic = new Dictionary<string, string>();
+            dic = Configuration.readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
+
+            forwarder = new Forwarder(dic);
+
+
 
             linksListView.Enabled = true;
             logsListView.Enabled = true;
             startButton.Enabled = true;
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
+
         }
 
         private void addLog(String log, Boolean time, int flag)

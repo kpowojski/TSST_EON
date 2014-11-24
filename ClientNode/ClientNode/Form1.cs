@@ -26,6 +26,9 @@ namespace ClientNode
         private PipeClient pipeCloudClient;
 
 
+        //klasa do sprawdzania przeznaczneie wiadomosci
+        private Checker checker;
+
         //id noda
         private string nodeId;
 
@@ -78,7 +81,12 @@ namespace ClientNode
 
         void DisplayReceivedMessageCloud(byte [] message)
         {
-            addLog("Received from cloud: "+message, true, 1);
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            string str = encoder.GetString(message);
+            string checkedMessage = checker.checkDestination(str);
+
+            if (checkedMessage != "null")
+                addLog("Received from cloud: "+message, true, 1);
         }
 
         void pipeManagerClient_ServerDisconnected()
@@ -99,7 +107,7 @@ namespace ClientNode
         private void sendButton_Click(object sender, EventArgs e)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-            byte[] myByte = encoder.GetBytes(this.nodeId + " " +this.messageTextBox.Text);
+            byte[] myByte = encoder.GetBytes(this.nodeId + " "+ this.portOut[1]+ " " +this.messageTextBox.Text);
             this.pipeCloudClient.SendMessage(myByte);
             this.messageTextBox.Text = "";
         }
@@ -156,6 +164,9 @@ namespace ClientNode
             this.portIn = Configuration.readPortIn(xml);
             this.portOut = Configuration.readPortOut(xml);
 
+            this.checker = new Checker(this.nodeId, this.portIn);
+
+
             this.logsListView.Items.Add("Configuration loaded form file: " + openFileDialog.FileName);
         }
 
@@ -173,7 +184,7 @@ namespace ClientNode
             if (!this.pipeCloudClient.Connected)
             {
                 this.pipeCloudClient.Connect(pipeCloudName);
-                string str = "StartMessage";
+                string str = this.nodeId+ " " + this.portOut[1] + " StartMessage";
                 byte[] mess = encoder.GetBytes(str);
                 this.pipeCloudClient.SendMessage(mess);
             }
