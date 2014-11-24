@@ -15,6 +15,7 @@ namespace NetworkManager
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
+        public const int RECEIVED = 3;
 
         private PipeServer pipeServer;
         private string pipeManagerName;
@@ -53,7 +54,12 @@ namespace NetworkManager
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            addLog("Received: " + str, true, TEXT);
+            addLog("Received: " + str, true, RECEIVED);
+            List<string> ports = commandChecker.parseMessage(str);
+            foreach (string port in ports)
+            {
+                addLog(port, false, RECEIVED);
+            }
         }
 
 
@@ -136,6 +142,9 @@ namespace NetworkManager
                     break;
                 case 2:
                     item.ForeColor = Color.Red;
+                    break;
+                case 3:
+                    item.ForeColor = Color.Green;
                     break;
             }
             if (time)

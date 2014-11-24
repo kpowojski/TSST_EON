@@ -65,5 +65,58 @@ namespace NetworkManager
                 return false;
             }
         }
+
+        public List<string> parseMessage(string msg)
+        {
+            List<string> logsList = new List<string>();
+            if(msg.Contains(' '))
+            {
+                string[] words = msg.Split(' ');
+                string tmp = "";
+                string[] tmp2 = null;
+                switch (words[0])
+                {
+                    case "PORTS_IN":
+                        tmp = "Input ports: ";
+                        for (int i = 1; i < words.Length; i++)
+                        {
+                            tmp += words[i] + ", ";
+                        }
+                        logsList.Add(tmp);
+                        break;
+                    case "PORTS_OUT":
+                        tmp = "Output ports: ";
+                        for (int i = 1; i < words.Length; i++)
+                        {
+                            tmp += words[i] + ", ";
+                        }
+                        logsList.Add(tmp);
+                        break;
+                    case "COMMUTATION":
+                        logsList.Add("Commutation:");
+                        for (int i = 1; i < words.Length; i++)
+                        {
+                            tmp2 = words[i].Split('-');
+                            if(tmp2[1].Equals("0"))
+                            {
+                                tmp = tmp2[0] + " not redirect";
+                            }
+                            else
+                            {
+                                tmp = tmp2[0] + " redirect to " + tmp2[1];
+                            }
+                        }
+                        break;
+                    default:
+                        logsList.Add(msg);
+                        break;
+                }
+            }
+            else
+            {
+                logsList.Add(msg);
+            }
+                return logsList;
+        }
     }
 }
