@@ -5,8 +5,6 @@ using System.Text;
 
 namespace ClientNode
 {
-    
-
     class Checker
     {
         private string nodeId;
@@ -18,7 +16,6 @@ namespace ClientNode
             this.portIn = portIn;
         }
 
-
         public string checkDestination(string message)
         {
             string[] words = message.Split(' ');
@@ -29,7 +26,7 @@ namespace ClientNode
 
             if (this.nodeId == dstId)
             {
-                if(this.portIn.Contains(dstId))
+                if(this.portIn.Contains(dstPortId))
                 {
                     destitantionReached = true;
                 }
@@ -53,5 +50,6 @@ namespace ClientNode
             
             return message;
         }
+    
     }
 }

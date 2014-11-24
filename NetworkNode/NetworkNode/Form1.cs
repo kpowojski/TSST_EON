@@ -21,6 +21,9 @@ namespace NetworkNode
 
         private PipeClient pipeCloudClient;
         private string pipeCloudName;
+        
+        //sprawdzacz
+        private Checker checker;
 
         //id noda
         private string nodeId;
@@ -35,7 +38,6 @@ namespace NetworkNode
         public Form1()
         {
             InitializeComponent();
-            pipeCloudName = @"\\.\pipe\NetworkCloud";
             if (pipeCloudClient != null)
             {
                 pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
@@ -46,7 +48,6 @@ namespace NetworkNode
             pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
             pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
 
-            pipeManagerName = @"\\.\pipe\NetworkManager";
             if (pipeManagerClient != null)
             {
                 pipeManagerClient.MessageReceived -= pipeManagerClient_MessageReceived;
@@ -79,6 +80,9 @@ namespace NetworkNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
             addLog("Received from cloud: " + str, true, TEXT);
+            string forwardedMessage = this.checker.checkDestination(str);
+            if( forwardedMessage != "null")
+                addLog("Received from cloud: " + forwardedMessage, true, TEXT);
         }
 
         void pipeManagerClient_ServerDisconnected()
@@ -161,6 +165,7 @@ namespace NetworkNode
 
             this.portIn = Configuration.readPortIn(xml);
             this.portOut = Configuration.readPortOut(xml);
+            this.checker = new Checker(this.nodeId, this.portIn);
 
             logsListView.Enabled = true;
             startButton.Enabled = true;
