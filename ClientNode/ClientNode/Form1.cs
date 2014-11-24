@@ -107,7 +107,7 @@ namespace ClientNode
         private void sendButton_Click(object sender, EventArgs e)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-            byte[] myByte = encoder.GetBytes(this.nodeId + " "+ this.portOut[1]+ " " +this.messageTextBox.Text);
+            byte[] myByte = encoder.GetBytes(this.nodeId + " "+ this.portOut[0]+ " " +this.messageTextBox.Text);
             this.pipeCloudClient.SendMessage(myByte);
             this.messageTextBox.Text = "";
         }
@@ -184,7 +184,7 @@ namespace ClientNode
             if (!this.pipeCloudClient.Connected)
             {
                 this.pipeCloudClient.Connect(pipeCloudName);
-                string str = this.nodeId+ " " + this.portOut[1] + " StartMessage";
+                string str = this.nodeId+ " " + this.portOut[0] + " StartMessage";
                 byte[] mess = encoder.GetBytes(str);
                 this.pipeCloudClient.SendMessage(mess);
             }
