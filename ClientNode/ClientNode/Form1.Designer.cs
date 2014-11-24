@@ -36,7 +36,6 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label1 = new System.Windows.Forms.Label();
             this.logsListView = new System.Windows.Forms.ListView();
             this.connectButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
@@ -102,21 +101,12 @@
             this.statusLabel.Size = new System.Drawing.Size(48, 17);
             this.statusLabel.Text = "Inactive";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 38);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Logs";
-            // 
             // logsListView
             // 
             this.logsListView.Enabled = false;
-            this.logsListView.Location = new System.Drawing.Point(12, 55);
+            this.logsListView.Location = new System.Drawing.Point(12, 41);
             this.logsListView.Name = "logsListView";
-            this.logsListView.Size = new System.Drawing.Size(368, 255);
+            this.logsListView.Size = new System.Drawing.Size(368, 269);
             this.logsListView.TabIndex = 6;
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.List;
@@ -138,12 +128,12 @@
             this.ClientSize = new System.Drawing.Size(392, 367);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.logsListView);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.sendButton);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.messageTextBox);
             this.Controls.Add(this.configButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
@@ -165,7 +155,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.Button connectButton;
     }

@@ -39,6 +39,15 @@ namespace ClientNode
         public Form1()
         {
             InitializeComponent();
+
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = "Logs";
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
+
             portIn = new List<String>();
             portOut = new List<String>();
 

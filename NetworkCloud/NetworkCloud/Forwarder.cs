@@ -19,21 +19,28 @@ namespace NetworkCloud
 
         public string forwardMessage(string message)
         {
-            string[] words = message.Split(' ');
-            string srcId = words[0];
-            string srcPortId = words[1];
-            string originalMessage = null;
-            for (int i=2; i<words.Length;i++)
+            if (message.Contains(' '))
             {
-                originalMessage += " "+words[i];
+                string[] words = message.Split(' ');
+                string srcId = words[0];
+                string srcPortId = words[1];
+                string originalMessage = null;
+                for (int i = 2; i < words.Length; i++)
+                {
+                    originalMessage += " " + words[i];
+                }
+                Console.WriteLine(originalMessage);
+                string dest = dic[srcId + " " + srcPortId];
+
+                message = null;
+                message = dest + originalMessage;
+
+                return message;
             }
-            Console.WriteLine(originalMessage);
-            string dest = dic[srcId +" "+ srcPortId];
-
-            message = null;
-            message = dest + originalMessage;
-
-            return message;
+            else
+            {
+                return null;
+            }
         }
     }
 }

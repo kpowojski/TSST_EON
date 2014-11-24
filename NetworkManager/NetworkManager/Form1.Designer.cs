@@ -162,6 +162,7 @@
             this.Controls.Add(this.commandTextBox);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.configButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
