@@ -102,17 +102,11 @@ namespace NetworkNode
 
 
             string[] response = this.checker.checkManagerCommand(str);
-            for (int i =0; i< response.Length; i++)
+            for (int i = 0; i < response.Length; i++)
             {
-                if(response[i] != null)
-                {
-                    byte[] msg = encoder.GetBytes(response[i]);
-                    this.pipeManagerClient.SendMessage(msg);
-                }
+                if (response[i] != null)
                 addLog("Received from manager: " + response[i], true, TEXT);
             }
-            
-            addLog("Received from manager: " + response[, true, TEXT);
         }
 
         
