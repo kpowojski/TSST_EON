@@ -162,7 +162,6 @@ namespace NetworkNode
             this.portIn = Configuration.readPortIn(xml);
             this.portOut = Configuration.readPortOut(xml);
 
-
             logsListView.Enabled = true;
             startButton.Enabled = true;
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);

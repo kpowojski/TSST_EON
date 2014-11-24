@@ -9,6 +9,20 @@ namespace NetworkCloud
 {
     class Configuration
     {
+        public static List<string> readConfig(XmlDocument xml)
+        {
+            List<string> nodeConfig = new List<string>();
+            foreach (XmlNode xnode in xml.SelectNodes("//Cloud[@ID]"))
+            {
+                string nodeId = xnode.Attributes["ID"].Value;
+                nodeConfig.Add(nodeId);
+                string pipeManagerName = xnode.Attributes["pipeCloudName"].Value;
+                nodeConfig.Add(pipeManagerName);
+            }
+            return nodeConfig;
+        }
+
+
 
         public static ListView readLinks(XmlDocument xml, string nodeName, ListView linksListView)
         {
@@ -23,9 +37,7 @@ namespace NetworkCloud
                 string[] row = { srcId, dstId, srcPortId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);
             }
-
             return linksListView;
         }
-        
     }
 }

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace NetworkManager
 {
@@ -16,7 +17,9 @@ namespace NetworkManager
         public const int ERROR = 2;
 
         private PipeServer pipeServer;
-        
+        private string pipeManagerName;
+
+        private string managerId;
         public Form1()
         {
             InitializeComponent();
@@ -55,14 +58,13 @@ namespace NetworkManager
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
 
             if (!this.pipeServer.Running)
-                this.pipeServer.Start(@"\\.\pipe\NetworkManger");
+                this.pipeServer.Start(this.pipeManagerName);
 
             if (this.pipeServer.Running)
-                addLog("NetworkNode started", true, INFO);
+                addLog("NetworkManager has been started", true, INFO);
             else
                 addLog("An error occurred during start NetworkNode", true, ERROR);
             
-            addLog("NetworkManager was started", true, INFO);
             startButton.Enabled = false;
             sendButton.Enabled = true;
             configButton.Enabled = false;
@@ -72,7 +74,7 @@ namespace NetworkManager
 
         private void configButton_Click(object sender, EventArgs e)
         {
-            openFileDialog.ShowDialog();
+            DialogResult result = openFileDialog.ShowDialog();
         }
 
         private void sendButton_Click(object sender, EventArgs e)
@@ -86,6 +88,13 @@ namespace NetworkManager
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(openFileDialog.FileName);
+            List<string> managerConfig = new List<string>();
+            managerConfig = Configuration.readConfig(xml);
+
+            this.managerId = managerConfig[0];
+            this.pipeManagerName = managerConfig[1];
             logsListView.Enabled = true;
             startButton.Enabled = true;
             addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);

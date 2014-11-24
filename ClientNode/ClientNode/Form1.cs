@@ -39,7 +39,6 @@ namespace ClientNode
             portIn = new List<String>();
             portOut = new List<String>();
 
-            pipeCloudName = @"\\.\pipe\NetworkCloud";
             if (pipeCloudClient != null)
             {
                 pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
@@ -51,7 +50,6 @@ namespace ClientNode
             pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
 
 
-            pipeManagerName = @"\\.\pipe\NetworkManager";
             if (pipeManagerClient != null)
             {
                 pipeManagerClient.MessageReceived -= pipeManagerClient_MessageReceived;
@@ -101,7 +99,7 @@ namespace ClientNode
         private void sendButton_Click(object sender, EventArgs e)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-            byte[] myByte = encoder.GetBytes(this.messageTextBox.Text);
+            byte[] myByte = encoder.GetBytes(this.nodeId + " " +this.messageTextBox.Text);
             this.pipeCloudClient.SendMessage(myByte);
             this.messageTextBox.Text = "";
         }
