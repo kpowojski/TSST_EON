@@ -58,6 +58,7 @@ namespace NetworkNode
 
         //IN1-OUT1 IN2-OUT3 IN3-0:OUT1 OUT2 OUT3
         //command from manager GET NODE_NAME
+        //SET NODE_NAME PORT_IN PORT_OUT
         public string[] checkManagerCommand(string message)
         {
             string[] words = message.Split(' ');
@@ -65,7 +66,6 @@ namespace NetworkNode
             string nodeId = words[1];
             
             string[] result = new string[3];
-            Console.WriteLine(nodeId);
             if (this.nodeId != nodeId)
             {
                 result[0] = "null";
@@ -82,6 +82,7 @@ namespace NetworkNode
                         break;
                     
                     case "SET":
+
                         string portIn = words[2];
                         string portOut = words[3];
                         break;
