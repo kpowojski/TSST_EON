@@ -51,8 +51,6 @@ namespace NetworkManager
         {
             statusLabel.Text = "Active";
             
-            
-            
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
