@@ -107,7 +107,7 @@
             this.linksListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.linksListView.Location = new System.Drawing.Point(12, 25);
             this.linksListView.Name = "linksListView";
-            this.linksListView.Size = new System.Drawing.Size(525, 154);
+            this.linksListView.Size = new System.Drawing.Size(525, 189);
             this.linksListView.TabIndex = 8;
             this.linksListView.UseCompatibleStateImageBehavior = false;
             this.linksListView.View = System.Windows.Forms.View.Details;
@@ -144,9 +144,9 @@
             // logsListView
             // 
             this.logsListView.Enabled = false;
-            this.logsListView.Location = new System.Drawing.Point(12, 185);
+            this.logsListView.Location = new System.Drawing.Point(12, 220);
             this.logsListView.Name = "logsListView";
-            this.logsListView.Size = new System.Drawing.Size(525, 177);
+            this.logsListView.Size = new System.Drawing.Size(525, 142);
             this.logsListView.TabIndex = 9;
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.List;

@@ -98,7 +98,7 @@ namespace NetworkNode
                 {
                     this.pipeCloudClient.SendMessage(encoder.GetBytes(forwardedMessage));
                 }
-                addLog("Received from cloud: " + forwardedMessage, true, TEXT);
+                addLog("Received: " + forwardedMessage, true, TEXT);
             }
         }
 
@@ -126,12 +126,11 @@ namespace NetworkNode
             string[] response = this.checker.checkManagerCommand(str);
             if (response != null)
             {
-                addLog("Received from manager: " + response[0], true, RECEIVED);
+                addLog("Agent: " + response[0], true, RECEIVED);
                 for (int i = 1; i < response.Length; i++)
                 {
                     if (response[i] != "null" && response[i] != null)
                         this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                        //addLog("Wyslano: " + response[i], true, TEXT);
                 }
             }
         }
@@ -152,9 +151,9 @@ namespace NetworkNode
                 this.pipeCloudClient.SendMessage(mess);
             }
             if (this.pipeCloudClient.Connected)
-                addLog("Already connected to cloud", true, INFO);
+                addLog("Already connected to  NetworkCloud", true, INFO);
             else
-                addLog("Erorr while trying to connect to cloud!", true, ERROR);
+                addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
 
             if (!this.pipeManagerClient.Connected)
             {
@@ -164,9 +163,9 @@ namespace NetworkNode
                 this.pipeManagerClient.SendMessage(mess);
             }
             if (this.pipeManagerClient.Connected)
-                addLog("Already connected to manager", true, INFO);
+                addLog("Already connected to NetworkManager", true, INFO);
             else
-                addLog("Erorr while trying to connect to manager!", true, ERROR);
+                addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
 
             startButton.Enabled = false;
 
@@ -190,7 +189,6 @@ namespace NetworkNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-
             XmlDocument xml = new XmlDocument();
             xml.Load(openFileDialog.FileName);
             
@@ -212,7 +210,9 @@ namespace NetworkNode
 
             logsListView.Enabled = true;
             startButton.Enabled = true;
-            addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
+
+            string[] filePath = openFileDialog.FileName.Split('\\');
+            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -238,6 +238,7 @@ namespace NetworkNode
             else
                 item.Text = log;
             logsListView.Items.Add(item);
+            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
         }
     }
 }

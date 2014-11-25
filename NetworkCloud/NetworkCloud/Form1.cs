@@ -17,6 +17,7 @@ namespace NetworkCloud
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
+        public const int RECEIVED = 3;
 
         private List<Link> linksList;
         private PipeServer pipeServer;
@@ -95,7 +96,7 @@ namespace NetworkCloud
                 {
                     byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
                     pipeServer.SendMessage(forwardedByte);
-                    addLog("Send: " + forwardedMessage, true, TEXT);
+                    addLog("Sent: " + forwardedMessage, true, TEXT);
                 }
             }
 
@@ -119,12 +120,12 @@ namespace NetworkCloud
 
             forwarder = new Forwarder(dic);
 
-
-
             linksListView.Enabled = true;
             logsListView.Enabled = true;
             startButton.Enabled = true;
-            addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
+
+            string[] filePath = openFileDialog.FileName.Split('\\');
+            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
 
         }
 
@@ -142,13 +143,17 @@ namespace NetworkCloud
                 case 2:
                     item.ForeColor = Color.Red;
                     break;
+                case 3:
+                    item.ForeColor = Color.Green;
+                    break;
+
             }
             if (time)
                 item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
             else
                 item.Text = log;
             logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible(); //to zapewnia ze bedzie sie zawsze scrollowac do ostatniego dodanego log'a
+            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
         }
     }
 }

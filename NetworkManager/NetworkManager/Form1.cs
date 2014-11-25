@@ -20,7 +20,6 @@ namespace NetworkManager
         private PipeServer pipeServer;
         private string pipeManagerName;
 
-        //private string lastCommand = "";
         private List<string> lastCommands = new List<string>();
         private int commandListPosition = 0;
 
@@ -133,7 +132,9 @@ namespace NetworkManager
             this.pipeManagerName = managerConfig[1];
             logsListView.Enabled = true;
             startButton.Enabled = true;
-            addLog("Loaded configuration from: " + openFileDialog.FileName, true, INFO);
+
+            string[] filePath = openFileDialog.FileName.Split('\\');
+            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -164,18 +165,15 @@ namespace NetworkManager
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-            addLog(" ", false, INFO);
-            addLog("LIST OF COMMANDS:", false, INFO);
-            addLog(" ", false, INFO);
-            addLog("'GETALLNAMES'", false, INFO);
-            addLog("-> Shows all names of network nodes.", false, INFO);
-            addLog("'GET NODE_NAME'", false, INFO);
-            addLog("-> Shows commutation matrix in specified network node.", false, INFO);
-            addLog("'SET NODE_NAME PORT_IN PORT_OUT'", false, INFO);
-            addLog("-> Sets commutation between inner and outer ports in specified network node.", false, INFO);
-            addLog("'DELETE NODE_NAME PORT_IN PORT_OUT'", false, INFO);
-            addLog("-> Deletes commutation between inner and outer ports in specified network node.", false, INFO);
-            addLog(" ", false, INFO);
+            addLog("LIST OF COMMANDS:", false, TEXT);
+            addLog("'GETALLNAMES'", false, TEXT);
+            addLog("-> Shows all names of network nodes.", false, TEXT);
+            addLog("'GET NODE_NAME'", false, TEXT);
+            addLog("-> Shows commutation matrix in specified network node.", false, TEXT);
+            addLog("'SET NODE_NAME PORT_IN PORT_OUT'", false, TEXT);
+            addLog("-> Sets commutation between inner and outer ports in specified network node.", false, TEXT);
+            addLog("'DELETE NODE_NAME PORT_IN PORT_OUT'", false, TEXT);
+            addLog("-> Deletes commutation between inner and outer ports in specified network node.", false, TEXT);
         }
 
         private void clearButton_Click(object sender, EventArgs e)

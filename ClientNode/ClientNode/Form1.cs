@@ -18,7 +18,7 @@ namespace ClientNode
         public const int INFO = 0;
         public const int TEXT = 1;
         public const int ERROR = 2;
-        public const int RECEIVE = 3;
+        public const int RECEIVED = 3;
 
         private string pipeManagerName;
         private PipeClient pipeManagerClient;
@@ -96,7 +96,7 @@ namespace ClientNode
             string checkedMessage = checker.checkDestination(str);
 
             if (checkedMessage != "null")
-                addLog("Received from cloud: "+str, true, RECEIVE);
+                addLog("Received: " + checkedMessage, true, RECEIVED);
         }
 
         void pipeManagerClient_ServerDisconnected()
@@ -118,16 +118,19 @@ namespace ClientNode
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            byte[] myByte = encoder.GetBytes(this.nodeId + " "+ this.portOut[0]+ " " +this.messageTextBox.Text);
-            this.pipeCloudClient.SendMessage(myByte);
-            this.addLog("Sended: " + this.messageTextBox.Text, true, TEXT);
-            this.messageTextBox.Text = "";
+            if (this.messageTextBox.Text != "")
+            {
+                ASCIIEncoding encoder = new ASCIIEncoding();
+                byte[] myByte = encoder.GetBytes(this.nodeId + " " + this.portOut[0] + " " + this.messageTextBox.Text);
+                this.pipeCloudClient.SendMessage(myByte);
+                this.addLog("Sent: " + this.messageTextBox.Text, true, TEXT);
+                this.messageTextBox.Text = "";
+            }
         }
 
         private void clearButton_Click(object sender, EventArgs e)
         {
-            messageTextBox.Text = "";
+            logsListView.Items.Clear();
         }
 
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -165,6 +168,7 @@ namespace ClientNode
             else
                 item.Text = log;
             logsListView.Items.Add(item);
+            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -184,8 +188,8 @@ namespace ClientNode
 
             this.checker = new Checker(this.nodeId, this.portIn);
 
-
-            this.logsListView.Items.Add("Configuration loaded form file: " + openFileDialog.FileName);
+            string[] filePath = openFileDialog.FileName.Split('\\');
+            addLog("Configuration loaded form file: " + filePath[filePath.Length-1], true, INFO);
         }
 
 
@@ -207,9 +211,9 @@ namespace ClientNode
                 this.pipeCloudClient.SendMessage(mess);
             }
             if (this.pipeCloudClient.Connected)
-                addLog("Already connected to cloud", true, INFO);
+                addLog("Already connected to NetworkCloud", true, INFO);
             else
-                addLog("Erorr while trying to connect to cloud!", true, ERROR);
+                addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
 
             if (!this.pipeManagerClient.Connected)
             {
@@ -219,9 +223,9 @@ namespace ClientNode
                 this.pipeManagerClient.SendMessage(mess);
             }
             if (this.pipeManagerClient.Connected)
-                addLog("Already connected to manager", true, INFO);
+                addLog("Already connected to NetworkManager", true, INFO);
             else
-                addLog("Erorr while trying to connect to manager!", true, ERROR);
+                addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
 
             connectButton.Enabled = false;
         }
