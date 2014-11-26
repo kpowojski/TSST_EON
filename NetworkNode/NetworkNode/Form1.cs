@@ -100,6 +100,7 @@ namespace NetworkNode
                 }
                 addLog("Received: " + forwardedMessage, true, TEXT);
             }
+            message = null;
         }
 
         void pipeManagerClient_ServerDisconnected()

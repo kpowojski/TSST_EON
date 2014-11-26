@@ -99,7 +99,7 @@ namespace NetworkCloud
                     addLog("Sent: " + forwardedMessage, true, TEXT);
                 }
             }
-
+            message = null;
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
