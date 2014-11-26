@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkModelViewer", "NetworkModelViewer\NetworkModelViewer.csproj", "{14388A4F-EC15-4628-AF4C-7DD1D1A8DB29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{14388A4F-EC15-4628-AF4C-7DD1D1A8DB29}.Debug|x86.ActiveCfg = Debug|x86
+		{14388A4F-EC15-4628-AF4C-7DD1D1A8DB29}.Debug|x86.Build.0 = Debug|x86
+		{14388A4F-EC15-4628-AF4C-7DD1D1A8DB29}.Release|x86.ActiveCfg = Release|x86
+		{14388A4F-EC15-4628-AF4C-7DD1D1A8DB29}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
