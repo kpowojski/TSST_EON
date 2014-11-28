@@ -124,7 +124,7 @@ namespace NetworkNode
             string str = encoder.GetString(message);
 
             string[] response = this.checker.checkManagerCommand(str);
-            if (response != null)
+            if (response != null && !response.Contains("StartMessage"))
             {
                 addLog("Agent: " + response[0], true, RECEIVED);
                 for (int i = 1; i < response.Length; i++)
