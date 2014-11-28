@@ -92,7 +92,7 @@ namespace NetworkNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
             string forwardedMessage = this.checker.checkDestination(str);
-            if (forwardedMessage != "null")
+            if (forwardedMessage != "null" && forwardedMessage!="StartMessage")
             {
                 if (this.checker.forwardMessage(forwardedMessage))
                 {
