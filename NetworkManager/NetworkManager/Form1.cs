@@ -57,7 +57,7 @@ namespace NetworkManager
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
-            if(!str.Equals("StartMessage"))
+            if(!str.Contains("StartMessage"))
             {
                 List<string> msgs = commandChecker.parseMessage(str);
                 foreach (string msg in msgs)

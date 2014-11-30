@@ -95,7 +95,7 @@ namespace ClientNode
             string str = encoder.GetString(message);
             string checkedMessage = checker.checkDestination(str);
 
-            if (checkedMessage != "null")
+            if (checkedMessage != "null" && !checkedMessage.Contains("StartMessage"))
                 addLog("Received: " + checkedMessage, true, RECEIVED);
         }
 

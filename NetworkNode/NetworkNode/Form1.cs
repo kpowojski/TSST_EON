@@ -92,7 +92,7 @@ namespace NetworkNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
             string forwardedMessage = this.checker.checkDestination(str);
-            if (forwardedMessage != "null")
+            if (forwardedMessage != "null" && forwardedMessage!="StartMessage")
             {
                 if (this.checker.forwardMessage(forwardedMessage))
                 {
@@ -125,7 +125,7 @@ namespace NetworkNode
             string str = encoder.GetString(message);
 
             string[] response = this.checker.checkManagerCommand(str);
-            if (response != null)
+            if (response != null && !response.Contains("StartMessage"))
             {
                 addLog("Agent: " + response[0], true, RECEIVED);
                 for (int i = 1; i < response.Length; i++)
