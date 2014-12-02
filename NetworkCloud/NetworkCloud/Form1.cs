@@ -32,6 +32,7 @@ namespace NetworkCloud
         public NetworkCloud()
         {
             InitializeComponent();
+            loadConfiguration(@"Config\NetworkTopology.xml");
             linksList = new List<Link>();
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
@@ -104,29 +105,7 @@ namespace NetworkCloud
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-
-            linksListView.Items.Clear();
-            XmlDocument xml = new XmlDocument();
-            xml.Load(openFileDialog.FileName);
-
-            //podstawowe informacje o cloudzie (id, nazwy pipow)
-            List<string> config = new List<string>();
-            config = Configuration.readConfig(xml);
-            this.cloudId = config[0];
-            this.pipeServerName = config[1];
-            //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-            dic = new Dictionary<string, string>();
-            dic = Configuration.readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
-
-            forwarder = new Forwarder(dic);
-
-            linksListView.Enabled = true;
-            logsListView.Enabled = true;
-            startButton.Enabled = true;
-
-            string[] filePath = openFileDialog.FileName.Split('\\');
-            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
-
+            loadConfiguration(openFileDialog.FileName);
         }
 
         private void addLog(String log, Boolean time, int flag)
@@ -154,6 +133,36 @@ namespace NetworkCloud
                 item.Text = log;
             logsListView.Items.Add(item);
             logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+        }
+
+        public void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+
+                linksListView.Items.Clear();
+                //podstawowe informacje o cloudzie (id, nazwy pipow)
+                List<string> config = new List<string>();
+                config = Configuration.readConfig(xml);
+                this.cloudId = config[0];
+                this.pipeServerName = config[1];
+                //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
+                dic = new Dictionary<string, string>();
+                dic = Configuration.readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
+
+                forwarder = new Forwarder(dic);
+
+                linksListView.Enabled = true;
+                logsListView.Enabled = true;
+                startButton.Enabled = true;
+
+                string[] filePath = path.Split('\\');
+                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
+            }
+            catch (Exception)
+            { }
         }
     }
 }

@@ -8,6 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.ServiceModel;
 using System.Xml;
+using System.Threading;
+using System.Security.Permissions;
+using System.Security.Principal;
+using System.Diagnostics;
 
 namespace NetworkNode
 {
@@ -40,6 +44,8 @@ namespace NetworkNode
         public Form1()
         {
             InitializeComponent();
+
+            checkId();
 
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
@@ -190,30 +196,7 @@ namespace NetworkNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            XmlDocument xml = new XmlDocument();
-            xml.Load(openFileDialog.FileName);
-            
-            List<string> nodeConf = new List<string>();
-            nodeConf = Configuration.readConfig(xml);
-            this.nodeId = nodeConf[0];
-            this.pipeCloudName = nodeConf[1];
-            this.pipeManagerName = nodeConf[2];
-
-            this.portIn = Configuration.readPortIn(xml);
-            this.portOut = Configuration.readPortOut(xml);
-
-            this.comutation = new int[portIn.Count];
-            for (int i = 0; i < this.portIn.Count; i++)
-            {
-                this.comutation[i] = -1;
-            }
-            this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
-
-            logsListView.Enabled = true;
-            startButton.Enabled = true;
-
-            string[] filePath = openFileDialog.FileName.Split('\\');
-            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
+            loadConfiguration(openFileDialog.FileName);
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -240,6 +223,60 @@ namespace NetworkNode
                 item.Text = log;
             logsListView.Items.Add(item);
             logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+        }
+
+        private void checkId()
+        {
+            Process cur_process = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName("NetworkNode");
+            int position = 1;
+            string configName = null;
+            if (processes.Length > 0)
+            {
+                foreach (Process proc in processes)
+                {
+                    if (cur_process.StartTime > proc.StartTime)
+                        position++;
+                    else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
+                        position++;
+                }
+                configName = "NetworkNode" + position + "Config.xml";
+                loadConfiguration(@"Config\NetworkNode\" + configName);
+            }
+        }
+
+        private void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+
+                List<string> nodeConf = new List<string>();
+                nodeConf = Configuration.readConfig(xml);
+                this.nodeId = nodeConf[0];
+                this.pipeCloudName = nodeConf[1];
+                this.pipeManagerName = nodeConf[2];
+
+                this.portIn = Configuration.readPortIn(xml);
+                this.portOut = Configuration.readPortOut(xml);
+
+                this.comutation = new int[portIn.Count];
+                for (int i = 0; i < this.portIn.Count; i++)
+                {
+                    this.comutation[i] = -1;
+                }
+                this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
+
+                logsListView.Enabled = true;
+                startButton.Enabled = true;
+
+                string[] filePath = path.Split('\\');
+                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
+                nameLabel.Text = nodeId;
+            }
+            catch (Exception e)
+            { }
         }
     }
 }

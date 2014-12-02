@@ -38,14 +38,15 @@
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.logsListView = new System.Windows.Forms.ListView();
             this.connectButton = new System.Windows.Forms.Button();
+            this.nameLabel = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // configButton
             // 
-            this.configButton.Location = new System.Drawing.Point(12, 12);
+            this.configButton.Location = new System.Drawing.Point(187, 12);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(182, 23);
+            this.configButton.Size = new System.Drawing.Size(112, 23);
             this.configButton.TabIndex = 0;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
@@ -113,13 +114,22 @@
             // 
             // connectButton
             // 
-            this.connectButton.Location = new System.Drawing.Point(200, 12);
+            this.connectButton.Location = new System.Drawing.Point(305, 12);
             this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(180, 23);
+            this.connectButton.Size = new System.Drawing.Size(75, 23);
             this.connectButton.TabIndex = 7;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
+            // nameLabel
+            // 
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Location = new System.Drawing.Point(9, 17);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(87, 13);
+            this.nameLabel.TabIndex = 8;
+            this.nameLabel.Text = "Name: Unknown";
             // 
             // Form1
             // 
@@ -127,6 +137,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 367);
+            this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.statusStrip);
@@ -158,6 +169,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.Label nameLabel;
     }
 }
 

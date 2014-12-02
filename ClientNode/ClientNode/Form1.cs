@@ -8,6 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.ServiceModel;
 using System.Xml;
+using System.Threading;
+using System.Security.Permissions;
+using System.Security.Principal;
+using System.Diagnostics;
 
 namespace ClientNode
 {
@@ -40,6 +44,8 @@ namespace ClientNode
         public Form1()
         {
             InitializeComponent();
+
+            checkId();
 
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
@@ -173,23 +179,7 @@ namespace ClientNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            logsListView.Enabled = true;
-
-            XmlDocument xml = new XmlDocument();
-            xml.Load(openFileDialog.FileName);
-            List<string> nodeConf = new List<string>();
-            nodeConf = Configuration.readConfig(xml);
-            this.nodeId = nodeConf[0];
-            this.pipeCloudName = nodeConf[1];
-            this.pipeManagerName = nodeConf[2];
-
-            this.portIn = Configuration.readPortIn(xml);
-            this.portOut = Configuration.readPortOut(xml);
-
-            this.checker = new Checker(this.nodeId, this.portIn);
-
-            string[] filePath = openFileDialog.FileName.Split('\\');
-            addLog("Configuration loaded form file: " + filePath[filePath.Length-1], true, INFO);
+            loadConfiguration(openFileDialog.FileName);
         }
 
 
@@ -228,6 +218,53 @@ namespace ClientNode
                 addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
 
             connectButton.Enabled = false;
+        }
+
+        private void checkId()
+        {
+            Process cur_process = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName("ClientNode");
+            int position = 1;
+            string configName = null;
+            if (processes.Length > 0)
+            {
+                foreach (Process proc in processes)
+                {
+                    if (cur_process.StartTime > proc.StartTime)
+                        position++;
+                    else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
+                        position++;
+                }
+                configName = "ClientNode" + position + "Config.xml";
+                loadConfiguration(@"Config\ClientNode\" + configName);
+            }
+        }
+
+        private void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+                List<string> nodeConf = new List<string>();
+                nodeConf = Configuration.readConfig(xml);
+                this.nodeId = nodeConf[0];
+                this.pipeCloudName = nodeConf[1];
+                this.pipeManagerName = nodeConf[2];
+
+                this.portIn = Configuration.readPortIn(xml);
+                this.portOut = Configuration.readPortOut(xml);
+
+                this.checker = new Checker(this.nodeId, this.portIn);
+                
+                logsListView.Enabled = true;
+
+                string[] filePath = path.Split('\\');
+                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
+                nameLabel.Text = nodeId;
+            }
+            catch (Exception e)
+            { }
         }
     }
 }

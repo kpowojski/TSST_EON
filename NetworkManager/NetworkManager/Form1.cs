@@ -29,7 +29,7 @@ namespace NetworkManager
         public Form1()
         {
             InitializeComponent();
-
+            loadConfiguration(@"Config\ManagerConfig.xml");
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
@@ -123,18 +123,7 @@ namespace NetworkManager
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            XmlDocument xml = new XmlDocument();
-            xml.Load(openFileDialog.FileName);
-            List<string> managerConfig = new List<string>();
-            managerConfig = Configuration.readConfig(xml);
-
-            this.managerId = managerConfig[0];
-            this.pipeManagerName = managerConfig[1];
-            logsListView.Enabled = true;
-            startButton.Enabled = true;
-
-            string[] filePath = openFileDialog.FileName.Split('\\');
-            addLog("Configuration loaded form file: " + filePath[filePath.Length - 1], true, INFO);
+            loadConfiguration(openFileDialog.FileName);
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -202,6 +191,27 @@ namespace NetworkManager
                     commandTextBox.Select(commandTextBox.Text.Length, 0);
                 }
             }
+        }
+
+        private void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+                List<string> managerConfig = new List<string>();
+                managerConfig = Configuration.readConfig(xml);
+
+                this.managerId = managerConfig[0];
+                this.pipeManagerName = managerConfig[1];
+                logsListView.Enabled = true;
+                startButton.Enabled = true;
+
+                string[] filePath = path.Split('\\');
+                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
+            }
+            catch (Exception)
+            { }
         }
     }
 }

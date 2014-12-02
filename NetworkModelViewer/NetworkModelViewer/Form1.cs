@@ -32,6 +32,7 @@ namespace NetworkModelViewer
         public Form1()
         {
             InitializeComponent();
+            loadConfiguration(@"Config/NetworkTopology.xml");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -46,13 +47,7 @@ namespace NetworkModelViewer
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            readTopology(openFileDialog.FileName);
-            elementHost1.Child = GenerateWpfVisuals();
-            gArea.GenerateGraph(true);
-            gArea.SetVerticesDrag(true, true);
-            zoomctrl.ZoomToFill();
-            button1.Enabled = false;
-            button3.Enabled = true;
+            loadConfiguration(openFileDialog.FileName);
         }
 
         public void readTopology(string fileName)
@@ -105,7 +100,7 @@ namespace NetworkModelViewer
                     if (vlist[i].Text == dstId)
                         dst = i;
                 }
-                var link = new DataEdge(vlist[src], vlist[dst]) { Text = "DUPA" };
+                var link = new DataEdge(vlist[src], vlist[dst]);
                 dataGraph.AddEdge(link);
             }
         }
@@ -147,6 +142,22 @@ namespace NetworkModelViewer
         {
             gArea.RelayoutGraph();
             zoomctrl.ZoomToFill();
+        }
+
+        private void loadConfiguration(string path)
+        {
+            try
+            {
+                readTopology(path);
+                elementHost1.Child = GenerateWpfVisuals();
+                gArea.GenerateGraph(true);
+                gArea.SetVerticesDrag(true, true);
+                zoomctrl.ZoomToFill();
+                button1.Enabled = false;
+                button3.Enabled = true;
+            }
+            catch(Exception)
+            { }
         }
         
     }
