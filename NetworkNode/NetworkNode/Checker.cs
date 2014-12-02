@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace NetworkNode
 {
@@ -18,6 +19,7 @@ namespace NetworkNode
             this.portIn = portIn;
             this.portOut = portOut;
             this.commutation = commutation;
+            loadCross();
         }
 
         public string checkDestination(string message)
@@ -150,12 +152,14 @@ namespace NetworkNode
 
         public bool setCommutation(string portIn, string portOut)
         {
+            saveCross();
             int input = this.portIn.IndexOf(portIn);
             int output = this.portOut.IndexOf(portOut);
 
             if (commutation[input] == -1)
             {
                 commutation[input] = output;
+                saveCross();
                 return true;
             }
             else
@@ -173,12 +177,54 @@ namespace NetworkNode
             if (commutation[input] == output)
             {
                 commutation[input] = -1;
+                saveCross();
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        public void saveCross()
+        {
+            try{
+                string folderPath = "/Config/NetworkNode";
+                System.IO.Directory.CreateDirectory(folderPath);
+                using (StreamWriter outfile = new StreamWriter(folderPath + "/" + nodeId + "Cross.xml"))
+                {
+                    outfile.WriteLine(commutation.Length);
+                    int i=0;
+                    foreach (int c in commutation)
+                    {
+                        outfile.WriteLine(commutation[i]);
+                        i++;
+                    }
+                }
+            }
+            catch (Exception e)
+            { 
+                Console.Write(e.ToString());
+            }
+
+        }
+
+        public void loadCross()
+        {
+            try
+            {
+                string folderPath = "/Config/NetworkNode";
+                string[] lines = System.IO.File.ReadAllLines(folderPath + "/" + nodeId + "Cross.xml");
+                if (Convert.ToInt32(lines[0]) == portIn.Count)
+                {
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        commutation[i-1] = Convert.ToInt32(lines[i]);
+                    }
+                }
+            }
+            catch (Exception)
+            { }
         }
     }
 }

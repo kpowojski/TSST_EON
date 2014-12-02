@@ -45,8 +45,6 @@ namespace ClientNode
         {
             InitializeComponent();
 
-            checkId();
-
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
@@ -78,6 +76,8 @@ namespace ClientNode
             pipeManagerClient = new PipeClient();
             pipeManagerClient.MessageReceived += pipeManagerClient_MessageReceived;
             pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;
+
+            checkId();
         }
 
         void pipeCloudClient_ServerDisconnected()
@@ -182,42 +182,43 @@ namespace ClientNode
             loadConfiguration(openFileDialog.FileName);
         }
 
-
-
         private void connectButton_Click(object sender, EventArgs e)
         {
-            messageTextBox.Enabled = true;
-            sendButton.Enabled = true;
-            clearButton.Enabled = true;
+            //try
+            //{
+                messageTextBox.Enabled = true;
+                sendButton.Enabled = true;
+                clearButton.Enabled = true;
 
-            
+                ASCIIEncoding encoder = new ASCIIEncoding();
+                if (!this.pipeCloudClient.Connected)
+                {
+                    this.pipeCloudClient.Connect(pipeCloudName);
+                    string str = this.nodeId + " " + this.portOut[0] + " StartMessage";
+                    byte[] mess = encoder.GetBytes(str);
+                    this.pipeCloudClient.SendMessage(mess);
+                }
+                if (this.pipeCloudClient.Connected)
+                    addLog("Already connected to NetworkCloud", true, INFO);
+                else
+                    addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
 
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            if (!this.pipeCloudClient.Connected)
-            {
-                this.pipeCloudClient.Connect(pipeCloudName);
-                string str = this.nodeId+ " " + this.portOut[0] + " StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeCloudClient.SendMessage(mess);
-            }
-            if (this.pipeCloudClient.Connected)
-                addLog("Already connected to NetworkCloud", true, INFO);
-            else
-                addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
+                if (!this.pipeManagerClient.Connected)
+                {
+                    this.pipeManagerClient.Connect(pipeManagerName);
+                    string str = "StartMessage";
+                    byte[] mess = encoder.GetBytes(str);
+                    this.pipeManagerClient.SendMessage(mess);
+                }
+                if (this.pipeManagerClient.Connected)
+                    addLog("Already connected to NetworkManager", true, INFO);
+                else
+                    addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
 
-            if (!this.pipeManagerClient.Connected)
-            {
-                this.pipeManagerClient.Connect(pipeManagerName);
-                string str = "StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeManagerClient.SendMessage(mess);
-            }
-            if (this.pipeManagerClient.Connected)
-                addLog("Already connected to NetworkManager", true, INFO);
-            else
-                addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
-
-            connectButton.Enabled = false;
+                connectButton.Enabled = false;
+            //}
+            //catch (Exception)
+            //{ }
         }
 
         private void checkId()
