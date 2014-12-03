@@ -30,13 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.configButton = new System.Windows.Forms.Button();
-            this.startButton = new System.Windows.Forms.Button();
-            this.stopButton = new System.Windows.Forms.Button();
+            this.connectCloudButton = new System.Windows.Forms.Button();
+            this.disconnectCloudButton = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.logsListView = new System.Windows.Forms.ListView();
             this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.connectManagerButton = new System.Windows.Forms.Button();
+            this.disconnectManagerButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,39 +46,39 @@
             // 
             this.configButton.Location = new System.Drawing.Point(12, 270);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(143, 23);
+            this.configButton.Size = new System.Drawing.Size(117, 23);
             this.configButton.TabIndex = 2;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
             this.configButton.Click += new System.EventHandler(this.configButton_Click);
             // 
-            // startButton
+            // connectCloudButton
             // 
-            this.startButton.Enabled = false;
-            this.startButton.Location = new System.Drawing.Point(161, 270);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(135, 23);
-            this.startButton.TabIndex = 3;
-            this.startButton.Text = "Start";
-            this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.connectCloudButton.Enabled = false;
+            this.connectCloudButton.Location = new System.Drawing.Point(138, 270);
+            this.connectCloudButton.Name = "connectCloudButton";
+            this.connectCloudButton.Size = new System.Drawing.Size(150, 23);
+            this.connectCloudButton.TabIndex = 3;
+            this.connectCloudButton.Text = "Connect to cloud";
+            this.connectCloudButton.UseVisualStyleBackColor = true;
+            this.connectCloudButton.Click += new System.EventHandler(this.cloudConnect_Click);
             // 
-            // stopButton
+            // disconnectCloudButton
             // 
-            this.stopButton.Enabled = false;
-            this.stopButton.Location = new System.Drawing.Point(302, 270);
-            this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(135, 23);
-            this.stopButton.TabIndex = 4;
-            this.stopButton.Text = "Stop";
-            this.stopButton.UseVisualStyleBackColor = true;
-            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            this.disconnectCloudButton.Enabled = false;
+            this.disconnectCloudButton.Location = new System.Drawing.Point(293, 270);
+            this.disconnectCloudButton.Name = "disconnectCloudButton";
+            this.disconnectCloudButton.Size = new System.Drawing.Size(150, 23);
+            this.disconnectCloudButton.TabIndex = 4;
+            this.disconnectCloudButton.Text = "Disconnect from cloud";
+            this.disconnectCloudButton.UseVisualStyleBackColor = true;
+            this.disconnectCloudButton.Click += new System.EventHandler(this.disconnectCloud_Click);
             // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 299);
+            this.statusStrip.Location = new System.Drawing.Point(0, 338);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(449, 22);
             this.statusStrip.TabIndex = 5;
@@ -99,7 +101,7 @@
             this.col1});
             this.logsListView.Location = new System.Drawing.Point(12, 12);
             this.logsListView.Name = "logsListView";
-            this.logsListView.Size = new System.Drawing.Size(425, 252);
+            this.logsListView.Size = new System.Drawing.Size(428, 252);
             this.logsListView.TabIndex = 6;
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.Details;
@@ -109,15 +111,39 @@
             this.col1.Text = "Logs";
             this.col1.Width = 425;
             // 
+            // connectManagerButton
+            // 
+            this.connectManagerButton.Enabled = false;
+            this.connectManagerButton.Location = new System.Drawing.Point(137, 299);
+            this.connectManagerButton.Name = "connectManagerButton";
+            this.connectManagerButton.Size = new System.Drawing.Size(150, 23);
+            this.connectManagerButton.TabIndex = 7;
+            this.connectManagerButton.Text = "Connect to manager";
+            this.connectManagerButton.UseVisualStyleBackColor = true;
+            this.connectManagerButton.Click += new System.EventHandler(this.connectManagerButton_Click);
+            // 
+            // disconnectManagerButton
+            // 
+            this.disconnectManagerButton.Enabled = false;
+            this.disconnectManagerButton.Location = new System.Drawing.Point(293, 299);
+            this.disconnectManagerButton.Name = "disconnectManagerButton";
+            this.disconnectManagerButton.Size = new System.Drawing.Size(150, 23);
+            this.disconnectManagerButton.TabIndex = 8;
+            this.disconnectManagerButton.Text = "Disconnect from manager";
+            this.disconnectManagerButton.UseVisualStyleBackColor = true;
+            this.disconnectManagerButton.Click += new System.EventHandler(this.disconnectManagerButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 321);
+            this.ClientSize = new System.Drawing.Size(449, 360);
+            this.Controls.Add(this.disconnectManagerButton);
+            this.Controls.Add(this.connectManagerButton);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.stopButton);
-            this.Controls.Add(this.startButton);
+            this.Controls.Add(this.disconnectCloudButton);
+            this.Controls.Add(this.connectCloudButton);
             this.Controls.Add(this.configButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -135,13 +161,15 @@
         #endregion
 
         private System.Windows.Forms.Button configButton;
-        private System.Windows.Forms.Button startButton;
-        private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button connectCloudButton;
+        private System.Windows.Forms.Button disconnectCloudButton;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.ColumnHeader col1;
+        private System.Windows.Forms.Button connectManagerButton;
+        private System.Windows.Forms.Button disconnectManagerButton;
     }
 }
 

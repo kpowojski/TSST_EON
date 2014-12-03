@@ -23,7 +23,7 @@ namespace NetworkManager
             this.form = form;
         }
 
-        public bool connectToManager()
+        public bool startManager()
         {
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;

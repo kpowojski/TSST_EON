@@ -33,7 +33,7 @@ namespace NetworkManager
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            if(communication.connectToManager())
+            if (communication.startManager())
                 enableButtonsAfterStarted();
         }
 

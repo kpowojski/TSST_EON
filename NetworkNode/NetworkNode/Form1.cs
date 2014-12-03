@@ -17,13 +17,13 @@ namespace NetworkNode
 {
     public partial class Form1 : Form
     {
+
+        //communication with cloud
+        private Communication communication;
+
+        //communiaction with manager
+        private ManagementAgent managementAgent;
         
-
-        private PipeClient pipeManagerClient;
-        private string pipeManagerName;
-
-        private PipeClient pipeCloudClient;
-        private string pipeCloudName;
         
         private string nodeId;
         private List<String> portIn;
@@ -39,148 +39,46 @@ namespace NetworkNode
             InitializeComponent();
             checkId();
 
-
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
-
-            
-            
-
-            if (pipeCloudClient != null)
-            {
-                pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
-                pipeCloudClient.ServerDisconnected -= pipeCloudClient_ServerDisconnected;
-            }
-
-            pipeCloudClient = new PipeClient();
-            pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
-            pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
-
-            if (pipeManagerClient != null)
-            {
-                pipeManagerClient.MessageReceived -= pipeManagerClient_MessageReceived;
-                pipeManagerClient.ServerDisconnected -= pipeManagerClient_ServerDisconnected;
-            }
-
-            pipeManagerClient = new PipeClient();
-            pipeManagerClient.MessageReceived += pipeManagerClient_MessageReceived;
-            pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;
             
         }
 
-        void pipeCloudClient_ServerDisconnected()
+        private void cloudConnect_Click(object sender, EventArgs e)
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(cloudDisconnected));
-        }
-
-        void cloudDisconnected()
-        {
-            pipeManagerClient.Disconnect();
-            buttonsEnabled();
-            addLog("NetworkCloude has been disconnected", true, ERROR);
-            addLog("Node stoppped", true, ERROR);
-        }
-
-        void pipeCloudClient_MessageReceived(byte[] message)
-        {
-            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageCloud), new object[] { message });
-        }
-
-        void DisplayReceivedMessageCloud(byte[] message)
-        {
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            string str = encoder.GetString(message, 0, message.Length);
-            string forwardedMessage = this.checker.checkDestination(str);
-            if (forwardedMessage != "null" && forwardedMessage!="StartMessage")
-            {
-                if (this.checker.forwardMessage(forwardedMessage))
-                {
-                    this.pipeCloudClient.SendMessage(encoder.GetBytes(forwardedMessage));
-                }
-                logs.addLog(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.TEXT);
-            }
-            message = null;
-        }
-
-        void pipeManagerClient_ServerDisconnected()
-        {
-            Invoke(new PipeClient.ServerDisconnectedHandler(managerDisconnected));
-        }
-
-        void managerDisconnected()
-        {
-            pipeCloudClient.Disconnect();
-            buttonsEnabled();
-            logs.addLog(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
-        }
-
-        void pipeManagerClient_MessageReceived(byte[] message)
-        {
-            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageManager), new object[] { message });
-        }
-
-        void DisplayReceivedMessageManager(byte[] message)
-        {
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            string str = encoder.GetString(message);
-
-            string[] response = this.checker.checkManagerCommand(str);
-            if (response != null && !response.Contains("StartMessage"))
-            {
-                logs.addLog(Constants.MANAGER_MSG + response[0], true, Constants.RECEIVED);
-                for (int i = 1; i < response.Length; i++)
-                {
-                    if (response[i] != "null" && response[i] != null)
-                        this.pipeManagerClient.SendMessage(encoder.GetBytes(response[i]));
-                }
-            }
-        }
-
-        
-        private void startButton_Click(object sender, EventArgs e)
-        {
-            statusLabel.Text = Constants.ACTIVE; 
-            stopButton.Enabled = true;
+            disconnectCloudButton.Enabled = true;
             configButton.Enabled = false;
 
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            if (!this.pipeCloudClient.Connected)
-            {
-                this.pipeCloudClient.Connect(pipeCloudName);
-                string str = "StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeCloudClient.SendMessage(mess);
-            }
-            if (this.pipeCloudClient.Connected)
-                logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
-            else
-                logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
+            communication.connectToCloud();
 
-            if (!this.pipeManagerClient.Connected)
-            {
-                this.pipeManagerClient.Connect(pipeManagerName);
-                string str = "StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeManagerClient.SendMessage(mess);
-            }
-            if (this.pipeManagerClient.Connected)
-                logs.addLog(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
-            else
-                logs.addLog(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
-
-            startButton.Enabled = false;
-
+            connectCloudButton.Enabled = false;
         }
 
-        private void stopButton_Click(object sender, EventArgs e)
+        private void disconnectCloud_Click(object sender, EventArgs e)
         {
             statusLabel.Text = Constants.INACTIVE;
-            stopButton.Enabled = false;
-            startButton.Enabled = true;
+            disconnectCloudButton.Enabled = false;
+            connectCloudButton.Enabled = true;
             configButton.Enabled = true;
-            pipeCloudClient.Disconnect();
-            pipeManagerClient.Disconnect();
+            communication.PipeCloudeClient.Disconnect();
             logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.INFO);
+        }
+
+
+        private void connectManagerButton_Click(object sender, EventArgs e)
+        {
+            disconnectManagerButton.Enabled = true;
+
+            managementAgent.connectToManager();
+            connectManagerButton.Enabled = false;
+        }
+
+        private void disconnectManagerButton_Click(object sender, EventArgs e)
+        {
+            disconnectManagerButton.Enabled = false;
+            connectManagerButton.Enabled = true;
+            managementAgent.PipeManagerClient.Disconnect();
+            logs.addLog(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.INFO);
         }
 
         private void configButton_Click(object sender, EventArgs e)
@@ -232,15 +130,23 @@ namespace NetworkNode
         private void enableButtonAfterConfiguration()
         {
             logsListView.Enabled = true;
-            startButton.Enabled = true;
-            nameLabel.Text = nodeId;
+            connectCloudButton.Enabled = true;
+            connectManagerButton.Enabled = true;
+
+            Button[] buttonsForCloud = { this.connectCloudButton, this.disconnectCloudButton, this.configButton };
+            communication = new Communication(this.logs, this.checker, this, buttonsForCloud, this.statusLabel);
+            communication.PipeCloudeName = configuration.PipeCloudName;
+
+            Button[] buttonsForManager = { this.connectManagerButton, this.disconnectManagerButton, this.configButton };
+            managementAgent = new ManagementAgent(this.logs, this.checker, this, buttonsForCloud);
+            managementAgent.PipeManagerName = configuration.PipeManagerName;
+
         }
 
         private void loadDataFromConfiguraion()
         {
             this.nodeId = configuration.NodeId;
-            this.pipeCloudName = configuration.PipeCloudName;
-            this.pipeManagerName = configuration.PipeManagerName;
+            
             this.portIn = configuration.PortIn;
             this.portOut = configuration.PortOut;
             this.comutation = configuration.Comutation;
@@ -248,5 +154,15 @@ namespace NetworkNode
 
             enableButtonAfterConfiguration();
         }
+
+        
+
+        
+
+        
+
+        
+
+        
     }
 }
