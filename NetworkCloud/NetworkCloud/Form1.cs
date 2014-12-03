@@ -24,16 +24,36 @@ namespace NetworkCloud
         private string pipeServerName;
         private string cloudId;
         
-        //slownik ktory mapuje nam wszystko, klucz (odKogo ktorymPortem) wartosc (doKogo ktorymPortem)
-        private Dictionary<string, string> dic;
 
         private Forwarder forwarder;
+        private Configuration configuration;
+        private Logs logs;
+        private ASCIIEncoding encoder;
+
+
 
         public NetworkCloud()
         {
             InitializeComponent();
-            loadConfiguration(@"Config\NetworkTopology.xml");
+            logs = new Logs(this.logsListView);
+            configuration = new Configuration(this.linksListView, this.logs);
+            encoder = new ASCIIEncoding();
+
+            configuration.loadConfiguration(@"Config\NetworkTopology.xml");
+            this.cloudId = configuration.CloudId;
+            this.pipeServerName = configuration.PipeServerName;
+            this.forwarder = configuration.Forwarder;
+
+
+
+            linksListView.Enabled = true;
+            logsListView.Enabled = true;
+            startButton.Enabled = true;
             linksList = new List<Link>();
+            
+            
+            
+            
             logsListView.Scrollable = true;
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
@@ -47,7 +67,6 @@ namespace NetworkCloud
         {
             statusLabel.Text = "Active"; 
             
-            
             this.pipeServer = new PipeServer();
             pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
@@ -56,9 +75,9 @@ namespace NetworkCloud
                 this.pipeServer.Start(pipeServerName);
 
             if (this.pipeServer.Running)
-                addLog("NetworkCloud was started", true, INFO);
+                logs.addLog("NetworkCloud was started", true, INFO);
             else
-                addLog("An error occurred during start NetworkCloud", true, ERROR);
+                logs.addLog("An error occurred during start NetworkCloud", true, ERROR);
 
             startButton.Enabled = false;
             configButton.Enabled = false;
@@ -76,7 +95,7 @@ namespace NetworkCloud
         }
         void ClientDisconnected()
         {
-            addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
+            logs.addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -86,18 +105,17 @@ namespace NetworkCloud
 
         void DisplayMessageReceived(byte[] message)
         {
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            string str = encoder.GetString(message, 0, message.Length);
+            string str = this.encoder.GetString(message, 0, message.Length);
             if (!str.Contains("StartMessage"))
             {
-                addLog("Received: " + str, true, TEXT);
+                logs.addLog("Received: " + str, true, TEXT);
                 string forwardedMessage = forwarder.forwardMessage(str);
 
                 if (forwardedMessage != null)
                 {
-                    byte[] forwardedByte = encoder.GetBytes(forwardedMessage);
+                    byte[] forwardedByte = this.encoder.GetBytes(forwardedMessage);
                     pipeServer.SendMessage(forwardedByte);
-                    addLog("Sent: " + forwardedMessage, true, TEXT);
+                    logs.addLog("Sent: " + forwardedMessage, true, TEXT);
                 }
             }
             message = null;
@@ -105,64 +123,12 @@ namespace NetworkCloud
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            loadConfiguration(openFileDialog.FileName);
+            configuration.loadConfiguration(openFileDialog.FileName);
+            this.cloudId = configuration.CloudId;
+            this.pipeServerName = configuration.PipeServerName;
+            this.forwarder = configuration.Forwarder;
         }
 
-        private void addLog(String log, Boolean time, int flag)
-        {
-            ListViewItem item = new ListViewItem();
-            switch (flag)
-            {
-                case 0:
-                    item.ForeColor = Color.Blue;
-                    break;
-                case 1:
-                    item.ForeColor = Color.Black;
-                    break;
-                case 2:
-                    item.ForeColor = Color.Red;
-                    break;
-                case 3:
-                    item.ForeColor = Color.Green;
-                    break;
-
-            }
-            if (time)
-                item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
-            else
-                item.Text = log;
-            logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-        }
-
-        public void loadConfiguration(string path)
-        {
-            XmlDocument xml = new XmlDocument();
-            try
-            {
-                xml.Load(path);
-
-                linksListView.Items.Clear();
-                //podstawowe informacje o cloudzie (id, nazwy pipow)
-                List<string> config = new List<string>();
-                config = Configuration.readConfig(xml);
-                this.cloudId = config[0];
-                this.pipeServerName = config[1];
-                //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-                dic = new Dictionary<string, string>();
-                dic = Configuration.readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
-
-                forwarder = new Forwarder(dic);
-
-                linksListView.Enabled = true;
-                logsListView.Enabled = true;
-                startButton.Enabled = true;
-
-                string[] filePath = path.Split('\\');
-                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
-            }
-            catch (Exception)
-            { }
-        }
+        
     }
 }
