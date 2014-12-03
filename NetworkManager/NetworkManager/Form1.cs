@@ -35,12 +35,15 @@ namespace NetworkManager
             encoder = new ASCIIEncoding();
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
+            loadDataFromConfiguration();
             enableListScroll();
             configuration.loadConfiguration(Constants.pathToConfig);
             enableButtonsAfertConfiguration();
 
             
         }
+
+       
 
         void pipeServer_ClientDisconnected()
         {
@@ -126,7 +129,9 @@ namespace NetworkManager
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             configuration.loadConfiguration(openFileDialog.FileName);
+            loadDataFromConfiguration();
             enableButtonsAfertConfiguration();
+
         }
 
         
@@ -163,6 +168,12 @@ namespace NetworkManager
                     commandTextBox.Select(commandTextBox.Text.Length, 0);
                 }
             }
+        }
+
+        private void loadDataFromConfiguration()
+        {
+            this.managerId = configuration.ManaderId;
+            this.pipeManagerName = configuration.PipeManagerName;
         }
 
         private void enableButtonsAfertConfiguration()
