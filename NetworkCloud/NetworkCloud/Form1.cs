@@ -14,10 +14,7 @@ namespace NetworkCloud
 {
     public partial class NetworkCloud : Form
     {
-        public const int INFO = 0;
-        public const int TEXT = 1;
-        public const int ERROR = 2;
-        public const int RECEIVED = 3;
+        
 
         private List<Link> linksList;
         private PipeServer pipeServer;
@@ -42,7 +39,7 @@ namespace NetworkCloud
             linksList = new List<Link>();
 
 
-            configuration.loadConfiguration(@"Config\NetworkTopology.xml");
+            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
             enableButtonAfterConfiguration();
             loadDataFromConfiguration();
 
@@ -53,7 +50,7 @@ namespace NetworkCloud
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = "Active"; 
+            statusLabel.Text = Constants.ACTIVE;
             
             this.pipeServer = new PipeServer();
             pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
@@ -63,9 +60,9 @@ namespace NetworkCloud
                 this.pipeServer.Start(pipeServerName);
 
             if (this.pipeServer.Running)
-                logs.addLog("NetworkCloud was started", true, INFO);
+                logs.addLog(Constants.CLOUD_STARTED_CORRECTLY, true, Constants.INFO);
             else
-                logs.addLog("An error occurred during start NetworkCloud", true, ERROR);
+                logs.addLog(Constants.CLOUD_STARTED_ERROR, true, Constants.ERROR);
 
             startButton.Enabled = false;
             configButton.Enabled = false;
@@ -83,7 +80,7 @@ namespace NetworkCloud
         }
         void ClientDisconnected()
         {
-            logs.addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
+            logs.addLog( Constants.DISCONNECTED_NODE + pipeServer.TotalConnectedClients + ")", true, Constants.ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -96,14 +93,14 @@ namespace NetworkCloud
             string str = this.encoder.GetString(message, 0, message.Length);
             if (!str.Contains("StartMessage"))
             {
-                logs.addLog("Received: " + str, true, TEXT);
+                logs.addLog(Constants.RECEIVED_MSG + str, true, Constants.TEXT);
                 string forwardedMessage = forwarder.forwardMessage(str);
 
                 if (forwardedMessage != null)
                 {
                     byte[] forwardedByte = this.encoder.GetBytes(forwardedMessage);
                     pipeServer.SendMessage(forwardedByte);
-                    logs.addLog("Sent: " + forwardedMessage, true, TEXT);
+                    logs.addLog( Constants.SENT_MSG + forwardedMessage, true, Constants.TEXT);
                 }
             }
             message = null;
@@ -129,7 +126,7 @@ namespace NetworkCloud
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
             header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
+            header.Text = Constants.LOGS;
             header.Name = "col1";
             logsListView.Columns.Add(header);
         }

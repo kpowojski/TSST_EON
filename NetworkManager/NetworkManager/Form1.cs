@@ -37,7 +37,7 @@ namespace NetworkManager
             configuration = new Configuration(this.logs);
             loadDataFromConfiguration();
             enableListScroll();
-            configuration.loadConfiguration(Constants.pathToConfig);
+            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
             enableButtonsAfertConfiguration();
 
             
@@ -51,7 +51,7 @@ namespace NetworkManager
         }
         void ClientDisconnected()
         {
-            logs.addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, Constants.ERROR);
+            logs.addLog(Constants.DISCONNECTED_NODE + pipeServer.TotalConnectedClients + ")", true, Constants.ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -75,7 +75,7 @@ namespace NetworkManager
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = Constants.active ;
+            statusLabel.Text = Constants.ACTIVE ;
 
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
@@ -85,9 +85,9 @@ namespace NetworkManager
                 this.pipeServer.Start(this.pipeManagerName);
 
             if (this.pipeServer.Running)
-                logs.addLog(Constants.networkStartedCorrectly, true, Constants.INFO);
+                logs.addLog(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
             else
-                logs.addLog(Constants.networkStartedError, true, Constants.ERROR);
+                logs.addLog(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
             
             startButton.Enabled = false;
             sendButton.Enabled = true;
@@ -111,14 +111,14 @@ namespace NetworkManager
             {
                 if (commandChecker.checkCommand(command))
                 {
-                    logs.addLog(Constants.command + command, true, Constants.TEXT);
+                    logs.addLog(Constants.COMMAND + command, true, Constants.TEXT);
                     byte[] commandByte = encoder.GetBytes(command);
                     pipeServer.SendMessage(commandByte);
                 }
                 else
                 {
-                    logs.addLog(Constants.command + command, true, Constants.ERROR);
-                    logs.addLog(Constants.error + commandChecker.getErrorMsg(), false, Constants.ERROR);
+                    logs.addLog(Constants.COMMAND + command, true, Constants.ERROR);
+                    logs.addLog(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
                 }
                 lastCommands.Add(command);
                 commandListPosition = lastCommands.Count;
@@ -138,8 +138,8 @@ namespace NetworkManager
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-            string msg = Constants.helpMsg;
-            MessageBox.Show(this, msg, Constants.listOfCommands, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string msg = Constants.HELP_MSG;
+            MessageBox.Show(this, msg, Constants.LIST_OF_COMMANDS, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -188,7 +188,7 @@ namespace NetworkManager
             logsListView.View = View.Details;
             ColumnHeader header = new ColumnHeader();
             header.Width = logsListView.Size.Width;
-            header.Text = Constants.logs;
+            header.Text = Constants.LOGS;
             header.Name = "col1";
             logsListView.Columns.Add(header);
         }
