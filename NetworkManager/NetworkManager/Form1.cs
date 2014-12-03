@@ -12,31 +12,34 @@ namespace NetworkManager
 {
     public partial class Form1 : Form
     {
-        public const int INFO = 0;
-        public const int TEXT = 1;
-        public const int ERROR = 2;
-        public const int RECEIVED = 3;
+        
 
         private PipeServer pipeServer;
-        private string pipeManagerName;
-
+        
         private List<string> lastCommands = new List<string>();
         private int commandListPosition = 0;
 
+        private ASCIIEncoding encoder;
         private CommandChecker commandChecker;
+        private Configuration configuration;
+        private Logs logs;
 
         private string managerId;
+        private string pipeManagerName;
+        
+
+
         public Form1()
         {
             InitializeComponent();
-            loadConfiguration(@"Config\ManagerConfig.xml");
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
+            encoder = new ASCIIEncoding();
+            logs = new Logs(this.logsListView);
+            configuration = new Configuration(this.logs);
+            enableListScroll();
+            configuration.loadConfiguration(Constants.pathToConfig);
+            enableButtonsAfertConfiguration();
+
+            
         }
 
         void pipeServer_ClientDisconnected()
@@ -45,7 +48,7 @@ namespace NetworkManager
         }
         void ClientDisconnected()
         {
-            addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, ERROR);
+            logs.addLog("Someone has been disconnected (Connected nodes: " + pipeServer.TotalConnectedClients + ")", true, Constants.ERROR);
         }
 
         void pipeServer_messageReceived(byte[] message)
@@ -55,14 +58,13 @@ namespace NetworkManager
 
         void DisplayMessageReceived(byte[] message)
         {
-            ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message, 0, message.Length);
             if(!str.Contains("StartMessage"))
             {
                 List<string> msgs = commandChecker.parseMessage(str);
                 foreach (string msg in msgs)
                 {
-                    addLog(msg, false, RECEIVED);
+                    logs.addLog(msg, false, Constants.RECEIVED);
                 }
             }
         }
@@ -70,7 +72,8 @@ namespace NetworkManager
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = "Active";
+            statusLabel.Text = Constants.active ;
+
             this.pipeServer = new PipeServer();
             this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
             this.pipeServer.MessageReceived += pipeServer_messageReceived;
@@ -79,9 +82,9 @@ namespace NetworkManager
                 this.pipeServer.Start(this.pipeManagerName);
 
             if (this.pipeServer.Running)
-                addLog("NetworkManager has been started", true, INFO);
+                logs.addLog(Constants.networkStartedCorrectly, true, Constants.INFO);
             else
-                addLog("An error occurred during start NetworkNode", true, ERROR);
+                logs.addLog(Constants.networkStartedError, true, Constants.ERROR);
             
             startButton.Enabled = false;
             sendButton.Enabled = true;
@@ -105,15 +108,14 @@ namespace NetworkManager
             {
                 if (commandChecker.checkCommand(command))
                 {
-                    addLog("Command: " + command, true, TEXT);
-                    ASCIIEncoding encoder = new ASCIIEncoding();
+                    logs.addLog(Constants.command + command, true, Constants.TEXT);
                     byte[] commandByte = encoder.GetBytes(command);
                     pipeServer.SendMessage(commandByte);
                 }
                 else
                 {
-                    addLog("Command: " + command, true, ERROR);
-                    addLog("Error: " + commandChecker.getErrorMsg(), false, ERROR);
+                    logs.addLog(Constants.command + command, true, Constants.ERROR);
+                    logs.addLog(Constants.error + commandChecker.getErrorMsg(), false, Constants.ERROR);
                 }
                 lastCommands.Add(command);
                 commandListPosition = lastCommands.Count;
@@ -123,45 +125,16 @@ namespace NetworkManager
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            loadConfiguration(openFileDialog.FileName);
+            configuration.loadConfiguration(openFileDialog.FileName);
+            enableButtonsAfertConfiguration();
         }
 
-        public void addLog(String log, Boolean time, int flag)
-        {
-            ListViewItem item = new ListViewItem();
-            switch (flag)
-            {
-                case 0:
-                    item.ForeColor = Color.Blue;
-                    break;
-                case 1:
-                    item.ForeColor = Color.Black;
-                    break;
-                case 2:
-                    item.ForeColor = Color.Red;
-                    break;
-                case 3:
-                    item.ForeColor = Color.Green;
-                    break;
-            }
-            if (time)
-                item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
-            else
-                item.Text = log;
-            logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-        }
+        
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-            string msg = "LIST OF COMMANDS\n\n"
-                + "Command: GET NODE_NAME\n"
-                + "Description: Shows commutation matrix in specified network node.\n\n"
-                + "Command: SET NODE_NAME PORT_IN PORT_OUT\n"
-                + "Description: Sets commutation between input and output ports in specified network node.\n\n"
-                + "Command: DELETE NODE_NAME PORT_IN PORT_OUT\n"
-                + "Description: Deletes commutation between input and output ports in specified network node.\n\n";
-            MessageBox.Show(this, msg, "List of Commands", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string msg = Constants.helpMsg;
+            MessageBox.Show(this, msg, Constants.listOfCommands, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -192,25 +165,23 @@ namespace NetworkManager
             }
         }
 
-        private void loadConfiguration(string path)
+        private void enableButtonsAfertConfiguration()
         {
-            XmlDocument xml = new XmlDocument();
-            try
-            {
-                xml.Load(path);
-                List<string> managerConfig = new List<string>();
-                managerConfig = Configuration.readConfig(xml);
-
-                this.managerId = managerConfig[0];
-                this.pipeManagerName = managerConfig[1];
-                logsListView.Enabled = true;
-                startButton.Enabled = true;
-
-                string[] filePath = path.Split('\\');
-                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
-            }
-            catch (Exception)
-            { }
+            logsListView.Enabled = true;
+            startButton.Enabled = true;
         }
+
+        private void enableListScroll()
+        {
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = Constants.logs;
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
+        }
+
+        
     }
 }

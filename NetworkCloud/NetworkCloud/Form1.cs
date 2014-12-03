@@ -35,32 +35,20 @@ namespace NetworkCloud
         public NetworkCloud()
         {
             InitializeComponent();
+            enableListScroll();
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.linksListView, this.logs);
             encoder = new ASCIIEncoding();
+            linksList = new List<Link>();
+
 
             configuration.loadConfiguration(@"Config\NetworkTopology.xml");
-            this.cloudId = configuration.CloudId;
-            this.pipeServerName = configuration.PipeServerName;
-            this.forwarder = configuration.Forwarder;
+            enableButtonAfterConfiguration();
+            loadDataFromConfiguration();
 
+            
 
-
-            linksListView.Enabled = true;
-            logsListView.Enabled = true;
-            startButton.Enabled = true;
-            linksList = new List<Link>();
             
-            
-            
-            
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -124,11 +112,34 @@ namespace NetworkCloud
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             configuration.loadConfiguration(openFileDialog.FileName);
-            this.cloudId = configuration.CloudId;
-            this.pipeServerName = configuration.PipeServerName;
-            this.forwarder = configuration.Forwarder;
+            enableButtonAfterConfiguration();
+            loadDataFromConfiguration();
         }
 
+        private void enableButtonAfterConfiguration()
+        {
+            linksListView.Enabled = true;
+            logsListView.Enabled = true;
+            startButton.Enabled = true;
+        }
+
+        private void enableListScroll()
+        {
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = "Logs";
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
+        }
         
+        private void loadDataFromConfiguration()
+        {
+            this.forwarder = configuration.Forwarder;
+            this.pipeServerName = configuration.PipeServerName;
+            this.cloudId = configuration.CloudId;
+        }
+
     }
 }
