@@ -36,15 +36,15 @@
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.logsListView = new System.Windows.Forms.ListView();
-            this.nameLabel = new System.Windows.Forms.Label();
+            this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // configButton
             // 
-            this.configButton.Location = new System.Drawing.Point(174, 270);
+            this.configButton.Location = new System.Drawing.Point(12, 270);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(139, 23);
+            this.configButton.Size = new System.Drawing.Size(143, 23);
             this.configButton.TabIndex = 2;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
@@ -53,9 +53,9 @@
             // startButton
             // 
             this.startButton.Enabled = false;
-            this.startButton.Location = new System.Drawing.Point(319, 270);
+            this.startButton.Location = new System.Drawing.Point(161, 270);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(55, 23);
+            this.startButton.Size = new System.Drawing.Size(135, 23);
             this.startButton.TabIndex = 3;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
@@ -64,9 +64,9 @@
             // stopButton
             // 
             this.stopButton.Enabled = false;
-            this.stopButton.Location = new System.Drawing.Point(380, 270);
+            this.stopButton.Location = new System.Drawing.Point(302, 270);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(57, 23);
+            this.stopButton.Size = new System.Drawing.Size(135, 23);
             this.stopButton.TabIndex = 4;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -95,29 +95,25 @@
             // 
             // logsListView
             // 
-            this.logsListView.Enabled = false;
+            this.logsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.col1});
             this.logsListView.Location = new System.Drawing.Point(12, 12);
             this.logsListView.Name = "logsListView";
             this.logsListView.Size = new System.Drawing.Size(425, 252);
             this.logsListView.TabIndex = 6;
             this.logsListView.UseCompatibleStateImageBehavior = false;
-            this.logsListView.View = System.Windows.Forms.View.List;
+            this.logsListView.View = System.Windows.Forms.View.Details;
             // 
-            // nameLabel
+            // col1
             // 
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(12, 275);
-            this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(87, 13);
-            this.nameLabel.TabIndex = 7;
-            this.nameLabel.Text = "Name: Unknown";
+            this.col1.Text = "Logs";
+            this.col1.Width = 425;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(449, 321);
-            this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.stopButton);
@@ -128,7 +124,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "NetworkNode";
+            this.Text = "NetworkNode - Unknown";
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -145,7 +141,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ListView logsListView;
-        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.ColumnHeader col1;
     }
 }
 
