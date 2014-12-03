@@ -3,12 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Windows.Forms;
 
 namespace NetworkNode
 {
     class Configuration
     {
-        public static List<string> readConfig(XmlDocument xml)
+
+        private Logs logs;
+        private string pipeManagerName;
+        public string PipeManagerName
+        {
+            get { return pipeManagerName; }
+        }
+
+        private string pipeCloudName;
+        public string PipeCloudName
+        {
+            get { return pipeCloudName; }
+        }
+        
+        private string nodeId;
+        public string NodeId
+        {
+            get { return nodeId; }
+        }
+
+
+        private List<String> portIn;
+        public List<String> PortIn
+        {
+            get { return portIn; }
+        }
+        
+        private List<String> portOut;
+        public List<String> PortOut
+        {
+            get { return portOut; }
+        }
+
+        private int[] comutation;
+        public int[] Comutation
+        {
+            get { return comutation; }
+        }
+
+        private Checker checker;
+        public Checker Checker
+        {
+            get { return checker; }
+        }
+
+        public Configuration(Logs logs)
+        {
+            this.logs = logs;
+        }
+
+        private List<string> readConfig(XmlDocument xml)
         {
             List<string> nodeConfig =new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Node[@ID]"))
@@ -24,7 +75,7 @@ namespace NetworkNode
         }
 
 
-        public static List<string> readPortIn(XmlDocument xml)
+        private List<string> readPortIn(XmlDocument xml)
         {
             string nodeName = "//InputPorts/Port";
             List<string> portIn = new List<string>();
@@ -36,7 +87,7 @@ namespace NetworkNode
             return portIn;
         }
 
-        public static List<string> readPortOut(XmlDocument xml)
+        private List<string> readPortOut(XmlDocument xml)
         {
             string nodeName = "//OutputPorts/Port";
             List<string> portOut = new List<string>();
@@ -48,6 +99,39 @@ namespace NetworkNode
             }
             return portOut;
         }
+
+
+        public void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+
+                List<string> nodeConf = new List<string>();
+                nodeConf = readConfig(xml);
+                this.nodeId = nodeConf[0];
+                this.pipeCloudName = nodeConf[1];
+                this.pipeManagerName = nodeConf[2];
+
+                this.portIn = readPortIn(xml);
+                this.portOut = readPortOut(xml);
+
+                this.comutation = new int[portIn.Count];
+                for (int i = 0; i < this.portIn.Count; i++)
+                {
+                    this.comutation[i] = -1;
+                }
+                this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
+
+                string[] filePath = path.Split('\\');
+                logs.addLog(Constants.CONFIGURATION_LOADED + filePath[filePath.Length - 1], true, Constants.INFO);
+                
+            }
+            catch (Exception)
+            { }
+        }
+
     }
 
 

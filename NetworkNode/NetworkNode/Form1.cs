@@ -17,10 +17,7 @@ namespace NetworkNode
 {
     public partial class Form1 : Form
     {
-        public const int INFO = 0;
-        public const int TEXT = 1;
-        public const int ERROR = 2;
-        public const int RECEIVED = 3;
+        
 
         private PipeClient pipeManagerClient;
         private string pipeManagerName;
@@ -39,21 +36,20 @@ namespace NetworkNode
         private List<String> portOut;
         private int[] comutation;
 
-
+        private Logs logs;
+        private Configuration configuration;
 
         public Form1()
         {
             InitializeComponent();
-
             checkId();
 
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
+
+            logs = new Logs(this.logsListView);
+            configuration = new Configuration(this.logs);
+
+            
+            
 
             if (pipeCloudClient != null)
             {
@@ -85,7 +81,7 @@ namespace NetworkNode
         void EnableCloudStart()
         {
             this.startButton.Enabled = true;
-            addLog("NetworkCloude has been disconnected", true, ERROR);
+            logs.addLog(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
         }
 
         void pipeCloudClient_MessageReceived(byte[] message)
@@ -104,7 +100,7 @@ namespace NetworkNode
                 {
                     this.pipeCloudClient.SendMessage(encoder.GetBytes(forwardedMessage));
                 }
-                addLog("Received: " + forwardedMessage, true, TEXT);
+                logs.addLog(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.TEXT);
             }
             message = null;
         }
@@ -117,7 +113,7 @@ namespace NetworkNode
         void EnableManagerStart()
         {
             this.startButton.Enabled = true;
-            addLog("NetworkManager has been disconnected", true, ERROR);
+            logs.addLog(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
         }
 
         void pipeManagerClient_MessageReceived(byte[] message)
@@ -133,7 +129,7 @@ namespace NetworkNode
             string[] response = this.checker.checkManagerCommand(str);
             if (response != null && !response.Contains("StartMessage"))
             {
-                addLog("Agent: " + response[0], true, RECEIVED);
+                logs.addLog(Constants.MANAGER_MSG + response[0], true, Constants.RECEIVED);
                 for (int i = 1; i < response.Length; i++)
                 {
                     if (response[i] != "null" && response[i] != null)
@@ -145,7 +141,7 @@ namespace NetworkNode
         
         private void startButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = "Active";
+            statusLabel.Text = Constants.ACTIVE; 
             stopButton.Enabled = true;
             configButton.Enabled = false;
 
@@ -158,9 +154,9 @@ namespace NetworkNode
                 this.pipeCloudClient.SendMessage(mess);
             }
             if (this.pipeCloudClient.Connected)
-                addLog("Already connected to  NetworkCloud", true, INFO);
+                logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
             else
-                addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
+                logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
 
             if (!this.pipeManagerClient.Connected)
             {
@@ -170,9 +166,9 @@ namespace NetworkNode
                 this.pipeManagerClient.SendMessage(mess);
             }
             if (this.pipeManagerClient.Connected)
-                addLog("Already connected to NetworkManager", true, INFO);
+                logs.addLog(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
             else
-                addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
+                logs.addLog(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
 
             startButton.Enabled = false;
 
@@ -180,13 +176,13 @@ namespace NetworkNode
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = "Inactive";
+            statusLabel.Text = Constants.INACTIVE;
             stopButton.Enabled = false;
             startButton.Enabled = true;
             configButton.Enabled = true;
             pipeCloudClient.Disconnect();
             pipeManagerClient.Disconnect();
-            addLog("NetworkNode stopped", true, INFO);
+            logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.INFO);
         }
 
         private void configButton_Click(object sender, EventArgs e)
@@ -196,39 +192,16 @@ namespace NetworkNode
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            loadConfiguration(openFileDialog.FileName);
+            configuration.loadConfiguration(openFileDialog.FileName);
+            loadDataFromConfiguraion();
         }
 
-        public void addLog(String log, Boolean time, int flag)
-        {
-            ListViewItem item = new ListViewItem();
-            switch (flag)
-            {
-                case 0:
-                    item.ForeColor = Color.Blue;
-                    break;
-                case 1:
-                    item.ForeColor = Color.Black;
-                    break;
-                case 2:
-                    item.ForeColor = Color.Red;
-                    break;
-                case 3:
-                    item.ForeColor = Color.Green;
-                    break;
-            }
-            if (time)
-                item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
-            else
-                item.Text = log;
-            logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-        }
+        
 
         private void checkId()
         {
             Process cur_process = Process.GetCurrentProcess();
-            Process[] processes = Process.GetProcessesByName("NetworkNode");
+            Process[] processes = Process.GetProcessesByName(Constants.NETWORKNODE);
             int position = 1;
             string configName = null;
             if (processes.Length > 0)
@@ -240,43 +213,42 @@ namespace NetworkNode
                     else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
                         position++;
                 }
-                configName = "NetworkNode" + position + "Config.xml";
-                loadConfiguration(@"Config\NetworkNode\" + configName);
+                configName = Constants.NETWORKNODE + position + Constants.CONFIG_XML;
+                configuration.loadConfiguration(Constants.PATH_TO_CONFIG + configName);
+                loadDataFromConfiguraion();
             }
         }
 
-        private void loadConfiguration(string path)
+
+        private void enableScroll()
         {
-            XmlDocument xml = new XmlDocument();
-            try
-            {
-                xml.Load(path);
+            logsListView.Scrollable = true;
+            logsListView.View = View.Details;
+            ColumnHeader header = new ColumnHeader();
+            header.Width = logsListView.Size.Width;
+            header.Text = "Logs";
+            header.Name = "col1";
+            logsListView.Columns.Add(header);
+        }
 
-                List<string> nodeConf = new List<string>();
-                nodeConf = Configuration.readConfig(xml);
-                this.nodeId = nodeConf[0];
-                this.pipeCloudName = nodeConf[1];
-                this.pipeManagerName = nodeConf[2];
+        private void enableButtonAfterConfiguration()
+        {
+            logsListView.Enabled = true;
+            startButton.Enabled = true;
+            nameLabel.Text = nodeId;
+        }
 
-                this.portIn = Configuration.readPortIn(xml);
-                this.portOut = Configuration.readPortOut(xml);
+        private void loadDataFromConfiguraion()
+        {
+            this.nodeId = configuration.NodeId;
+            this.pipeCloudName = configuration.PipeCloudName;
+            this.pipeManagerName = configuration.PipeManagerName;
+            this.portIn = configuration.PortIn;
+            this.portOut = configuration.PortOut;
+            this.comutation = configuration.Comutation;
+            this.checker = configuration.Checker;
 
-                this.comutation = new int[portIn.Count];
-                for (int i = 0; i < this.portIn.Count; i++)
-                {
-                    this.comutation[i] = -1;
-                }
-                this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
-
-                logsListView.Enabled = true;
-                startButton.Enabled = true;
-
-                string[] filePath = path.Split('\\');
-                addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
-                nameLabel.Text = nodeId;
-            }
-            catch (Exception e)
-            { }
+            enableButtonAfterConfiguration();
         }
     }
 }
