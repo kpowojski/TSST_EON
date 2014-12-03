@@ -16,9 +16,8 @@ namespace NetworkManager
         private List<string> lastCommands;
         private int commandListPosition;
 
-        private ASCIIEncoding encoder;
-        private Configuration configuration;
         private Logs logs;
+        private Configuration configuration;
         private Communication communication;
         
         public Form1()
@@ -26,7 +25,6 @@ namespace NetworkManager
             InitializeComponent();
             lastCommands = new List<string>();
             commandListPosition = 0;
-            encoder = new ASCIIEncoding();
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
             if (configuration.loadConfiguration(Constants.PATH_TO_CONFIG))
