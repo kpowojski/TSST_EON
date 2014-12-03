@@ -154,15 +154,14 @@ namespace NetworkManager
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-            addLog("LIST OF COMMANDS:", false, TEXT);
-            addLog("'GETALLNAMES'", false, TEXT);
-            addLog("-> Shows all names of network nodes.", false, TEXT);
-            addLog("'GET NODE_NAME'", false, TEXT);
-            addLog("-> Shows commutation matrix in specified network node.", false, TEXT);
-            addLog("'SET NODE_NAME PORT_IN PORT_OUT'", false, TEXT);
-            addLog("-> Sets commutation between inner and outer ports in specified network node.", false, TEXT);
-            addLog("'DELETE NODE_NAME PORT_IN PORT_OUT'", false, TEXT);
-            addLog("-> Deletes commutation between inner and outer ports in specified network node.", false, TEXT);
+            string msg = "LIST OF COMMANDS\n\n"
+                + "Command: GET NODE_NAME\n"
+                + "Description: Shows commutation matrix in specified network node.\n\n"
+                + "Command: SET NODE_NAME PORT_IN PORT_OUT\n"
+                + "Description: Sets commutation between input and output ports in specified network node.\n\n"
+                + "Command: DELETE NODE_NAME PORT_IN PORT_OUT\n"
+                + "Description: Deletes commutation between input and output ports in specified network node.\n\n";
+            MessageBox.Show(this, msg, "List of Commands", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void clearButton_Click(object sender, EventArgs e)

@@ -24,50 +24,29 @@ namespace ClientNode
         public const int ERROR = 2;
         public const int RECEIVED = 3;
 
-        private string pipeManagerName;
-        private PipeClient pipeManagerClient;
-
+        private string nodeId;
+        private List<String> portIn = new List<String>();
+        private List<String> portOut = new List<String>();
+        private Checker checker;
         private string pipeCloudName;
         private PipeClient pipeCloudClient;
-
-
-        //klasa do sprawdzania przeznaczneie wiadomosci
-        private Checker checker;
-
-        //id noda
-        private string nodeId;
-
-        //porty
-        private List<String> portIn;
-        private List<String> portOut;
+        //private string pipeManagerName;
+        //private PipeClient pipeManagerClient;
 
         public Form1()
         {
             InitializeComponent();
-
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
-
-            portIn = new List<String>();
-            portOut = new List<String>();
 
             if (pipeCloudClient != null)
             {
                 pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
                 pipeCloudClient.ServerDisconnected -= pipeCloudClient_ServerDisconnected;
             }
-
             pipeCloudClient = new PipeClient();
             pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
             pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
 
-
-            if (pipeManagerClient != null)
+            /*if (pipeManagerClient != null)
             {
                 pipeManagerClient.MessageReceived -= pipeManagerClient_MessageReceived;
                 pipeManagerClient.ServerDisconnected -= pipeManagerClient_ServerDisconnected;
@@ -75,19 +54,14 @@ namespace ClientNode
 
             pipeManagerClient = new PipeClient();
             pipeManagerClient.MessageReceived += pipeManagerClient_MessageReceived;
-            pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;
+            pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;*/
 
             checkId();
         }
 
         void pipeCloudClient_ServerDisconnected()
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
-        }
-
-        void EnableStart()
-        {
-            this.sendButton.Enabled = true;
+            Invoke(new PipeClient.ServerDisconnectedHandler(serverDisconnected));
         }
                     
         void pipeCloudClient_MessageReceived(byte[] message)
@@ -105,7 +79,7 @@ namespace ClientNode
                 addLog("Received: " + checkedMessage, true, RECEIVED);
         }
 
-        void pipeManagerClient_ServerDisconnected()
+        /*void pipeManagerClient_ServerDisconnected()
         {
             Invoke(new PipeClient.ServerDisconnectedHandler(EnableStart));
         }
@@ -120,18 +94,53 @@ namespace ClientNode
             ASCIIEncoding encoder = new ASCIIEncoding();
             string str = encoder.GetString(message);
             //addLog("Received from manager: " + str, true, 1);
-        }
+        }*/
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            if (this.messageTextBox.Text != "")
+            if (messageTextBox.Text != "")
             {
                 ASCIIEncoding encoder = new ASCIIEncoding();
-                byte[] myByte = encoder.GetBytes(this.nodeId + " " + this.portOut[0] + " " + this.messageTextBox.Text);
-                this.pipeCloudClient.SendMessage(myByte);
-                this.addLog("Sent: " + this.messageTextBox.Text, true, TEXT);
-                this.messageTextBox.Text = "";
+                byte[] myByte = encoder.GetBytes(nodeId + " " + portOut[0] + " " + messageTextBox.Text);
+                pipeCloudClient.SendMessage(myByte);
+                addLog("Sent: " + this.messageTextBox.Text, true, TEXT);
+                messageTextBox.Text = "";
             }
+            messageTextBox.Focus();
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            ASCIIEncoding encoder = new ASCIIEncoding();
+            if (!this.pipeCloudClient.Connected)
+            {
+                this.pipeCloudClient.Connect(pipeCloudName);
+                string str = this.nodeId + " " + this.portOut[0] + " StartMessage";
+                byte[] mess = encoder.GetBytes(str);
+                this.pipeCloudClient.SendMessage(mess);
+            }
+            if (this.pipeCloudClient.Connected)
+            {
+                addLog("Already connected to NetworkCloud", true, INFO);
+                buttonsEnabled();
+            }
+            else
+            {
+                addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
+            }
+
+            /*if (!this.pipeManagerClient.Connected)
+            {
+                this.pipeManagerClient.Connect(pipeManagerName);
+                string str = "StartMessage";
+                byte[] mess = encoder.GetBytes(str);
+                this.pipeManagerClient.SendMessage(mess);
+            }
+            if (this.pipeManagerClient.Connected)
+                addLog("Already connected to NetworkManager", true, INFO);
+            else
+                addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);*/
+
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -139,16 +148,14 @@ namespace ClientNode
             logsListView.Items.Clear();
         }
 
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            //// Determine if text has changed in the textbox by comparing to original text.
-            //this.pipeClient.closing = true;
-            //this.pipeClient.close();
-        }
-
         private void configButton_Click(object sender, EventArgs e)
         {
-            DialogResult result = openFileDialog.ShowDialog();
+            openFileDialog.ShowDialog();
+        }
+
+        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            loadConfiguration(openFileDialog.FileName);
         }
 
         public void addLog(String log, Boolean time, int flag)
@@ -175,50 +182,6 @@ namespace ClientNode
                 item.Text = log;
             logsListView.Items.Add(item);
             logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-        }
-
-        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
-            loadConfiguration(openFileDialog.FileName);
-        }
-
-        private void connectButton_Click(object sender, EventArgs e)
-        {
-            //try
-            //{
-                messageTextBox.Enabled = true;
-                sendButton.Enabled = true;
-                clearButton.Enabled = true;
-
-                ASCIIEncoding encoder = new ASCIIEncoding();
-                if (!this.pipeCloudClient.Connected)
-                {
-                    this.pipeCloudClient.Connect(pipeCloudName);
-                    string str = this.nodeId + " " + this.portOut[0] + " StartMessage";
-                    byte[] mess = encoder.GetBytes(str);
-                    this.pipeCloudClient.SendMessage(mess);
-                }
-                if (this.pipeCloudClient.Connected)
-                    addLog("Already connected to NetworkCloud", true, INFO);
-                else
-                    addLog("Erorr while trying to connect to NetworkCloud!", true, ERROR);
-
-                if (!this.pipeManagerClient.Connected)
-                {
-                    this.pipeManagerClient.Connect(pipeManagerName);
-                    string str = "StartMessage";
-                    byte[] mess = encoder.GetBytes(str);
-                    this.pipeManagerClient.SendMessage(mess);
-                }
-                if (this.pipeManagerClient.Connected)
-                    addLog("Already connected to NetworkManager", true, INFO);
-                else
-                    addLog("Erorr while trying to connect to NetworkManager!", true, ERROR);
-
-                connectButton.Enabled = false;
-            //}
-            //catch (Exception)
-            //{ }
         }
 
         private void checkId()
@@ -251,21 +214,44 @@ namespace ClientNode
                 nodeConf = Configuration.readConfig(xml);
                 this.nodeId = nodeConf[0];
                 this.pipeCloudName = nodeConf[1];
-                this.pipeManagerName = nodeConf[2];
+                //this.pipeManagerName = nodeConf[2];
 
                 this.portIn = Configuration.readPortIn(xml);
                 this.portOut = Configuration.readPortOut(xml);
 
                 this.checker = new Checker(this.nodeId, this.portIn);
-                
-                logsListView.Enabled = true;
 
                 string[] filePath = path.Split('\\');
                 addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, INFO);
-                nameLabel.Text = nodeId;
+                this.Text = "Name: " + nodeId;
             }
-            catch (Exception e)
+            catch (Exception)
             { }
+        }
+
+        private void buttonsEnabled()
+        {
+            bool enabled = connectButton.Enabled;
+            connectButton.Enabled = !enabled;
+            disconnectButton.Enabled = enabled;
+            messageTextBox.Enabled = enabled;
+            sendButton.Enabled = enabled;
+            clearButton.Enabled = enabled;
+            if (enabled) statusLabel.Text = "Active";
+            else statusLabel.Text = "Inactive";
+        }
+
+        private void serverDisconnected()
+        {
+            addLog("NetworkCloud has been disconnected", true, ERROR);
+            buttonsEnabled();
+        }
+
+        private void disconnectButton_Click(object sender, EventArgs e)
+        {
+            pipeCloudClient.Disconnect();
+            addLog("Disconnected", true, INFO);
+            buttonsEnabled();
         }
     }
 }

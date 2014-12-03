@@ -21,4 +21,4 @@ START NetworkManager\NetworkManager\bin\Debug\NetworkManager.exe
 START NetworkModelViewer\NetworkModelViewer\bin\Debug\NetworkModelViewer.exe
 
 
-pause>nul
+end

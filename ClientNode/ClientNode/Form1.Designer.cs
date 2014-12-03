@@ -37,16 +37,17 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.logsListView = new System.Windows.Forms.ListView();
+            this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.connectButton = new System.Windows.Forms.Button();
-            this.nameLabel = new System.Windows.Forms.Label();
+            this.disconnectButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // configButton
             // 
-            this.configButton.Location = new System.Drawing.Point(187, 12);
+            this.configButton.Location = new System.Drawing.Point(12, 12);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(112, 23);
+            this.configButton.Size = new System.Drawing.Size(124, 23);
             this.configButton.TabIndex = 0;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
@@ -104,32 +105,40 @@
             // 
             // logsListView
             // 
-            this.logsListView.Enabled = false;
+            this.logsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.col1});
             this.logsListView.Location = new System.Drawing.Point(12, 41);
             this.logsListView.Name = "logsListView";
             this.logsListView.Size = new System.Drawing.Size(368, 269);
             this.logsListView.TabIndex = 6;
             this.logsListView.UseCompatibleStateImageBehavior = false;
-            this.logsListView.View = System.Windows.Forms.View.List;
+            this.logsListView.View = System.Windows.Forms.View.Details;
+            // 
+            // col1
+            // 
+            this.col1.Text = "Logs";
+            this.col1.Width = 368;
             // 
             // connectButton
             // 
-            this.connectButton.Location = new System.Drawing.Point(305, 12);
+            this.connectButton.Location = new System.Drawing.Point(142, 12);
             this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(75, 23);
+            this.connectButton.Size = new System.Drawing.Size(116, 23);
             this.connectButton.TabIndex = 7;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
-            // nameLabel
+            // disconnectButton
             // 
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(9, 17);
-            this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(87, 13);
-            this.nameLabel.TabIndex = 8;
-            this.nameLabel.Text = "Name: Unknown";
+            this.disconnectButton.Enabled = false;
+            this.disconnectButton.Location = new System.Drawing.Point(264, 12);
+            this.disconnectButton.Name = "disconnectButton";
+            this.disconnectButton.Size = new System.Drawing.Size(116, 23);
+            this.disconnectButton.TabIndex = 9;
+            this.disconnectButton.Text = "Disconnect";
+            this.disconnectButton.UseVisualStyleBackColor = true;
+            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
             // 
             // Form1
             // 
@@ -137,7 +146,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 367);
-            this.Controls.Add(this.nameLabel);
+            this.Controls.Add(this.disconnectButton);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.statusStrip);
@@ -150,7 +159,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "ClientNode";
+            this.Text = "ClientNode - Unknown";
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -169,7 +178,8 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.Button connectButton;
-        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.Button disconnectButton;
+        public System.Windows.Forms.ColumnHeader col1;
     }
 }
 
