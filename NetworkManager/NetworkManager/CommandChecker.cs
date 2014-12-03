@@ -19,23 +19,13 @@ namespace NetworkManager
         {
             error_msg = "";
             string[] words = command.Split(' ');
-            if (words[0].Equals("GETALLNAMES"))
-            {
-                if (words.Length == 1)
-                    return true;
-                else
-                {
-                    error_msg = "Sytnax Error: Incorect list of parameters. Correct syntax: 'GETALL'";
-                    return false;
-                }
-            }
-            else if (words[0].Equals("GET"))
+            if (words[0].Equals("GET"))
             {
                 if (words.Length == 2)
                     return true;
                 else
                 {
-                    error_msg = "Sytnax Error: Incorect list of parameters. Correct syntax: 'GET NODE_NAME'";
+                    error_msg = Constants.GET_ERROR;
                     return false;
                 }
             }
@@ -45,7 +35,7 @@ namespace NetworkManager
                     return true;
                 else
                 {
-                    error_msg = "Sytnax Error: Incorect list of parameters. Correct syntax: 'SET NODE_NAME PORT_IN PORT_OUT'";
+                    error_msg = Constants.SET_ERROR;
                     return false;
                 }
             }
@@ -55,13 +45,13 @@ namespace NetworkManager
                     return true;
                 else
                 {
-                    error_msg = "Sytnax Error: Incorect list of parameters. Correct syntax: 'DELETE NODE_NAME PORT_IN PORT_OUT'";
+                    error_msg = Constants.DELETE_ERROR;
                     return false;
                 }
             }
             else
             {
-                error_msg = "Unknown command!";
+                error_msg = Constants.UNKNOWN_COMMAND_ERROR;
                 return false;
             }
         }
@@ -107,11 +97,11 @@ namespace NetworkManager
                             {
                                 if (tmp2[1].Equals("0"))
                                 {
-                                    tmp = tmp2[0] + " do not redirect";
+                                    tmp = tmp2[0] + Constants.NOT_REDIRECT;
                                 }
                                 else
                                 {
-                                    tmp = tmp2[0] + " redirect to " + tmp2[1];
+                                    tmp = tmp2[0] + Constants.REDIRECT + tmp2[1];
                                 }
                                 logsList.Add(tmp);
                             }

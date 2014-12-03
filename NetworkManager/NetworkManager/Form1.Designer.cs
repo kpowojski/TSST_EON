@@ -40,6 +40,7 @@
             this.logsListView = new System.Windows.Forms.ListView();
             this.helpButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -116,14 +117,15 @@
             // 
             // logsListView
             // 
-            this.logsListView.Enabled = false;
+            this.logsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.logsListView.FullRowSelect = true;
             this.logsListView.Location = new System.Drawing.Point(12, 12);
             this.logsListView.Name = "logsListView";
             this.logsListView.Size = new System.Drawing.Size(664, 252);
             this.logsListView.TabIndex = 8;
             this.logsListView.UseCompatibleStateImageBehavior = false;
-            this.logsListView.View = System.Windows.Forms.View.List;
+            this.logsListView.View = System.Windows.Forms.View.Details;
             // 
             // helpButton
             // 
@@ -146,6 +148,11 @@
             this.clearButton.Text = "Clear";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Logs";
+            this.columnHeader1.Width = 334;
             // 
             // Form1
             // 
@@ -188,6 +195,7 @@
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
 

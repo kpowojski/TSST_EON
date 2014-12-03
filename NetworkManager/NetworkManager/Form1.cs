@@ -13,139 +13,61 @@ namespace NetworkManager
     public partial class Form1 : Form
     {
         
-
-        private PipeServer pipeServer;
-        
-        private List<string> lastCommands = new List<string>();
-        private int commandListPosition = 0;
+        private List<string> lastCommands;
+        private int commandListPosition;
 
         private ASCIIEncoding encoder;
-        private CommandChecker commandChecker;
         private Configuration configuration;
         private Logs logs;
-
-        private string managerId;
-        private string pipeManagerName;
+        private Communication communication;
         
-
-
         public Form1()
         {
             InitializeComponent();
+            lastCommands = new List<string>();
+            commandListPosition = 0;
             encoder = new ASCIIEncoding();
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
-            loadDataFromConfiguration();
-            enableListScroll();
-            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
-            enableButtonsAfertConfiguration();
-
-            
+            if (configuration.loadConfiguration(Constants.PATH_TO_CONFIG))
+                afterConfiugrationLoaded();
         }
-
-       
-
-        void pipeServer_ClientDisconnected()
-        {
-            Invoke(new PipeServer.ClientDisconnectedHandler(ClientDisconnected));
-        }
-        void ClientDisconnected()
-        {
-            logs.addLog(Constants.DISCONNECTED_NODE + pipeServer.TotalConnectedClients + ")", true, Constants.ERROR);
-        }
-
-        void pipeServer_messageReceived(byte[] message)
-        {
-            this.Invoke(new PipeServer.MessageReceivedHandler(DisplayMessageReceived), new object[] { message });
-        }
-
-        void DisplayMessageReceived(byte[] message)
-        {
-            string str = encoder.GetString(message, 0, message.Length);
-            if(!str.Contains("StartMessage"))
-            {
-                List<string> msgs = commandChecker.parseMessage(str);
-                foreach (string msg in msgs)
-                {
-                    logs.addLog(msg, false, Constants.RECEIVED);
-                }
-            }
-        }
-
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = Constants.ACTIVE ;
-
-            this.pipeServer = new PipeServer();
-            this.pipeServer.ClientDisconnected += pipeServer_ClientDisconnected;
-            this.pipeServer.MessageReceived += pipeServer_messageReceived;
-
-            if (!this.pipeServer.Running)
-                this.pipeServer.Start(this.pipeManagerName);
-
-            if (this.pipeServer.Running)
-                logs.addLog(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
-            else
-                logs.addLog(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
-            
-            startButton.Enabled = false;
-            sendButton.Enabled = true;
-            helpButton.Enabled = true;
-            clearButton.Enabled = true;
-            configButton.Enabled = false;
-            commandTextBox.Enabled = true;
-
-            commandChecker = new CommandChecker();
-        }
-
-        private void configButton_Click(object sender, EventArgs e)
-        {
-            DialogResult result = openFileDialog.ShowDialog();
+            if(communication.connectToManager())
+                enableButtonsAfterStarted();
         }
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            string command = commandTextBox.Text;
-            if (command != "")
+            if (communication.sendCommand(commandTextBox.Text))
             {
-                if (commandChecker.checkCommand(command))
-                {
-                    logs.addLog(Constants.COMMAND + command, true, Constants.TEXT);
-                    byte[] commandByte = encoder.GetBytes(command);
-                    pipeServer.SendMessage(commandByte);
-                }
-                else
-                {
-                    logs.addLog(Constants.COMMAND + command, true, Constants.ERROR);
-                    logs.addLog(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
-                }
-                lastCommands.Add(command);
+                lastCommands.Add(commandTextBox.Text);
                 commandListPosition = lastCommands.Count;
                 commandTextBox.Text = "";
             }
         }
 
-        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
+        private void configButton_Click(object sender, EventArgs e)
         {
-            configuration.loadConfiguration(openFileDialog.FileName);
-            loadDataFromConfiguration();
-            enableButtonsAfertConfiguration();
-
+            openFileDialog.ShowDialog();
         }
 
-        
+        private void openFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            if (configuration.loadConfiguration(openFileDialog.FileName))
+                afterConfiugrationLoaded();
+        }
 
         private void helpButton_Click(object sender, EventArgs e)
         {
-            string msg = Constants.HELP_MSG;
-            MessageBox.Show(this, msg, Constants.LIST_OF_COMMANDS, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, Constants.HELP_MSG, Constants.LIST_OF_COMMANDS, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void clearButton_Click(object sender, EventArgs e)
         {
             logsListView.Items.Clear();
-
         }
 
         private void commandTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -170,29 +92,21 @@ namespace NetworkManager
             }
         }
 
-        private void loadDataFromConfiguration()
+        private void afterConfiugrationLoaded()
         {
-            this.managerId = configuration.ManaderId;
-            this.pipeManagerName = configuration.PipeManagerName;
-        }
-
-        private void enableButtonsAfertConfiguration()
-        {
-            logsListView.Enabled = true;
             startButton.Enabled = true;
+            communication = new Communication(configuration.PipeManagerName, logs, this);
         }
 
-        private void enableListScroll()
+        private void enableButtonsAfterStarted()
         {
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = Constants.LOGS;
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
+            statusLabel.Text = Constants.ACTIVE;
+            startButton.Enabled = false;
+            sendButton.Enabled = true;
+            helpButton.Enabled = true;
+            clearButton.Enabled = true;
+            configButton.Enabled = false;
+            commandTextBox.Enabled = true;
         }
-
-        
     }
 }

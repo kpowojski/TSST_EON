@@ -9,7 +9,7 @@ namespace NetworkManager
     class Configuration
     {
         private string managerId;
-        public string ManaderId
+        public string ManagerId
         {
             get { return managerId; }
         }
@@ -39,7 +39,7 @@ namespace NetworkManager
             return nodeConfig;
         }
 
-        public void loadConfiguration(string path)
+        public bool loadConfiguration(string path)
         {
             XmlDocument xml = new XmlDocument();
             try
@@ -53,10 +53,13 @@ namespace NetworkManager
                 
 
                 string[] filePath = path.Split('\\');
-                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, 0);
+                logs.addLog(Constants.LOADED_CONFIG + filePath[filePath.Length - 1], true, 0);
+                return true;
             }
             catch (Exception)
-            { }
+            {
+                return false;
+            }
         }
 
     }
