@@ -16,7 +16,7 @@ namespace ClientNode
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new ClientNode());
             if (System.Windows.Forms.Application.MessageLoop)
             {
               // Use this since we are a WinForms app
