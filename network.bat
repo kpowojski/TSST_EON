@@ -18,7 +18,7 @@ for /L %%A in (1,1,%NetworkNode%) do (
 
 START NetworkCloud\NetworkCloud\bin\Debug\NetworkCloud.exe
 START NetworkManager\NetworkManager\bin\Debug\NetworkManager.exe
-START NetworkModelViewer\NetworkModelViewer\bin\Debug\NetworkModelViewer.exe
+/START NetworkModelViewer\NetworkModelViewer\bin\Debug\NetworkModelViewer.exe
 
 
 end

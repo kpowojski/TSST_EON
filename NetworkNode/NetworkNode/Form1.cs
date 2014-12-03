@@ -25,16 +25,11 @@ namespace NetworkNode
         private PipeClient pipeCloudClient;
         private string pipeCloudName;
         
-        //sprawdzacz
-        private Checker checker;
-
-        //id noda
         private string nodeId;
-
-        //porty
         private List<String> portIn;
         private List<String> portOut;
         private int[] comutation;
+        private Checker checker;
 
         private Logs logs;
         private Configuration configuration;
@@ -75,13 +70,15 @@ namespace NetworkNode
 
         void pipeCloudClient_ServerDisconnected()
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(EnableCloudStart));
+            Invoke(new PipeClient.ServerDisconnectedHandler(cloudDisconnected));
         }
 
-        void EnableCloudStart()
+        void cloudDisconnected()
         {
-            this.startButton.Enabled = true;
-            logs.addLog(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
+            pipeManagerClient.Disconnect();
+            buttonsEnabled();
+            addLog("NetworkCloude has been disconnected", true, ERROR);
+            addLog("Node stoppped", true, ERROR);
         }
 
         void pipeCloudClient_MessageReceived(byte[] message)
@@ -107,12 +104,13 @@ namespace NetworkNode
 
         void pipeManagerClient_ServerDisconnected()
         {
-            Invoke(new PipeClient.ServerDisconnectedHandler(EnableManagerStart));
+            Invoke(new PipeClient.ServerDisconnectedHandler(managerDisconnected));
         }
 
-        void EnableManagerStart()
+        void managerDisconnected()
         {
-            this.startButton.Enabled = true;
+            pipeCloudClient.Disconnect();
+            buttonsEnabled();
             logs.addLog(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
         }
 
