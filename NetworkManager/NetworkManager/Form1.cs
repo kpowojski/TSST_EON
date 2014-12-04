@@ -18,6 +18,7 @@ namespace NetworkManager
 
         private Logs logs;
         private Configuration configuration;
+        //private Communication2 communication;
         private Communication communication;
         
         public Form1()
@@ -93,7 +94,7 @@ namespace NetworkManager
         private void afterConfiugrationLoaded()
         {
             startButton.Enabled = true;
-            communication = new Communication(this.logs);
+            communication = new Communication(logs);
         }
 
         private void enableButtonsAfterStarted()
@@ -106,9 +107,11 @@ namespace NetworkManager
             configButton.Enabled = false;
             commandTextBox.Enabled = true;
         }
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            communication.stopServer();
+            if(communication != null)
+                communication.stopManager();
         }
     }
 }

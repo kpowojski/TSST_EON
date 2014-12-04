@@ -23,17 +23,16 @@ namespace NetworkManager
         public const string LIST_OF_COMMANDS = "List of Commands";
         public const string PATH_TO_CONFIG = @"Config\ManagerConfig.xml";
         public const string ACTIVE = "Active";
-        public const string DISCONNECTED_NODE = "Someone has been disconnected (Connected nodes: ";
+        public const string DISCONNECTED_NODE = "Someone has been disconnected";
         
         //strings which are displayed in logs 
         public const string NETWORK_STARTED_CORRECTLY = "NetworkManager has been started";
         public const string NETWORK_STARTED_ERROR = "An error occurred during start NetworkManager";
-        public const string NODE_UNREACHABLE = "Node is unreachable";
-        public const string NODE_NOT_CONNECTED = "Node you want to reach is not connected";
         public const string COMMAND = "Command: ";
         public const string ERROR_MSG = "Error: ";
         public const string LOADED_CONFIG = "Configuration loaded from file: ";
-        public const string CLIENT_DISCONNECTED = "Client has disconnected";
+        public const string NODE_UNREACHABLE = "Node is unreachable";
+        public const string NODE_NOT_CONNECTED = "Node you want to reach is not connected";
 
         //Command Checker
         public const string GET_ERROR = "Sytnax Error: Incorect list of parameters. Correct syntax: 'GET NODE_NAME'";
@@ -42,8 +41,6 @@ namespace NetworkManager
         public const string UNKNOWN_COMMAND_ERROR = "Unknown command!";
         public const string NOT_REDIRECT = " do not redirect";
         public const string REDIRECT = " redirect to ";
-
-        
 
 
 

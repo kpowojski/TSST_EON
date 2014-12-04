@@ -53,19 +53,19 @@ namespace NetworkNode
                     clientThread = new Thread(new ThreadStart(displayMessageReceived));
                     clientThread.Start();
                     sendMyName();
-                    logs.addLog(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
+                    logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
                     return true;
                 }
                 else
                 {
                     client = null;
-                    logs.addLog(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
+                    logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
                     return false;
                 }
             }
             else
             {
-                logs.addLog(Constants.CONNECTION_MANAGER_CONNECTED_ALREADY, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_CONNECTED_ALREADY, true, Constants.ERROR);
                 return false;
             }
         }
@@ -78,7 +78,7 @@ namespace NetworkNode
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLog(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.ERROR);
             }
         }
 
@@ -118,7 +118,7 @@ namespace NetworkNode
                 string[] response = this.checker.checkManagerCommand(str);
                 if (response != null)
                 {
-                    logs.addLog(Constants.MANAGER_MSG + response[0], true, Constants.RECEIVED);
+                    logs.addLogFromAnotherThread(Constants.MANAGER_MSG + response[0], true, Constants.RECEIVED);
                     for (int i = 1; i < response.Length; i++)
                     {
                         if (response[i] != "null" && response[i] != null)
@@ -128,7 +128,7 @@ namespace NetworkNode
             }
             if (client != null)
             {
-                logs.addLog(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
                 disconnectFromManager();
             }
         }

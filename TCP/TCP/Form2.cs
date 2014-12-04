@@ -17,6 +17,7 @@ namespace TCP
         {
             InitializeComponent();
             client = new TCPClient("ClientName", listView1);
+            new Form1().Show();
         }
 
         private void connectButton_Click(object sender, EventArgs e)

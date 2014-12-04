@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
+using System.Windows.Forms;
 
 namespace NetworkManager
 {
@@ -20,12 +21,12 @@ namespace NetworkManager
 
         public Communication(Logs logs)
         {
-            encoder = new ASCIIEncoding();
+            this.encoder = new ASCIIEncoding();
             this.logs = logs;
-            commandChecker = new CommandChecker();
-            
+            this.commandChecker = new CommandChecker();
         }
 
+        //Rozpoczyna pracę serwera
         public bool startManager(int port)
         {
             if (serverSocket == null && serverThread == null)
@@ -33,17 +34,18 @@ namespace NetworkManager
                 this.serverSocket = new TcpListener(IPAddress.Any, port);
                 this.serverThread = new Thread(new ThreadStart(ListenForClients));
                 this.serverThread.Start();
-                logs.addLog(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
+                logs.addLogFromAnotherThread(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
                 return true;
             }
             else
             {
-                logs.addLog(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
                 return false;
             }
         }
 
-        public void stopServer()
+        //Kończy pracę serwera
+        public void stopManager()
         {
             foreach (TcpClient clientSocket in clientSockets.Keys.ToList())
             {
@@ -59,95 +61,97 @@ namespace NetworkManager
             serverThread = null;
         }
 
-        public bool sendCommand(string name, string command)
+        //Wysyła wiadomość do wybranego klienta
+        public bool sendCommand(string name, string msg)
         {
-            if (serverSocket != null)
+            bool ret = false;
+            if (msg != null)
             {
-                NetworkStream stream = null;
-                TcpClient client = null;
-                List<TcpClient> clientsList = clientSockets.Keys.ToList();
-                for (int i = 0; i < clientsList.Count; i++)
+                if (!commandChecker.checkCommand(msg))
                 {
-                    if (clientSockets[clientsList[i]].Equals(name))
-                    {
-                        client = clientsList[i];
-                        break;
-                    }
-                }
-
-                if (client != null)
-                {
-                    if (client.Connected)
-                    {
-                        if (command != "")
-                        {
-                            if (commandChecker.checkCommand(command))
-                            {
-                                stream = client.GetStream();
-                                byte[] buffer = encoder.GetBytes(command);
-                                logs.addLog(Constants.COMMAND + command, true, Constants.TEXT);
-                                byte[] commandByte = encoder.GetBytes(command);
-                                stream.Write(buffer, 0, buffer.Length);
-                                stream.Flush();
-                            }
-                            else
-                            {
-                                logs.addLog(Constants.COMMAND + command, true, Constants.ERROR);
-                                logs.addLog(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
-                            }
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        stream.Close();
-                        clientSockets.Remove(client);
-                        logs.addLog(Constants.NODE_UNREACHABLE, true, Constants.ERROR);
-                        return false;
-                    }
+                    logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.ERROR);
+                    logs.addLogFromAnotherThread(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
                 }
                 else
                 {
-                    logs.addLog(Constants.NODE_NOT_CONNECTED, true, Constants.ERROR);
-                    return false;
+                    if (serverSocket != null)
+                    {
+                        NetworkStream stream = null;
+                        TcpClient client = null;
+                        List<TcpClient> clientsList = clientSockets.Keys.ToList();
+                        Console.Write(clientsList.Count);
+                        for (int i = 0; i < clientsList.Count; i++)
+                        {
+                            if (clientSockets[clientsList[i]].Equals(name))
+                            {
+                                client = clientsList[i];
+                                break;
+                            }
+                        }
+
+                        if (client != null)
+                        {
+                            if (client.Connected)
+                            {
+                                stream = client.GetStream();
+                                byte[] buffer = encoder.GetBytes(msg);
+                                stream.Write(buffer, 0, buffer.Length);
+                                stream.Flush();
+                                logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.TEXT);
+                                ret = true;
+                            }
+                            else
+                            {
+                                stream.Close();
+                                clientSockets.Remove(client);
+                                logs.addLogFromAnotherThread(Constants.NODE_UNREACHABLE, true, Constants.ERROR);
+                            }
+                        }
+                        else
+                        {
+                            logs.addLogFromAnotherThread(Constants.NODE_NOT_CONNECTED, true, Constants.ERROR);
+                        }
+                    }
                 }
             }
-            else return false;
-
+            return ret;
         }
 
+        //Wysyła wiadomość do wszystkich klientów
         public bool sendCommandToAll(string msg)
         {
-            if (msg != "")
+            bool ret = false;
+            if (msg != null)
             {
                 if (serverSocket != null)
                 {
-                    NetworkStream stream;
-                    foreach (TcpClient client in clientSockets.Keys.ToList())
+                    if (!commandChecker.checkCommand(msg))
                     {
-                        if (client.Connected)
-                        {
-                            stream = client.GetStream();
-                            byte[] buffer = encoder.GetBytes(msg);
-                            stream.Write(buffer, 0, buffer.Length);
-                            stream.Flush();
-                        }
+                        logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.ERROR);
+                        logs.addLogFromAnotherThread(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
                     }
-                    logs.addLog(msg, false, Constants.TEXT);
-                    return true;
+                    else
+                    {
+                        NetworkStream stream;
+                        foreach (TcpClient client in clientSockets.Keys.ToList())
+                        {
+                            if (client.Connected)
+                            {
+                                stream = client.GetStream();
+                                byte[] buffer = encoder.GetBytes(msg);
+                                stream.Write(buffer, 0, buffer.Length);
+                                stream.Flush();
+                            }
+                        }
+                        logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.TEXT);
+                        ret = true;
+                    }
                 }
-                return false;
             }
-            else
-            {
-                return false;
-            }
+            return ret;
         }
 
+        //Oczekiwanie na połączenie nowych klientów
         private void ListenForClients()
         {
             this.serverSocket.Start();
@@ -156,6 +160,8 @@ namespace NetworkManager
                 try
                 {
                     TcpClient clientSocket = this.serverSocket.AcceptTcpClient();
+                    /*if (clientSockets.ContainsKey(clientSocket))
+                        clientSockets.Remove(clientSocket);*/
                     clientSockets.Add(clientSocket, "Unknown");
                     Thread clientThread = new Thread(new ParameterizedThreadStart(displayMessageReceived));
                     clientThread.Start(clientSocket);
@@ -167,20 +173,7 @@ namespace NetworkManager
             }
         }
 
-        private bool getClientName(TcpClient client, string msg)
-        {
-            if (msg.Contains("//NAME// "))
-            {
-                string[] tmp = msg.Split(' ');
-                clientSockets[client] = tmp[1];
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
+        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived(object client)
         {
             TcpClient clientSocket = (TcpClient)client;
@@ -206,21 +199,21 @@ namespace NetworkManager
                 string str = encoder.GetString(message, 0, bytesRead);
                 if (clientSockets[clientSocket].Equals("Unknown"))
                 {
-                    if (!getClientName(clientSocket, str))
+                    if (!getNodeName(clientSocket, str))
                     {
-                        List<string> messages = commandChecker.parseMessage(str);
-                        foreach (string msg in messages)
+                        List<string> msgs = commandChecker.parseMessage(str);
+                        foreach (string msg in msgs)
                         {
-                            logs.addLog(msg, false, Constants.RECEIVED);
+                            logs.addLogFromAnotherThread(msg, false, Constants.RECEIVED);
                         }
                     }
                 }
                 else
                 {
-                    List<string> messages = commandChecker.parseMessage(str);
-                    foreach (string msg in messages)
+                    List<string> msgs = commandChecker.parseMessage(str);
+                    foreach (string msg in msgs)
                     {
-                        logs.addLog(msg, false, Constants.RECEIVED);
+                        logs.addLogFromAnotherThread(msg, false, Constants.RECEIVED);
                     }
                 }
             }
@@ -229,11 +222,24 @@ namespace NetworkManager
                 clientSocket.GetStream().Close();
                 clientSocket.Close();
                 clientSockets.Remove(clientSocket);
-                logs.addLog("Client has Disconnected",true,Constants.ERROR);
-                logs.addLog(Constants.CLIENT_DISCONNECTED,true,Constants.ERROR);
-                logs.addLog("Client has Disconnected", true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.DISCONNECTED_NODE, true, Constants.ERROR);
             }
 
+        }
+
+        //Pobiera z wiadomości nazwę klienta
+        private bool getNodeName(TcpClient client, string msg)
+        {
+            if (msg.Contains("//NAME// "))
+            {
+                string[] tmp = msg.Split(' ');
+                clientSockets[client] = tmp[1];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
