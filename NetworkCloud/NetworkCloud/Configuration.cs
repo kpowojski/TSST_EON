@@ -86,7 +86,7 @@ namespace NetworkCloud
                 //podstawowe informacje o cloudzie (id, nazwy pipow)
                 List<string> config = readConfig(xml);
                 this.cloudId = config[0];
-                this.cloudPort = Convert.ToInt32(config[2]) ;
+                this.cloudPort = Convert.ToInt32(config[1]) ;
                 //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic = readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
