@@ -30,42 +30,34 @@ namespace NetworkNode
         //Łączenie z serwerem
         public bool connectToCloud(string ip, int port)
         {
-            if (client == null)
+            client = new TcpClient();
+            IPAddress ipAddress;
+            if (ip.Contains("localhost"))
             {
-                client = new TcpClient();
-                IPAddress ipAddress;
-                if (ip.Contains("localhost"))
-                {
-                    ipAddress = IPAddress.Loopback;
-                }
-                else
-                {
-                    ipAddress = IPAddress.Parse(ip);
-                }
-                try
-                {
-                    client.Connect(new IPEndPoint(ipAddress, port));
-                }
-                catch { }
-                if (client.Connected)
-                {
-                    stream = client.GetStream();
-                    clientThread = new Thread(new ThreadStart(displayMessageReceived));
-                    clientThread.Start();
-                    sendMyName();
-                    logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
-                    return true;
-                }
-                else
-                {
-                    client = null;
-                    logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
-                    return false;
-                }
+                ipAddress = IPAddress.Loopback;
             }
             else
             {
-                logs.addLog(Constants.CONNECTION_CLOUD_CONNECTED_ALREADY, true, Constants.ERROR);
+                ipAddress = IPAddress.Parse(ip);
+            }
+            try
+            {
+                client.Connect(new IPEndPoint(ipAddress, port));
+            }
+            catch { }
+            if (client.Connected)
+            {
+                stream = client.GetStream();
+                clientThread = new Thread(new ThreadStart(displayMessageReceived));
+                clientThread.Start();
+                sendMyName();
+                logs.addLog(Constants.CONNECTION_PASS, true, Constants.INFO);
+                return true;
+            }
+            else
+            {
+                client = null;
+                logs.addLog(Constants.CONNECTION_FAIL, true, Constants.ERROR);
                 return false;
             }
         }

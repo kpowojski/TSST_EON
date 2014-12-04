@@ -93,7 +93,7 @@ namespace NetworkManager
         private void afterConfiugrationLoaded()
         {
             startButton.Enabled = true;
-            communication = new Communication(logs, this);
+            communication = new Communication(logs);
         }
 
         private void enableButtonsAfterStarted()
