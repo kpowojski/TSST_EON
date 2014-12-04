@@ -38,8 +38,14 @@ namespace ClientNode
                 item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
             else
                 item.Text = log;
-            logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+
+            logsListView.Invoke(
+                new MethodInvoker(delegate()
+                {
+                    logsListView.Items.Add(item);
+                    logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+                })
+            );
         }
     }
 }
