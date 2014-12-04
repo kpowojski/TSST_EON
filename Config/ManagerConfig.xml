@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Manager ID= "Network Manager" pipeManagerName="\\.\pipe\NetworkManager">
+<Manager ID= "Network Manager" managerIp = "localhost" managerPort ="16000" >
 
 </Manager>
