@@ -88,7 +88,6 @@ namespace ClientNode
         {
             this.nodeId = configuration.NodeId;
             this.cloudIp = configuration.CloudIp;
-            Console.WriteLine("cloudIp" + this.cloudIp);
             this.cloudPort = configuration.CloudPort;
 
             this.portIn = configuration.PortIn;

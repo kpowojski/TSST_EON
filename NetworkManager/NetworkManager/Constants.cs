@@ -33,6 +33,7 @@ namespace NetworkManager
         public const string COMMAND = "Command: ";
         public const string ERROR_MSG = "Error: ";
         public const string LOADED_CONFIG = "Configuration loaded from file: ";
+        public const string CLIENT_DISCONNECTED = "Client has disconnected";
 
         //Command Checker
         public const string GET_ERROR = "Sytnax Error: Incorect list of parameters. Correct syntax: 'GET NODE_NAME'";
@@ -41,6 +42,8 @@ namespace NetworkManager
         public const string UNKNOWN_COMMAND_ERROR = "Unknown command!";
         public const string NOT_REDIRECT = " do not redirect";
         public const string REDIRECT = " redirect to ";
+
+        
 
 
 
