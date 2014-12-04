@@ -8,16 +8,22 @@ namespace ClientNode
 {
     class Configuration
     {
-        private string pipeCloudName;
-        public string PipeCloudeName
-        {
-            get { return pipeCloudName; }
-        }
         private string nodeId;
         public string NodeId
         {
-            get { return nodeId; }
+            get{return nodeId;}
         }
+        private string cloudIp;
+        public string CloudIp
+        {
+            get { return cloudIp; }
+        }
+        private int cloudPort;
+        public int CloudPort
+        {
+            get { return cloudPort; }
+        }
+        
         private Checker checker;
         public Checker Checker
         {
@@ -50,9 +56,9 @@ namespace ClientNode
             {
                 string nodeId = xnode.Attributes["ID"].Value;
                 nodeConfig.Add(nodeId);
-                string pipeCloudName = xnode.Attributes["pipeCloudName"].Value;
+                string pipeCloudName = xnode.Attributes["cloudIp"].Value;
                 nodeConfig.Add(pipeCloudName);
-                string pipeManagerName = xnode.Attributes["pipeManagerName"].Value;
+                string pipeManagerName = xnode.Attributes["cloudPort"].Value;
                 nodeConfig.Add(pipeManagerName);
             }
             return nodeConfig;
@@ -93,7 +99,8 @@ namespace ClientNode
                 List<string> nodeConf = new List<string>();
                 nodeConf = readConfig(xml);
                 this.nodeId = nodeConf[0];
-                this.pipeCloudName = nodeConf[1];
+                this.cloudIp = nodeConf[1];
+                this.cloudPort = Convert.ToInt32(nodeConf[2]);
 
                 this.portIn = readPortIn(xml);
                 this.portOut = readPortOut(xml);

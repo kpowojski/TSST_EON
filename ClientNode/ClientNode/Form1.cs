@@ -19,16 +19,14 @@ namespace ClientNode
 
     public partial class ClientNode : Form
     {
-        
-
+        private TCPClient client;
         private string nodeId;
+        private string cloudIp;
+        private int cloudPort;
         private List<String> portIn = new List<String>();
         private List<String> portOut = new List<String>();
         private Checker checker;
 
-
-        private string pipeCloudName;
-        private PipeClient pipeCloudClient;
         private Logs logs;
 
         private ASCIIEncoding encoder;
@@ -40,54 +38,21 @@ namespace ClientNode
             logs = new Logs(logsListView);
             encoder = new ASCIIEncoding();
             configuration = new Configuration(this.logs);
+            
+            client = new TCPClient("ClientName", this.logs);
+            
 
 
-
-            if (pipeCloudClient != null)
-            {
-                pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
-                pipeCloudClient.ServerDisconnected -= pipeCloudClient_ServerDisconnected;
-            }
-            pipeCloudClient = new PipeClient();
-            pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
-            pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
-
-            checkId();
+            //checkId();
             
         }
 
-        void pipeCloudClient_ServerDisconnected()
-        {
-            Invoke(new PipeClient.ServerDisconnectedHandler(serverDisconnected));
-        }
-
-        private void serverDisconnected()
-        {
-            logs.addLog(, true, Constants.ERROR);
-            buttonsEnabled();
-        }
-                    
-        void pipeCloudClient_MessageReceived(byte[] message)
-        {
-            this.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageCloud), new object[] { message });
-        }
-
-        void DisplayReceivedMessageCloud(byte [] message)
-        {
-            string str = encoder.GetString(message);
-            string checkedMessage = checker.checkDestination(str);
-
-            if (checkedMessage != "null" && !checkedMessage.Contains("StartMessage"))
-                logs.addLog("Received: " + checkedMessage, true, Constants.RECEIVED);
-        }
 
         private void sendButton_Click(object sender, EventArgs e)
         {
             if (messageTextBox.Text != "")
             {
-                byte[] myByte = encoder.GetBytes(nodeId + " " + portOut[0] + " " + messageTextBox.Text);
-                pipeCloudClient.SendMessage(myByte);
-                logs.addLog("Sent: " + this.messageTextBox.Text, true, Constants.TEXT);
+                client.sendMessage(messageTextBox.Text);
                 messageTextBox.Text = "";
             }
             messageTextBox.Focus();
@@ -95,32 +60,12 @@ namespace ClientNode
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            if (!this.pipeCloudClient.Connected)
-            {
-                this.pipeCloudClient.Connect(pipeCloudName);
-                string str = this.nodeId + " " + this.portOut[0] + " StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeCloudClient.SendMessage(mess);
-            }
-            
-            if (this.pipeCloudClient.Connected)
-            {
-                logs.addLog("Already connected to NetworkCloud", true, Constants.INFO);
-                buttonsEnabled();
-            }
-            else
-            {
-                logs.addLog("Connection failed! Try again.", true, Constants.ERROR);
-            }
-
-
+            client.connectToServer(configuration.CloudIp, configuration.CloudPort);
         }
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
-            pipeCloudClient.Disconnect();
-            logs.addLog("Disconnected", true, Constants.INFO);
-            buttonsEnabled();
+            client.disconnectFromServer();
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -142,7 +87,9 @@ namespace ClientNode
         private void loadDataFromConfiguraion()
         {
             this.nodeId = configuration.NodeId;
-            this.pipeCloudName = configuration.PipeCloudeName;
+            this.cloudIp = configuration.CloudIp;
+            Console.WriteLine("cloudIp" + this.cloudIp);
+            this.cloudPort = configuration.CloudPort;
 
             this.portIn = configuration.PortIn;
             this.portOut = configuration.PortOut;
