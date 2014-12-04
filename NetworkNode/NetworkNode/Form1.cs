@@ -17,13 +17,8 @@ namespace NetworkNode
 {
     public partial class Form1 : Form
     {
-
-        //communication with cloud
         private Communication communication;
-
-        //communiaction with manager
-        private ManagementAgent managementAgent;
-        
+        private ManagmentAgent managmentAgent;
         
         private string nodeId;
         private List<String> portIn;
@@ -46,7 +41,7 @@ namespace NetworkNode
 
         private void cloudConnect_Click(object sender, EventArgs e)
         {
-            if (communication.connectToCloud())
+            if (communication.connectToCloud(configuration.CloudIp, configuration.CloudPort))
             {
                 disconnectCloudButton.Enabled = true;
                 configButton.Enabled = false;
@@ -60,14 +55,14 @@ namespace NetworkNode
             disconnectCloudButton.Enabled = false;
             connectCloudButton.Enabled = true;
             configButton.Enabled = true;
-            communication.PipeCloudeClient.Disconnect();
+            communication.disconnectFromCloud();
             logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.INFO);
         }
 
 
         private void connectManagerButton_Click(object sender, EventArgs e)
         {
-            if (managementAgent.connectToManager())
+            if (managmentAgent.connectToManager(configuration.ManagerIp, configuration.ManagerPort))
             {
                 disconnectManagerButton.Enabled = true;
                 connectManagerButton.Enabled = false;
@@ -78,7 +73,7 @@ namespace NetworkNode
         {
             disconnectManagerButton.Enabled = false;
             connectManagerButton.Enabled = true;
-            managementAgent.PipeManagerClient.Disconnect();
+            managmentAgent.disconnectFromManager();
             logs.addLog(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.INFO);
         }
 
@@ -132,12 +127,10 @@ namespace NetworkNode
             connectManagerButton.Enabled = true;
 
             Button[] buttonsForCloud = { this.connectCloudButton, this.disconnectCloudButton, this.configButton };
-            communication = new Communication(this.logs, this.checker, this, buttonsForCloud, this.statusLabel);
-            communication.PipeCloudeName = configuration.PipeCloudName;
+            communication = new Communication(this.nodeId, this.logs, this.checker);
 
             Button[] buttonsForManager = { this.connectManagerButton, this.disconnectManagerButton, this.configButton };
-            managementAgent = new ManagementAgent(this.logs, this.checker, this, buttonsForCloud);
-            managementAgent.PipeManagerName = configuration.PipeManagerName;
+            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.checker);
         }
 
         private void loadDataFromConfiguraion()

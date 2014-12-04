@@ -2,132 +2,139 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace NetworkNode
 {
     class Communication
     {
-        private PipeClient pipeCloudClient;
-        public PipeClient PipeCloudeClient
-        {
-            get { return pipeCloudClient; }
-        }
-
-        private string pipeCloudName;
-        public string PipeCloudeName
-        {
-            set
-            {
-                pipeCloudName = value;
-            }
-        }
-
+        private ASCIIEncoding encoder;
+        private TcpClient client;
+        private NetworkStream stream;
+        private Thread clientThread;
+        private string myName;
         private Logs logs;
         private Checker checker;
-        private Form1 form;
 
-        private Button connectToCloudButton;
-        private Button disconnectFromCloudButton;
-        private Button configButton;
-        private ToolStripStatusLabel statusLabel;
-        private Form1 form1;
-        private ASCIIEncoding encoder;
-
-
-        public Communication(Logs logs, Checker checker, Form1 form, Button[] button, ToolStripStatusLabel statusLabel)
+        public Communication(string name, Logs logs, Checker checker)
         {
-
+            this.encoder = new ASCIIEncoding();
+            this.myName = name;
             this.logs = logs;
             this.checker = checker;
-            this.form = form;
-
-            this.connectToCloudButton = button[0];
-            this.disconnectFromCloudButton = button[1];
-            this.configButton = button[2];
-            this.statusLabel = statusLabel;
-
-            this.encoder = new ASCIIEncoding();
-
-            if (pipeCloudClient != null)
-            {
-                pipeCloudClient.MessageReceived -= pipeCloudClient_MessageReceived;
-                pipeCloudClient.ServerDisconnected -= pipeCloudClient_ServerDisconnected;
-            }
-
-            pipeCloudClient = new PipeClient();
-            pipeCloudClient.MessageReceived += pipeCloudClient_MessageReceived;
-            pipeCloudClient.ServerDisconnected += pipeCloudClient_ServerDisconnected;
-
         }
 
-        private void buttonsEnabled()
+        //Łączenie z serwerem
+        public bool connectToCloud(string ip, int port)
         {
-            bool enabled = connectToCloudButton.Enabled;
-            connectToCloudButton.Enabled = !enabled;
-            disconnectFromCloudButton.Enabled = enabled;
-            configButton.Enabled = !enabled;
-            if (enabled) statusLabel.Text = Constants.ACTIVE;
-            else statusLabel.Text = Constants.INACTIVE;
-        }
-
-        public bool connectToCloud()
-        {
-            
-            if (!this.pipeCloudClient.Connected)
+            if (client == null)
             {
-                this.pipeCloudClient.Connect(pipeCloudName);
-                string str = "StartMessage";
-                byte[] mess = encoder.GetBytes(str);
-                this.pipeCloudClient.SendMessage(mess);
-            }
-            if (this.pipeCloudClient.Connected)
-            {
-                logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
-                return true;
+                client = new TcpClient();
+                IPAddress ipAddress;
+                if (ip.Contains("localhost"))
+                {
+                    ipAddress = IPAddress.Loopback;
+                }
+                else
+                {
+                    ipAddress = IPAddress.Parse(ip);
+                }
+                try
+                {
+                    client.Connect(new IPEndPoint(ipAddress, port));
+                }
+                catch { }
+                if (client.Connected)
+                {
+                    stream = client.GetStream();
+                    clientThread = new Thread(new ThreadStart(displayMessageReceived));
+                    clientThread.Start();
+                    sendMyName();
+                    logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
+                    return true;
+                }
+                else
+                {
+                    client = null;
+                    logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
+                    return false;
+                }
             }
             else
             {
-                logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
+                logs.addLog(Constants.CONNECTION_CLOUD_CONNECTED_ALREADY, true, Constants.ERROR);
                 return false;
             }
-
         }
 
-
-        void pipeCloudClient_ServerDisconnected()
+        //Kończy połączenie z serwerem
+        public void disconnectFromCloud()
         {
-            this.form.Invoke(new PipeClient.ServerDisconnectedHandler(cloudDisconnected));
-        }
-
-        void cloudDisconnected()
-        {
-            pipeCloudClient.Disconnect();
-            buttonsEnabled();
-            logs.addLog(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
-            logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.ERROR);
-        }
-        
-
-        void pipeCloudClient_MessageReceived(byte[] message)
-        {
-            this.form.Invoke(new PipeClient.MessageReceivedHandler(DisplayReceivedMessageCloud), new object[] { message });
-        }
-
-        void DisplayReceivedMessageCloud(byte[] message)
-        {
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            string str = encoder.GetString(message, 0, message.Length);
-            string forwardedMessage = this.checker.checkDestination(str);
-            if (forwardedMessage != "null" && forwardedMessage != "StartMessage")
+            if (client != null)
             {
-                if (this.checker.forwardMessage(forwardedMessage))
-                {
-                    this.pipeCloudClient.SendMessage(encoder.GetBytes(forwardedMessage));
-                }
-                logs.addLog(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.TEXT);
+                client.GetStream().Close();
+                client.Close();
+                client = null;
+                logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.ERROR);
             }
-            message = null;
+        }
+
+        //Wysyłanie wiadomości
+        public void sendMessage(string msg)
+        {
+            if (client != null && client.Connected)
+            {
+                byte[] buffer = encoder.GetBytes(msg);
+                stream.Write(buffer, 0, buffer.Length);
+                stream.Flush();
+                logs.addLog(Constants.SENT_MSG + msg, true, Constants.TEXT);
+            }
+        }
+
+        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
+        private void displayMessageReceived()
+        {
+            byte[] message = new byte[4096];
+            int bytesRead;
+
+            while (stream.CanRead)
+            {
+                bytesRead = 0;
+                try
+                {
+                    bytesRead = stream.Read(message, 0, 4096);
+                }
+                catch
+                {
+                    break;
+                }
+
+                if (bytesRead == 0) break;
+
+                string str = encoder.GetString(message, 0, bytesRead);
+                string forwardedMessage = this.checker.checkDestination(str);
+                if (checker.forwardMessage(forwardedMessage))
+                {
+                    sendMessage(forwardedMessage);
+                }
+                logs.addLog(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);
+            }
+            if (client != null)
+            {
+                logs.addLog(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
+                disconnectFromCloud();
+            }
+        }
+
+        //Wysyła serwerowi swoją nazwę, aby mógł zidentyfikować tego klienta
+        private void sendMyName()
+        {
+            byte[] buffer = encoder.GetBytes("//NAME// " + myName);
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush();
         }
     }
 }

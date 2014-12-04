@@ -11,16 +11,27 @@ namespace NetworkNode
     {
 
         private Logs logs;
-        private string pipeManagerName;
-        public string PipeManagerName
+        private string managerIp;
+        public string ManagerIp
         {
-            get { return pipeManagerName; }
+            get { return managerIp; }
+        }
+        private int managerPort;
+        public int ManagerPort
+        {
+            get { return managerPort; }
         }
 
-        private string pipeCloudName;
-        public string PipeCloudName
+        private string cloudIp;
+        public string CloudIp
         {
-            get { return pipeCloudName; }
+            get { return cloudIp; }
+        }
+
+        private int cloudPort;
+        public int CloudPort
+        {
+            get { return cloudPort; }
         }
         
         private string nodeId;
@@ -74,7 +85,6 @@ namespace NetworkNode
             return nodeConfig;
         }
 
-
         private List<string> readPortIn(XmlDocument xml)
         {
             string nodeName = "//InputPorts/Port";
@@ -100,7 +110,6 @@ namespace NetworkNode
             return portOut;
         }
 
-
         public void loadConfiguration(string path)
         {
             XmlDocument xml = new XmlDocument();
@@ -111,8 +120,6 @@ namespace NetworkNode
                 List<string> nodeConf = new List<string>();
                 nodeConf = readConfig(xml);
                 this.nodeId = nodeConf[0];
-                this.pipeCloudName = nodeConf[1];
-                this.pipeManagerName = nodeConf[2];
 
                 this.portIn = readPortIn(xml);
                 this.portOut = readPortOut(xml);
@@ -131,9 +138,5 @@ namespace NetworkNode
             catch (Exception)
             { }
         }
-
     }
-
-
-    
 }
