@@ -10,6 +10,12 @@ namespace NetworkCloud
     class Configuration
     {
         private ListView linksListView;
+        private string cloudId;
+        public string CloudId
+        {
+            get { return cloudId; }
+        }
+
         private int cloudPort;
         public int CloudPort
         {
@@ -37,10 +43,11 @@ namespace NetworkCloud
             List<string> nodeConfig = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Cloud[@ID]"))
             {
-                string nodeId = xnode.Attributes["ID"].Value;
-                nodeConfig.Add(nodeId);
-                string pipeManagerName = xnode.Attributes["pipeCloudName"].Value;
-                nodeConfig.Add(pipeManagerName);
+                string cloudId = xnode.Attributes["ID"].Value;
+                nodeConfig.Add(cloudId);
+                string cloudPort = xnode.Attributes["cloudPort"].Value;
+                nodeConfig.Add(cloudPort);
+
             }
             return nodeConfig;
         }
@@ -78,8 +85,8 @@ namespace NetworkCloud
                 this.linksListView.Items.Clear();
                 //podstawowe informacje o cloudzie (id, nazwy pipow)
                 List<string> config = readConfig(xml);
-                //this.cloudId = config[0];
-                //this.pipeServerName = config[1];
+                this.cloudId = config[0];
+                this.cloudPort = Convert.ToInt32(config[2]) ;
                 //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic = readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik

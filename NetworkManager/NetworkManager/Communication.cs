@@ -21,8 +21,9 @@ namespace NetworkManager
         public Communication(Logs logs)
         {
             encoder = new ASCIIEncoding();
-            commandChecker = new CommandChecker();
             this.logs = logs;
+            commandChecker = new CommandChecker();
+            
         }
 
         public bool startManager(int port)

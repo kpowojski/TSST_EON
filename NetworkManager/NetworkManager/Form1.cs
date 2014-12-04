@@ -33,7 +33,7 @@ namespace NetworkManager
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            if (communication.startManager(2005))
+            if (communication.startManager(configuration.ManagerPort))
                 enableButtonsAfterStarted();
         }
 
@@ -93,7 +93,7 @@ namespace NetworkManager
         private void afterConfiugrationLoaded()
         {
             startButton.Enabled = true;
-            communication = new Communication(logs);
+            communication = new Communication(this.logs);
         }
 
         private void enableButtonsAfterStarted()

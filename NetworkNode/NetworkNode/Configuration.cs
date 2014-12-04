@@ -77,10 +77,16 @@ namespace NetworkNode
             {
                 string nodeId = xnode.Attributes["ID"].Value;
                 nodeConfig.Add(nodeId);
-                string pipeCloudName = xnode.Attributes["pipeCloudName"].Value;
-                nodeConfig.Add(pipeCloudName);
-                string pipeManagerName = xnode.Attributes["pipeManagerName"].Value;
-                nodeConfig.Add(pipeManagerName);
+                string cloudIp = xnode.Attributes["cloudIp"].Value;
+                nodeConfig.Add(cloudIp);
+                string cloudPort = xnode.Attributes["cloudPort"].Value;
+                nodeConfig.Add(cloudPort);
+                string managerIp = xnode.Attributes["managerIp"].Value;
+                nodeConfig.Add(managerIp);
+                string managerPort = xnode.Attributes["managerPort"].Value;
+                nodeConfig.Add(managerPort);
+
+
             }
             return nodeConfig;
         }
@@ -120,10 +126,13 @@ namespace NetworkNode
                 List<string> nodeConf = new List<string>();
                 nodeConf = readConfig(xml);
                 this.nodeId = nodeConf[0];
+                this.cloudIp = nodeConf[1];
+                this.cloudPort = Convert.ToInt32(nodeConf[2]);
+                this.managerIp = nodeConf[3];
+                this.managerPort = Convert.ToInt32(nodeConf[4]);
 
                 this.portIn = readPortIn(xml);
                 this.portOut = readPortOut(xml);
-
                 this.comutation = new int[portIn.Count];
                 for (int i = 0; i < this.portIn.Count; i++)
                 {

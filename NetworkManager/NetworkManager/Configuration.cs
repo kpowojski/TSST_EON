@@ -14,13 +14,15 @@ namespace NetworkManager
             get { return managerId; }
         }
 
-        private string pipeManagerName;
-        public string PipeManagerName
+        private int managerPort;
+        public int ManagerPort
         {
-            get { return pipeManagerName; }
+            get { return managerPort; }
         }
-        private Logs logs;
 
+        private Logs logs;
+        
+        
         public Configuration(Logs logs)
         {
             this.logs = logs;
@@ -33,8 +35,8 @@ namespace NetworkManager
             {
                 string nodeId = xnode.Attributes["ID"].Value;
                 nodeConfig.Add(nodeId);
-                string pipeManagerName = xnode.Attributes["pipeManagerName"].Value;
-                nodeConfig.Add(pipeManagerName);
+                string managerPort = xnode.Attributes["managerPort"].Value;
+                nodeConfig.Add(managerPort);
             }
             return nodeConfig;
         }
@@ -49,7 +51,7 @@ namespace NetworkManager
                 managerConfig = Configuration.readConfig(xml);
 
                 this.managerId = managerConfig[0];
-                this.pipeManagerName = managerConfig[1];
+                this.managerPort = Convert.ToInt32(managerConfig[1]);
                 
 
                 string[] filePath = path.Split('\\');
