@@ -8,7 +8,42 @@ namespace ClientNode
 {
     class Configuration
     {
-        public static List<string> readConfig(XmlDocument xml)
+        private string pipeCloudName;
+        public string PipeCloudeName
+        {
+            get { return pipeCloudName; }
+        }
+        private string nodeId;
+        public string NodeId
+        {
+            get { return nodeId; }
+        }
+        private Checker checker;
+        public Checker Checker
+        {
+            get { return checker; }
+        }
+        private List<String> portIn = new List<String>();
+        public List<String> PortIn
+        {
+            get { return portIn; }
+        }
+
+        private List<String> portOut = new List<String>();
+        public List<String> PortOut
+        {
+            get { return portOut; }
+        }
+
+
+        private Logs logs;
+
+        public Configuration(Logs logs)
+        {
+            this.logs = logs;
+        }
+        
+        private List<string> readConfig(XmlDocument xml)
         {
             List<string> nodeConfig = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Node[@ID]"))
@@ -24,7 +59,7 @@ namespace ClientNode
         }
 
 
-        public static List<string> readPortIn(XmlDocument xml)
+        private List<string> readPortIn(XmlDocument xml)
         {
             string nodeName = "//InputPorts/Port";
             List<string> portIn = new List<string>();
@@ -36,7 +71,7 @@ namespace ClientNode
             return portIn;
         }
 
-        public static List<string> readPortOut(XmlDocument xml)
+        private List<string> readPortOut(XmlDocument xml)
         {
             string nodeName = "//OutputPorts/Port";
             List<string> portOut = new List<string>();
@@ -47,6 +82,29 @@ namespace ClientNode
                 portOut.Add(input);
             }
             return portOut;
+        }
+
+        public void loadConfiguration(string path)
+        {
+            XmlDocument xml = new XmlDocument();
+            try
+            {
+                xml.Load(path);
+                List<string> nodeConf = new List<string>();
+                nodeConf = readConfig(xml);
+                this.nodeId = nodeConf[0];
+                this.pipeCloudName = nodeConf[1];
+
+                this.portIn = readPortIn(xml);
+                this.portOut = readPortOut(xml);
+
+                this.checker = new Checker(this.nodeId, this.portIn);
+
+                string[] filePath = path.Split('\\');
+                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, Constants.INFO);
+            }
+            catch (Exception)
+            { }
         }
     }
 }

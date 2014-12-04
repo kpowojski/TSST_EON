@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Checker.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

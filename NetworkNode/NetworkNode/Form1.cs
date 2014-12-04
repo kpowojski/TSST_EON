@@ -37,11 +37,11 @@ namespace NetworkNode
         public Form1()
         {
             InitializeComponent();
-            checkId();
+            
 
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
-            
+            checkId();
         }
 
         private void cloudConnect_Click(object sender, EventArgs e)
