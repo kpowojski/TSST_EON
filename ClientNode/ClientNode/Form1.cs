@@ -99,7 +99,7 @@ namespace ClientNode
         private void checkId()
         {
             Process cur_process = Process.GetCurrentProcess();
-            Process[] processes = Process.GetProcessesByName("ClientNode");
+            Process[] processes = Process.GetProcessesByName(Constants.CLIENT_NODE);
             int position = 1;
             string configName = null;
             if (processes.Length > 0)
@@ -111,7 +111,7 @@ namespace ClientNode
                     else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
                         position++;
                 }
-                configName = "ClientNode" + position + "Config.xml";
+                configName = Constants.CLIENT_NODE + position + "Config.xml";
                 configuration.loadConfiguration(@"Config\ClientNode\" + configName);
                 loadDataFromConfiguraion();
             }
@@ -126,8 +126,8 @@ namespace ClientNode
             messageTextBox.Enabled = enabled;
             sendButton.Enabled = enabled;
             clearButton.Enabled = enabled;
-            if (enabled) statusLabel.Text = "Active";
-            else statusLabel.Text = "Inactive";
+            if (enabled) statusLabel.Text = Constants.ACTIVE;
+            else statusLabel.Text = Constants.INACTIVE;
         }
 
 

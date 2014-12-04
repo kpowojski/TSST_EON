@@ -12,7 +12,10 @@ namespace ClientNode
         public const int ERROR = 2;
         public const int RECEIVED = 3;
 
-        
+
+        public const string ACTIVE = "Active";
+        public const string INACTIVE = "Inactive";
+        public const string CLIENT_NODE = "ClientNode";
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT = "Sent: ";
 
