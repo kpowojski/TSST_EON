@@ -38,13 +38,7 @@ namespace ClientNode
             logs = new Logs(logsListView);
             encoder = new ASCIIEncoding();
             configuration = new Configuration(this.logs);
-            
-            client = new TCPClient("ClientName", this.logs);
-            
-
-
-            //checkId();
-            
+            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
         }
 
 
@@ -93,9 +87,9 @@ namespace ClientNode
             this.portOut = configuration.PortOut;
             this.checker = configuration.Checker;
             this.Text = nodeId;
+            client = new TCPClient(nodeId, this.logs); 
         }
 
-        
         private void checkId()
         {
             Process cur_process = Process.GetCurrentProcess();

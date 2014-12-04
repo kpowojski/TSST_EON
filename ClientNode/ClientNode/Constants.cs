@@ -12,7 +12,8 @@ namespace ClientNode
         public const int ERROR = 2;
         public const int RECEIVED = 3;
 
-        
+        public const string PATH_TO_CONFIG = @"Config\ClientNode\";
+
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT = "Sent: ";
 
