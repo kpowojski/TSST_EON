@@ -38,7 +38,9 @@ namespace ClientNode
             logs = new Logs(logsListView);
             encoder = new ASCIIEncoding();
             configuration = new Configuration(this.logs);
-            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
+            //configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
+            checkId();
+
         }
 
 
