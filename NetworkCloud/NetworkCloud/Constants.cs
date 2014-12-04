@@ -17,7 +17,7 @@ namespace NetworkCloud
 
         public const string CLOUD_STARTED_CORRECTLY = "NetworkCloud was started";
         public const string CLOUD_STARTED_ERROR = "An error occurred during start NetworkCloud";
-        public const string DISCONNECTED_NODE = "Someone has been disconnected (Connected nodes: ";
+        public const string DISCONNECTED_NODE = "Someone has been disconnected";
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT_MSG = "Sent: ";
 

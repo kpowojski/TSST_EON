@@ -42,6 +42,7 @@
             this.port_in = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.port_out = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.logsListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,13 +144,20 @@
             // 
             // logsListView
             // 
+            this.logsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.logsListView.Enabled = false;
             this.logsListView.Location = new System.Drawing.Point(12, 220);
             this.logsListView.Name = "logsListView";
             this.logsListView.Size = new System.Drawing.Size(525, 142);
             this.logsListView.TabIndex = 9;
             this.logsListView.UseCompatibleStateImageBehavior = false;
-            this.logsListView.View = System.Windows.Forms.View.List;
+            this.logsListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Logs";
+            this.columnHeader1.Width = 525;
             // 
             // NetworkCloud
             // 
@@ -168,6 +176,7 @@
             this.Name = "NetworkCloud";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NetworkCloud";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NetworkCloud_FormClosing);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -190,6 +199,7 @@
         private System.Windows.Forms.ColumnHeader port_in;
         private System.Windows.Forms.ColumnHeader port_out;
         private System.Windows.Forms.ListView logsListView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
 
