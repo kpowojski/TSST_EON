@@ -20,7 +20,7 @@ namespace NetworkCloud
         public const string DISCONNECTED_NODE = "Someone has been disconnected";
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT_MSG = "Sent: ";
-
-        public const string LOGS = "Logs";
+        public const string NODE_UNREACHABLE = "Node is unreachable";
+        public const string NODE_NOT_CONNECTED = "Node you want to reach is not connected";
     }
 }

@@ -27,9 +27,8 @@ namespace NetworkNode
         public const string NETWORK_MANAGER_DISCONNECTED = "NetworkManager has been disconnected";
         public const string MANAGER_MSG = "Agent: ";
 
-        public const string CONNECTION_CLOUD_SUCCESSFULLY = "Connected succesfully to the NetworkCloud";
-        public const string CONNECTION_CLOUD_ERROR = "Erorr while trying to connect to the NetworkCloud!";
-        public const string CONNECTION_CLOUD_CONNECTED_ALREADY = "You are already connected to the NetworkCloud!";
+        public const string CONNECTION_PASS = "Connection passed";
+        public const string CONNECTION_FAIL = "Connection failed! Try again.";
         public const string CONNECTION_MANAGER_SUCCESSFULL = "Already connected to the NetworkManager";
         public const string CONNECTION_MANAGER_ERROR = "Erorr while trying to connect to the NetworkManager!";
         public const string CONNECTION_MANAGER_CONNECTED_ALREADY = "You are already connected to the NetworkManager!";

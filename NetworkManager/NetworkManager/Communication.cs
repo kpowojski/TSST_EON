@@ -5,29 +5,24 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
-using System.Windows.Forms;
 
 namespace NetworkManager
 {
     class Communication
     {
-        //private PipeServer pipeServer;
-        private TcpListener serverSocket;
-        private Thread serverThread;
-        private Dictionary<TcpClient, string> clientSockets = new Dictionary<TcpClient, string>();
         private ASCIIEncoding encoder;
         private Logs logs;
         private CommandChecker commandChecker;
-        //private string pipeManagerName;
-        private Form1 form;
 
-        public Communication(Logs logs, Form1 form)//pipeManagerName
+        private TcpListener serverSocket;
+        private Thread serverThread;
+        private Dictionary<TcpClient, string> clientSockets = new Dictionary<TcpClient, string>();
+
+        public Communication(Logs logs)
         {
             encoder = new ASCIIEncoding();
             commandChecker = new CommandChecker();
-            //this.pipeManagerName = pipeManagerName;
             this.logs = logs;
-            this.form = form;
         }
 
         public bool startManager(int port)
@@ -45,22 +40,6 @@ namespace NetworkManager
                 logs.addLog(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
                 return false;
             }
-            //this.serverSocket.ClientDisconnected += serverSocket_ClientDisconnected;
-            //this.serverSocket.MessageReceived += serverSocket_messageReceived;
-
-            // if (!this.pipeServer.Running)
-            //    this.pipeServer.Start(this.pipeManagerName);
-
-            // if (this.pipeServer.Running)
-            //  {
-            //     logs.addLog(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
-            //    return true;
-            // }
-            // else
-            // {
-            //    logs.addLog(Constants.NETWORK_STARTED_ERROR, true, Constants.ERROR);
-            //     return false;
-            // }
         }
 
         public void stopServer()
@@ -74,7 +53,6 @@ namespace NetworkManager
             if (serverSocket != null)
             {
                 serverSocket.Stop();
-                logs.addLog("Server was disconnected.", true, Constants.INFO);
             }
             serverSocket = null;
             serverThread = null;
@@ -127,13 +105,13 @@ namespace NetworkManager
                     {
                         stream.Close();
                         clientSockets.Remove(client);
-                        logs.addLog("Client is unreachable", true, Constants.ERROR);
+                        logs.addLog(Constants.NODE_UNREACHABLE, true, Constants.ERROR);
                         return false;
                     }
                 }
                 else
                 {
-                    logs.addLog("Client you want to reach is not connected", true, Constants.ERROR);
+                    logs.addLog(Constants.NODE_NOT_CONNECTED, true, Constants.ERROR);
                     return false;
                 }
             }
