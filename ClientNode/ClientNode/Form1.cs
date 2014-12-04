@@ -25,6 +25,8 @@ namespace ClientNode
         private List<String> portIn = new List<String>();
         private List<String> portOut = new List<String>();
         private Checker checker;
+
+
         private string pipeCloudName;
         private PipeClient pipeCloudClient;
         private Logs logs;
@@ -61,7 +63,7 @@ namespace ClientNode
 
         private void serverDisconnected()
         {
-            logs.addLog("NetworkCloud has been disconnected", true, Constants.ERROR);
+            logs.addLog(, true, Constants.ERROR);
             buttonsEnabled();
         }
                     
