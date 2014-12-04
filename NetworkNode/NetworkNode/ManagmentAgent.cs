@@ -90,7 +90,7 @@ namespace NetworkNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                //logs.addLogFromAnotherThread(msg, true, Constants.TEXT);
+                logs.addLogFromAnotherThread("", true, Constants.TEXT);
             }
         }
 

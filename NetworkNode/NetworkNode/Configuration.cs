@@ -85,8 +85,6 @@ namespace NetworkNode
                 nodeConfig.Add(managerIp);
                 string managerPort = xnode.Attributes["managerPort"].Value;
                 nodeConfig.Add(managerPort);
-
-
             }
             return nodeConfig;
         }

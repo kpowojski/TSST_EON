@@ -197,7 +197,6 @@ namespace NetworkManager
                 if (bytesRead == 0) break;
 
                 string str = encoder.GetString(message, 0, bytesRead);
-                logs.addLogFromAnotherThread(str, false, Constants.RECEIVED);
                 if (clientSockets[clientSocket].Equals("Unknown"))
                 {
                     if (!getNodeName(clientSocket, str))
