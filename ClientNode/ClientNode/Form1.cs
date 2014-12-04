@@ -38,7 +38,9 @@ namespace ClientNode
             logs = new Logs(logsListView);
             encoder = new ASCIIEncoding();
             configuration = new Configuration(this.logs);
-            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
+            //configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
+            checkId();
+
         }
 
 
@@ -56,13 +58,14 @@ namespace ClientNode
         {
             if (client.connectToServer(configuration.CloudIp, configuration.CloudPort))
             {
-
+                buttonsEnabled();
             }
         }
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
             client.disconnectFromServer();
+            buttonsEnabled();
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -119,6 +122,7 @@ namespace ClientNode
         {
             bool enabled = connectButton.Enabled;
             connectButton.Enabled = !enabled;
+            configButton.Enabled = !enabled;
             disconnectButton.Enabled = enabled;
             messageTextBox.Enabled = enabled;
             sendButton.Enabled = enabled;
