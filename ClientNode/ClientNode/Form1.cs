@@ -19,7 +19,7 @@ namespace ClientNode
 
     public partial class ClientNode : Form
     {
-        private TCPClient client;
+        private Communication communication;
         private string nodeId;
         private string cloudIp;
         private int cloudPort;
@@ -48,7 +48,7 @@ namespace ClientNode
         {
             if (messageTextBox.Text != "")
             {
-                client.sendMessage(messageTextBox.Text);
+                communication.sendMessage(messageTextBox.Text);
                 messageTextBox.Text = "";
             }
             messageTextBox.Focus();
@@ -56,7 +56,7 @@ namespace ClientNode
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            if (client.connectToServer(configuration.CloudIp, configuration.CloudPort))
+            if (communication.connectToCloud(configuration.CloudIp, configuration.CloudPort))
             {
                 buttonsEnabled();
             }
@@ -64,7 +64,7 @@ namespace ClientNode
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
-            client.disconnectFromServer();
+            communication.disconnectFromCloud();
             buttonsEnabled();
         }
 
@@ -93,7 +93,7 @@ namespace ClientNode
             this.portOut = configuration.PortOut;
             this.checker = configuration.Checker;
             this.Text = nodeId;
-            client = new TCPClient(nodeId, this.logs); 
+            communication = new Communication(nodeId, this.logs); 
         }
 
         private void checkId()
@@ -129,6 +129,14 @@ namespace ClientNode
             clearButton.Enabled = enabled;
             if (enabled) statusLabel.Text = Constants.ACTIVE;
             else statusLabel.Text = Constants.INACTIVE;
+        }
+
+        private void ClientNode_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (communication != null)
+            {
+                communication.disconnectFromCloud();
+            }
         }
 
 

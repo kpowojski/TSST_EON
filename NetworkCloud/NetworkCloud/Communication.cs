@@ -22,6 +22,7 @@ namespace NetworkCloud
         public Communication(Logs logs, Forwarder forwarder)
         {
             this.encoder = new ASCIIEncoding();
+            this.forwarder = forwarder;
             this.logs = logs;
         }
 

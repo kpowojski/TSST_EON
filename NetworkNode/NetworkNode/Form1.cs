@@ -128,6 +128,22 @@ namespace NetworkNode
             this.checker = configuration.Checker;
             enableButtonAfterConfiguration();
             this.Text = nodeId;
-        } 
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (communication != null)
+            {
+                communication.disconnectFromCloud();
+            }
+            if (managmentAgent != null)
+            {
+                managmentAgent.disconnectFromManager();
+            }
+        }
+
+
+
+         
     }
 }
