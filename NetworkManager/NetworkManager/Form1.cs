@@ -33,13 +33,13 @@ namespace NetworkManager
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            if (communication.startManager())
+            if (communication.startManager(2005))
                 enableButtonsAfterStarted();
         }
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            if (communication.sendCommand(commandTextBox.Text))
+            if (communication.sendCommand("ClientNode1",commandTextBox.Text))
             {
                 lastCommands.Add(commandTextBox.Text);
                 commandListPosition = lastCommands.Count;
@@ -93,7 +93,7 @@ namespace NetworkManager
         private void afterConfiugrationLoaded()
         {
             startButton.Enabled = true;
-            communication = new Communication(configuration.PipeManagerName, logs, this);
+            communication = new Communication(logs, this);
         }
 
         private void enableButtonsAfterStarted()
@@ -105,6 +105,10 @@ namespace NetworkManager
             clearButton.Enabled = true;
             configButton.Enabled = false;
             commandTextBox.Enabled = true;
+        }
+        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            communication.stopServer();
         }
     }
 }
