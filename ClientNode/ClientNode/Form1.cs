@@ -54,7 +54,10 @@ namespace ClientNode
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            client.connectToServer(configuration.CloudIp, configuration.CloudPort);
+            if (client.connectToServer(configuration.CloudIp, configuration.CloudPort))
+            {
+
+            }
         }
 
         private void disconnectButton_Click(object sender, EventArgs e)

@@ -26,7 +26,7 @@ namespace ClientNode
         }
 
         //Łączenie z serwerem
-        public void connectToServer(string ip, int port)
+        public bool connectToServer(string ip, int port)
         {
             
             client = new TcpClient();
@@ -52,11 +52,13 @@ namespace ClientNode
                 clientThread.Start();
                 sendMyName();
                 logs.addLogFromAnotherThread(Constants.CONNECTION_PASS,true, Constants.INFO);
+                return true;
             }
             else
             {
                 client = null;
                 logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL,true, Constants.ERROR);
+                return false;
             }
             
         }
