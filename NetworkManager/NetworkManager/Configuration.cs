@@ -21,8 +21,8 @@ namespace NetworkManager
         }
 
         private Logs logs;
-        
-        
+
+
         public Configuration(Logs logs)
         {
             this.logs = logs;
@@ -52,7 +52,7 @@ namespace NetworkManager
 
                 this.managerId = managerConfig[0];
                 this.managerPort = Convert.ToInt32(managerConfig[1]);
-                
+
 
                 string[] filePath = path.Split('\\');
                 logs.addLog(Constants.LOADED_CONFIG + filePath[filePath.Length - 1], true, 0);

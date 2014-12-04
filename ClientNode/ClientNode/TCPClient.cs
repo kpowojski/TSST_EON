@@ -51,12 +51,12 @@ namespace ClientNode
                 clientThread = new Thread(new ThreadStart(displayMessageReceived));
                 clientThread.Start();
                 sendMyName();
-                logs.addLog(Constants.CONNECTION_PASS,true, Constants.INFO);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS,true, Constants.INFO);
             }
             else
             {
                 client = null;
-                logs.addLog(Constants.CONNECTION_FAIL,true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL,true, Constants.ERROR);
             }
             
         }
@@ -69,7 +69,7 @@ namespace ClientNode
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_DISCONNECTED, true, Constants.ERROR);
             }
         }
 
@@ -81,7 +81,7 @@ namespace ClientNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                logs.addLog(msg, true, Constants.INFO);
+                logs.addLogFromAnotherThread(msg, true, Constants.INFO);
             }
         }
 
@@ -106,11 +106,11 @@ namespace ClientNode
                 if (bytesRead == 0) break;
 
                 string str = encoder.GetString(message, 0, bytesRead);
-                logs.addLog(str, true, Constants.TEXT);
+                logs.addLogFromAnotherThread(str, true, Constants.TEXT);
             }
             if (client != null)
             {
-                logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.RECEIVED);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_DISCONNECTED, true, Constants.RECEIVED);
                 disconnectFromServer();
             }
         }

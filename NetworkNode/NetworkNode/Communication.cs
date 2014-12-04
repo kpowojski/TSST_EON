@@ -51,13 +51,13 @@ namespace NetworkNode
                 clientThread = new Thread(new ThreadStart(displayMessageReceived));
                 clientThread.Start();
                 sendMyName();
-                logs.addLog(Constants.CONNECTION_PASS, true, Constants.INFO);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS, true, Constants.INFO);
                 return true;
             }
             else
             {
                 client = null;
-                logs.addLog(Constants.CONNECTION_FAIL, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL, true, Constants.ERROR);
                 return false;
             }
         }
@@ -70,7 +70,7 @@ namespace NetworkNode
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.NETWORKNODE_STOPPED, true, Constants.ERROR);
             }
         }
 
@@ -82,7 +82,7 @@ namespace NetworkNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                logs.addLog(Constants.SENT_MSG + msg, true, Constants.TEXT);
+                logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
             }
         }
 
@@ -112,11 +112,11 @@ namespace NetworkNode
                 {
                     sendMessage(forwardedMessage);
                 }
-                logs.addLog(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);
+                logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);
             }
             if (client != null)
             {
-                logs.addLog(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
                 disconnectFromCloud();
             }
         }

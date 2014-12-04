@@ -21,12 +21,12 @@ namespace TCP
         public Form1()
         {
             InitializeComponent();
-            clientForm1 = new Form2();
+            /*clientForm1 = new Form2();
             clientForm2 = new Form2();
             clientForm1.Text = "Client 1";
             clientForm2.Text = "Client 2";
             clientForm1.Show();
-            clientForm2.Show();
+            clientForm2.Show();*/
             ipBox.Text = getMyIpAddress();
             server = new TCPServer(listView1);
         }
