@@ -14,6 +14,9 @@ namespace ClientNode
 
         public const string PATH_TO_CONFIG = @"Config\ClientNode\";
 
+        public const string ACTIVE = "Active";
+        public const string INACTIVE = "Inactive";
+        public const string CLIENT_NODE = "ClientNode";
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT = "Sent: ";
 
