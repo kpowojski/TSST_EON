@@ -12,6 +12,12 @@ namespace ClientNode
         public const int ERROR = 2;
         public const int RECEIVED = 3;
 
-        public const string NETWORK_DISCONNECTED = "NetworkCloud has been disconnected";
+        
+        public const string RECEIVED_MSG = "Received: ";
+        public const string SENT = "Sent: ";
+
+        public const string CONNECTION_PASS = "Connection passed";
+        public const string CONNECTION_FAIL = "Connection failed! Try again.";
+        public const string CONNECTION_DISCONNECTED = "Disconnected! Error occured in Network.";
     }
 }
