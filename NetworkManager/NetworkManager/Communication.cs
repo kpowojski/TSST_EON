@@ -120,22 +120,31 @@ namespace NetworkManager
 
         }
 
-        public void sendMessageToAll(string msg)
+        public bool sendCommandToAll(string msg)
         {
-            if (serverSocket != null)
+            if (msg != "")
             {
-                NetworkStream stream;
-                foreach (TcpClient client in clientSockets.Keys.ToList())
+                if (serverSocket != null)
                 {
-                    if (client.Connected)
+                    NetworkStream stream;
+                    foreach (TcpClient client in clientSockets.Keys.ToList())
                     {
-                        stream = client.GetStream();
-                        byte[] buffer = encoder.GetBytes(msg);
-                        stream.Write(buffer, 0, buffer.Length);
-                        stream.Flush();
+                        if (client.Connected)
+                        {
+                            stream = client.GetStream();
+                            byte[] buffer = encoder.GetBytes(msg);
+                            stream.Write(buffer, 0, buffer.Length);
+                            stream.Flush();
+                        }
                     }
+                    logs.addLog(msg, false, Constants.TEXT);
+                    return true;
                 }
-                logs.addLog(msg,false,Constants.TEXT);
+                return false;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -148,7 +157,7 @@ namespace NetworkManager
                 {
                     TcpClient clientSocket = this.serverSocket.AcceptTcpClient();
                     clientSockets.Add(clientSocket, "Unknown");
-                    Thread clientThread = new Thread(new ParameterizedThreadStart(DisplayMessageReceived));
+                    Thread clientThread = new Thread(new ParameterizedThreadStart(displayMessageReceived));
                     clientThread.Start(clientSocket);
                 }
                 catch
@@ -172,12 +181,14 @@ namespace NetworkManager
             }
         }
 
-        private void DisplayMessageReceived(object client)
+        private void displayMessageReceived(object client)
         {
             TcpClient clientSocket = (TcpClient)client;
             NetworkStream stream = clientSocket.GetStream();
+
             byte[] message = new byte[4096];
             int bytesRead;
+
             while (stream.CanRead)
             {
                 bytesRead = 0;
@@ -193,10 +204,24 @@ namespace NetworkManager
                 if (bytesRead == 0) break;
 
                 string str = encoder.GetString(message, 0, bytesRead);
-                List<string> messages = commandChecker.parseMessage(str);
-                foreach (string msg in messages)
+                if (clientSockets[clientSocket].Equals("Unknown"))
                 {
-                    logs.addLog(msg, false, Constants.RECEIVED);
+                    if (!getClientName(clientSocket, str))
+                    {
+                        List<string> messages = commandChecker.parseMessage(str);
+                        foreach (string msg in messages)
+                        {
+                            logs.addLog(msg, false, Constants.RECEIVED);
+                        }
+                    }
+                }
+                else
+                {
+                    List<string> messages = commandChecker.parseMessage(str);
+                    foreach (string msg in messages)
+                    {
+                        logs.addLog(msg, false, Constants.RECEIVED);
+                    }
                 }
             }
             if (serverSocket != null)
@@ -204,8 +229,9 @@ namespace NetworkManager
                 clientSocket.GetStream().Close();
                 clientSocket.Close();
                 clientSockets.Remove(clientSocket);
-                logs.addLog("Client has Disconnected",true,Constants.ERROR);
+                logs.addLog("Client has Disconnected", true, Constants.ERROR);
             }
+
         }
     }
 }

@@ -39,7 +39,7 @@ namespace NetworkManager
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            if (communication.sendCommand("ClientNode1",commandTextBox.Text))
+            if (communication.sendCommandToAll(commandTextBox.Text))
             {
                 lastCommands.Add(commandTextBox.Text);
                 commandListPosition = lastCommands.Count;
