@@ -89,10 +89,10 @@ namespace ClientNode
             this.nodeId = configuration.NodeId;
             this.cloudIp = configuration.CloudIp;
             this.cloudPort = configuration.CloudPort;
-
             this.portIn = configuration.PortIn;
             this.portOut = configuration.PortOut;
             this.checker = configuration.Checker;
+            this.Text = nodeId;
         }
 
         

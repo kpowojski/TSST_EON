@@ -109,27 +109,13 @@ namespace NetworkNode
             }
         }
 
-        private void enableScroll()
-        {
-            logsListView.Scrollable = true;
-            logsListView.View = View.Details;
-            ColumnHeader header = new ColumnHeader();
-            header.Width = logsListView.Size.Width;
-            header.Text = "Logs";
-            header.Name = "col1";
-            logsListView.Columns.Add(header);
-        }
-
         private void enableButtonAfterConfiguration()
         {
             logsListView.Enabled = true;
             connectCloudButton.Enabled = true;
             connectManagerButton.Enabled = true;
 
-            Button[] buttonsForCloud = { this.connectCloudButton, this.disconnectCloudButton, this.configButton };
             communication = new Communication(this.nodeId, this.logs, this.checker);
-
-            Button[] buttonsForManager = { this.connectManagerButton, this.disconnectManagerButton, this.configButton };
             managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.checker);
         }
 
@@ -141,6 +127,7 @@ namespace NetworkNode
             this.comutation = configuration.Comutation;
             this.checker = configuration.Checker;
             enableButtonAfterConfiguration();
+            this.Text = nodeId;
         } 
     }
 }

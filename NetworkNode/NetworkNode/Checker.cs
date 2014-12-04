@@ -94,7 +94,6 @@ namespace NetworkNode
                         return result;
 
                     case "SET":
-
                         string portIn = words[2];
                         string portOut = words[3];
                         if (setCommutation(portIn, portOut))
