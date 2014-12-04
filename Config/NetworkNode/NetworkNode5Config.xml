@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Node ID="NetworkNode5" pipeCloudName="\\.\pipe\NetworkCloud" pipeManagerName="\\.\pipe\NetworkManager" >
+<Node ID="NetworkNode1" cloudIp="localhost" cloudPort="15000" managerIp = "localhost" managerPort ="16000" >
 <Ports>
     <InputPorts>
       	<Port ID="CI1" />
