@@ -46,12 +46,12 @@ namespace NetworkNode
 
         private void cloudConnect_Click(object sender, EventArgs e)
         {
-            disconnectCloudButton.Enabled = true;
-            configButton.Enabled = false;
-
-            communication.connectToCloud();
-
-            connectCloudButton.Enabled = false;
+            if (communication.connectToCloud())
+            {
+                disconnectCloudButton.Enabled = true;
+                configButton.Enabled = false;
+                connectCloudButton.Enabled = false;
+            }
         }
 
         private void disconnectCloud_Click(object sender, EventArgs e)
@@ -67,10 +67,11 @@ namespace NetworkNode
 
         private void connectManagerButton_Click(object sender, EventArgs e)
         {
-            disconnectManagerButton.Enabled = true;
-
-            managementAgent.connectToManager();
-            connectManagerButton.Enabled = false;
+            if (managementAgent.connectToManager())
+            {
+                disconnectManagerButton.Enabled = true;
+                connectManagerButton.Enabled = false;
+            }
         }
 
         private void disconnectManagerButton_Click(object sender, EventArgs e)
@@ -92,8 +93,6 @@ namespace NetworkNode
             loadDataFromConfiguraion();
         }
 
-        
-
         private void checkId()
         {
             Process cur_process = Process.GetCurrentProcess();
@@ -114,7 +113,6 @@ namespace NetworkNode
                 loadDataFromConfiguraion();
             }
         }
-
 
         private void enableScroll()
         {
@@ -140,29 +138,16 @@ namespace NetworkNode
             Button[] buttonsForManager = { this.connectManagerButton, this.disconnectManagerButton, this.configButton };
             managementAgent = new ManagementAgent(this.logs, this.checker, this, buttonsForCloud);
             managementAgent.PipeManagerName = configuration.PipeManagerName;
-
         }
 
         private void loadDataFromConfiguraion()
         {
             this.nodeId = configuration.NodeId;
-            
             this.portIn = configuration.PortIn;
             this.portOut = configuration.PortOut;
             this.comutation = configuration.Comutation;
             this.checker = configuration.Checker;
-
             enableButtonAfterConfiguration();
-        }
-
-        
-
-        
-
-        
-
-        
-
-        
+        } 
     }
 }

@@ -55,7 +55,7 @@
             // connectCloudButton
             // 
             this.connectCloudButton.Enabled = false;
-            this.connectCloudButton.Location = new System.Drawing.Point(138, 270);
+            this.connectCloudButton.Location = new System.Drawing.Point(135, 270);
             this.connectCloudButton.Name = "connectCloudButton";
             this.connectCloudButton.Size = new System.Drawing.Size(150, 23);
             this.connectCloudButton.TabIndex = 3;
@@ -66,7 +66,7 @@
             // disconnectCloudButton
             // 
             this.disconnectCloudButton.Enabled = false;
-            this.disconnectCloudButton.Location = new System.Drawing.Point(293, 270);
+            this.disconnectCloudButton.Location = new System.Drawing.Point(290, 270);
             this.disconnectCloudButton.Name = "disconnectCloudButton";
             this.disconnectCloudButton.Size = new System.Drawing.Size(150, 23);
             this.disconnectCloudButton.TabIndex = 4;
@@ -78,7 +78,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 338);
+            this.statusStrip.Location = new System.Drawing.Point(0, 326);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(449, 22);
             this.statusStrip.TabIndex = 5;
@@ -114,7 +114,7 @@
             // connectManagerButton
             // 
             this.connectManagerButton.Enabled = false;
-            this.connectManagerButton.Location = new System.Drawing.Point(137, 299);
+            this.connectManagerButton.Location = new System.Drawing.Point(135, 299);
             this.connectManagerButton.Name = "connectManagerButton";
             this.connectManagerButton.Size = new System.Drawing.Size(150, 23);
             this.connectManagerButton.TabIndex = 7;
@@ -125,7 +125,7 @@
             // disconnectManagerButton
             // 
             this.disconnectManagerButton.Enabled = false;
-            this.disconnectManagerButton.Location = new System.Drawing.Point(293, 299);
+            this.disconnectManagerButton.Location = new System.Drawing.Point(290, 299);
             this.disconnectManagerButton.Name = "disconnectManagerButton";
             this.disconnectManagerButton.Size = new System.Drawing.Size(150, 23);
             this.disconnectManagerButton.TabIndex = 8;
@@ -137,7 +137,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 360);
+            this.ClientSize = new System.Drawing.Size(449, 348);
             this.Controls.Add(this.disconnectManagerButton);
             this.Controls.Add(this.connectManagerButton);
             this.Controls.Add(this.logsListView);

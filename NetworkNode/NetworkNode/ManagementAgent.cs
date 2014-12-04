@@ -59,7 +59,7 @@ namespace NetworkNode
             pipeManagerClient.ServerDisconnected += pipeManagerClient_ServerDisconnected;
         }
 
-        public void connectToManager()
+        public bool connectToManager()
         {
             if (!this.pipeManagerClient.Connected)
             {
@@ -69,9 +69,15 @@ namespace NetworkNode
                 this.pipeManagerClient.SendMessage(mess);
             }
             if (this.pipeManagerClient.Connected)
+            {
                 logs.addLog(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
+                return true;
+            }
             else
+            {
                 logs.addLog(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
+                return false;
+            }
         }
 
 

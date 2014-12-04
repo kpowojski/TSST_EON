@@ -71,7 +71,7 @@ namespace NetworkNode
             else statusLabel.Text = Constants.INACTIVE;
         }
 
-        public void connectToCloud()
+        public bool connectToCloud()
         {
             
             if (!this.pipeCloudClient.Connected)
@@ -82,9 +82,15 @@ namespace NetworkNode
                 this.pipeCloudClient.SendMessage(mess);
             }
             if (this.pipeCloudClient.Connected)
+            {
                 logs.addLog(Constants.CONNECTION_CLOUD_SUCCESSFULLY, true, Constants.INFO);
+                return true;
+            }
             else
+            {
                 logs.addLog(Constants.CONNECTION_CLOUD_ERROR, true, Constants.ERROR);
+                return false;
+            }
 
         }
 
