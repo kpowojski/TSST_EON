@@ -38,9 +38,9 @@
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.logsListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.helpButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -127,6 +127,11 @@
             this.logsListView.UseCompatibleStateImageBehavior = false;
             this.logsListView.View = System.Windows.Forms.View.Details;
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Logs";
+            this.columnHeader1.Width = 334;
+            // 
             // helpButton
             // 
             this.helpButton.Enabled = false;
@@ -149,11 +154,6 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Logs";
-            this.columnHeader1.Width = 334;
-            // 
             // Form1
             // 
             this.AcceptButton = this.sendButton;
@@ -175,6 +175,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NetworkManager";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
