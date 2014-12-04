@@ -229,6 +229,8 @@ namespace NetworkManager
                 clientSocket.GetStream().Close();
                 clientSocket.Close();
                 clientSockets.Remove(clientSocket);
+                logs.addLog("Client has Disconnected",true,Constants.ERROR);
+                logs.addLog(Constants.CLIENT_DISCONNECTED,true,Constants.ERROR);
                 logs.addLog("Client has Disconnected", true, Constants.ERROR);
             }
 

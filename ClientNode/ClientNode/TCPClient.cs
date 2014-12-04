@@ -110,7 +110,7 @@ namespace ClientNode
             }
             if (client != null)
             {
-                logs.addLog("Serwer został wyłączony.", true, Constants.RECEIVED);
+                logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.RECEIVED);
                 disconnectFromServer();
             }
         }
