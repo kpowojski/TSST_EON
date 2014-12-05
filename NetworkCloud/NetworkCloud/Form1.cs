@@ -14,11 +14,8 @@ namespace NetworkCloud
 {
     public partial class NetworkCloud : Form
     {
-
-        private List<Link> linksList;
         private Communication communication;
-        
-        private Forwarder forwarder;
+        private Parser parser;
         private Configuration configuration;
         private Logs logs;
         private ASCIIEncoding encoder;
@@ -29,11 +26,12 @@ namespace NetworkCloud
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.linksListView, this.logs);
             encoder = new ASCIIEncoding();
-            linksList = new List<Link>();
 
-            configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
-            enableButtonAfterConfiguration();
-            loadDataFromConfiguration();
+            if (configuration.loadConfiguration(Constants.PATH_TO_CONFIG))
+            {
+                enableButtonAfterConfiguration();
+                loadDataFromConfiguration();
+            }
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -67,14 +65,14 @@ namespace NetworkCloud
         
         private void loadDataFromConfiguration()
         {
-            this.forwarder = configuration.Forwarder;
-            this.communication = new Communication(logs, forwarder);
+            this.parser = new Parser(configuration.Dic, this.logs, configuration.LinksList);
+            this.communication = new Communication(this.logs, this.parser);
         }
 
         private void NetworkCloud_FormClosing(object sender, FormClosingEventArgs e)
         {
-            communication.stopServer();
+            if(communication != null)
+                communication.stopServer();
         }
-
     }
 }

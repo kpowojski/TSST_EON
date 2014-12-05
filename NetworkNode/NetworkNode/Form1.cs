@@ -25,6 +25,7 @@ namespace NetworkNode
         private List<String> portOut;
         private int[] comutation;
         private Checker checker;
+        private Parser parser;
 
         private Logs logs;
         private Configuration configuration;
@@ -114,9 +115,6 @@ namespace NetworkNode
             logsListView.Enabled = true;
             connectCloudButton.Enabled = true;
             connectManagerButton.Enabled = true;
-
-            communication = new Communication(this.nodeId, this.logs, this.checker);
-            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.checker);
         }
 
         private void loadDataFromConfiguraion()
@@ -128,6 +126,10 @@ namespace NetworkNode
             this.checker = configuration.Checker;
             enableButtonAfterConfiguration();
             this.Text = nodeId;
+
+            parser = new Parser(this.portIn, this.portOut, this.comutation, this.logs);
+            communication = new Communication(this.nodeId, this.logs, this.checker, this.parser);
+            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.checker);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

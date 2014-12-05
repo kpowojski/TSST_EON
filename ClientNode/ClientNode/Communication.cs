@@ -17,14 +17,16 @@ namespace ClientNode
         private Thread clientThread;
         private Logs logs;
         private Parser parser;
+        private ClientNode form;
         private string myName;
 
-        public Communication(string name, Logs logs, Parser parser)
+        public Communication(string name, Logs logs, Parser parser, ClientNode form)
         {
             this.encoder = new ASCIIEncoding();
             this.logs = logs;
             this.myName = name;
             this.parser = parser;
+            this.form = form;
         }
 
         public bool connectToCloud(string ip, int port)
@@ -52,36 +54,43 @@ namespace ClientNode
                 clientThread = new Thread(new ThreadStart(displayMessageReceived));
                 clientThread.Start();
                 sendMyName();
-                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS, true, Constants.INFO);
+                logs.addLog(Constants.CONNECTION_PASS, true, Constants.LOG_INFO, true);
                 return true;
             }
             else
             {
                 client = null;
-                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL, true, Constants.ERROR);
+                logs.addLog(Constants.CONNECTION_FAIL, true, Constants.LOG_ERROR, true);
                 return false;
             }
         }
 
-        public void disconnectFromCloud()
+        public void disconnectFromCloud(bool error = false)
         {
             if (client != null)
             {
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLogFromAnotherThread(Constants.CONNECTION_DISCONNECTED, true, Constants.ERROR);
+                if (!error)
+                {
+                    logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.LOG_INFO, true);
+                }
+                else
+                {
+                    logs.addLog(Constants.CONNECTION_DISCONNECTED_ERROR, true, Constants.LOG_ERROR, true);
+                    form.Invoke(new MethodInvoker(delegate(){ form.buttonsEnabled(); }));
+                }
             }
         }
 
         public void sendMessage(string msg, string bitRate)
         {
-            if (client != null && client.Connected)
+            if (client != null && client.Connected && msg != "")
             {
                 byte[] buffer = encoder.GetBytes(parser.parseMsgToCloud(bitRate, msg, true));
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                //logs.addLogFromAnotherThread(msg, true, Constants.INFO);
             }
         }
 
@@ -102,16 +111,16 @@ namespace ClientNode
                     break;
                 }
 
-                if (bytesRead == 0) break;
+                if (bytesRead == 0)
+                {
+                    break;
+                }
 
-                //string str = encoder.GetString(message, 0, bytesRead);
-                //logs.addLogFromAnotherThread(str, true, Constants.TEXT);
                 parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true);
             }
             if (client != null)
             {
-                logs.addLogFromAnotherThread(Constants.CONNECTION_DISCONNECTED, true, Constants.RECEIVED);
-                disconnectFromCloud();
+                disconnectFromCloud(true);
             }
         }
 
@@ -121,6 +130,5 @@ namespace ClientNode
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
         }
-
     }
 }

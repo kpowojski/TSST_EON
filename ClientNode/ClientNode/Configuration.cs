@@ -8,27 +8,26 @@ namespace ClientNode
 {
     class Configuration
     {
+        private Logs logs;
+
         private string nodeId;
         public string NodeId
         {
             get{return nodeId;}
         }
+
         private string cloudIp;
         public string CloudIp
         {
             get { return cloudIp; }
         }
+
         private int cloudPort;
         public int CloudPort
         {
             get { return cloudPort; }
         }
-        
-        private Checker checker;
-        public Checker Checker
-        {
-            get { return checker; }
-        }
+       
         private List<String> portIn = new List<String>();
         public List<String> PortIn
         {
@@ -40,9 +39,6 @@ namespace ClientNode
         {
             get { return portOut; }
         }
-
-
-        private Logs logs;
 
         public Configuration(Logs logs)
         {
@@ -63,7 +59,6 @@ namespace ClientNode
             }
             return nodeConfig;
         }
-
 
         private List<string> readPortIn(XmlDocument xml)
         {
@@ -90,7 +85,7 @@ namespace ClientNode
             return portOut;
         }
 
-        public void loadConfiguration(string path)
+        public bool loadConfiguration(string path)
         {
             XmlDocument xml = new XmlDocument();
             try
@@ -105,13 +100,14 @@ namespace ClientNode
                 this.portIn = readPortIn(xml);
                 this.portOut = readPortOut(xml);
 
-                this.checker = new Checker(this.nodeId, this.portIn);
-
                 string[] filePath = path.Split('\\');
-                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, Constants.INFO);
+                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, Constants.LOG_INFO);
+                return true;
             }
             catch (Exception)
-            { }
+            {
+                return false;
+            }
         }
     }
 }

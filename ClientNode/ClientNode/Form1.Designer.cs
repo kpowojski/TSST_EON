@@ -122,6 +122,7 @@
             // 
             // connectButton
             // 
+            this.connectButton.Enabled = false;
             this.connectButton.Location = new System.Drawing.Point(142, 12);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(116, 23);

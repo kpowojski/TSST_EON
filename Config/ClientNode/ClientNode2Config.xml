@@ -3,13 +3,9 @@
 <Ports>
     <InputPorts>
       	<Port ID="CI1" />
-	<Port ID="CI2" />
-	<Port ID="CI3" />
     </InputPorts>
     <OutputPorts>
       	<Port ID="CO1" />
-      	<Port ID="CO2" />
-      	<Port ID="CO3" />
     </OutputPorts>
   </Ports>
 </Node>

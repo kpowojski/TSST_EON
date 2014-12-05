@@ -27,7 +27,7 @@ namespace NetworkCloud
             if (showLogs)
             {
                 string link = findLink(srcNode, dstNodeAndPort[0], signalWords[0], dstNodeAndPort[1]);
-                logs.addLogFromAnotherThread(Constants.SIGNAL + link, true, Constants.TEXT);
+                logs.addLog(Constants.SIGNAL + link, true, Constants.LOG_TEXT, true);
             }
             signalWords[0] = dstNodeAndPort[1];
             parsedSignal[0] = dstNodeAndPort[0];
@@ -37,14 +37,16 @@ namespace NetworkCloud
 
         public string findLink(string srcNode, string dstNode, string srcPort, string dstPort)
         {
+            string valueToReturn = null;
+            Console.WriteLine(linkList.Count);
             foreach (Link link in linkList)
             {
                 if(link.nodeIn.Equals(srcNode) && link.nodeOut.Equals(dstNode) && link.portIn.Equals(srcPort) && link.portOut.Equals(dstPort))
                 {
-                    return link.linkID;
+                    valueToReturn = link.linkID;
                 }
             }
-            return null;
+            return valueToReturn;
         }
     }
 }

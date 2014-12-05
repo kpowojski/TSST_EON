@@ -13,16 +13,16 @@ namespace NetworkCloud
     {
         private ASCIIEncoding encoder;
         private Logs logs;
-        private Forwarder forwarder;
+        private Parser parser;
 
         private TcpListener serverSocket;
         private Thread serverThread;
         private Dictionary<TcpClient, string> clientSockets = new Dictionary<TcpClient, string>();
 
-        public Communication(Logs logs, Forwarder forwarder)
+        public Communication(Logs logs, Parser parser)
         {
             this.encoder = new ASCIIEncoding();
-            this.forwarder = forwarder;
+            this.parser = parser;
             this.logs = logs;
         }
 
@@ -32,13 +32,13 @@ namespace NetworkCloud
             {
                 this.serverSocket = new TcpListener(IPAddress.Any, port);
                 this.serverThread = new Thread(new ThreadStart(ListenForClients));
-                this.serverThread.Start(); 
-                logs.addLogFromAnotherThread(Constants.CLOUD_STARTED_CORRECTLY, true, Constants.INFO);
+                this.serverThread.Start();
+                logs.addLog(Constants.CLOUD_STARTED_CORRECTLY, true, Constants.LOG_INFO, true);
                 return true;
             }
             else
             {
-                logs.addLogFromAnotherThread(Constants.CLOUD_STARTED_ERROR, true, Constants.ERROR);
+                logs.addLog(Constants.CLOUD_STARTED_ERROR, true, Constants.LOG_ERROR, true);
                 return false;
             }
         }
@@ -84,38 +84,13 @@ namespace NetworkCloud
                         byte[] buffer = encoder.GetBytes(msg);
                         stream.Write(buffer, 0, buffer.Length);
                         stream.Flush();
-                        logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
                     }
                     else
                     {
                         stream.Close();
                         clientSockets.Remove(client);
-                        logs.addLogFromAnotherThread(Constants.NODE_UNREACHABLE, true, Constants.ERROR);
                     }
                 }
-                else
-                {
-                    logs.addLogFromAnotherThread(Constants.NODE_NOT_CONNECTED, true, Constants.ERROR);
-                }
-            }
-        }
-
-        public void sendMessageToAll(string msg)
-        {
-            if (serverSocket != null)
-            {
-                NetworkStream stream;
-                foreach (TcpClient client in clientSockets.Keys.ToList())
-                {
-                    if (client.Connected)
-                    {
-                        stream = client.GetStream();
-                        byte[] buffer = encoder.GetBytes(msg);
-                        stream.Write(buffer, 0, buffer.Length);
-                        stream.Flush();
-                    }
-                }
-                logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
             }
         }
 
@@ -158,31 +133,20 @@ namespace NetworkCloud
                     break;
                 }
 
-                if (bytesRead == 0) break;
-
-                string str = encoder.GetString(message, 0, bytesRead);
-                if (clientSockets[clientSocket].Equals("Unknown"))
+                if (bytesRead == 0)
                 {
-                    if (!getClientName(clientSocket, str))
-                    {
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + str, true, Constants.TEXT);
-                        string forwardedMessage = forwarder.forwardMessage(str);
+                    break;
+                }
 
-                        if (forwardedMessage != null)
-                        {
-                            sendMessageToAll(forwardedMessage);
-                        }
-                    }
+                string signal = encoder.GetString(message, 0, bytesRead);
+                if (!clientSockets[clientSocket].Equals("Unknown"))
+                {
+                    string[] response = parser.parseSignal(clientSockets[clientSocket], signal, true);
+                    sendMessage(response[0], response[1]);
                 }
                 else
                 {
-                    logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + str, true, Constants.TEXT);
-                    string forwardedMessage = forwarder.forwardMessage(str);
-
-                    if (forwardedMessage != null)
-                    {
-                        sendMessageToAll(forwardedMessage);
-                    }
+                    getClientName(clientSocket, signal);
                 }
             }
             if (serverSocket != null)
@@ -190,7 +154,7 @@ namespace NetworkCloud
                 clientSocket.GetStream().Close();
                 clientSocket.Close();
                 clientSockets.Remove(clientSocket);
-                logs.addLogFromAnotherThread(Constants.DISCONNECTED_NODE, true, Constants.ERROR);
+                logs.addLog(Constants.DISCONNECTED_NODE, true, Constants.LOG_ERROR, true);
             }
 
         }

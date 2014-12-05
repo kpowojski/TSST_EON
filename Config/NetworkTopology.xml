@@ -2,26 +2,25 @@
 <Cloud ID = "Network Cloud" cloudPort="15000" >
 	<Topology>
 		<Link ID="Link1" SrcID="ClientNode1" DstID="NetworkNode1" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link2" SrcID="ClientNode1" DstID="NetworkNode4" SrcPortID="CO2" DstPortID="CI1" /> 
-		<Link ID="Link3" SrcID="ClientNode2" DstID="NetworkNode3" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link4" SrcID="ClientNode2" DstID="NetworkNode4" SrcPortID="CO2" DstPortID="CI2" /> 
-		<Link ID="Link5" SrcID="ClientNode2" DstID="NetworkNode5" SrcPortID="CO3" DstPortID="CI1" /> 
-		<Link ID="Link6" SrcID="ClientNode3" DstID="NetworkNode2" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link7" SrcID="NetworkNode1" DstID="ClientNode1" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link8" SrcID="NetworkNode1" DstID="NetworkNode2" SrcPortID="CO2" DstPortID="CI2" /> 
-		<Link ID="Link9" SrcID="NetworkNode1" DstID="NetworkNode3" SrcPortID="CO3" DstPortID="CI2" /> 
-		<Link ID="Link10" SrcID="NetworkNode2" DstID="ClientNode3" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link11" SrcID="NetworkNode2" DstID="NetworkNode1" SrcPortID="CO2" DstPortID="CI2" /> 
-		<Link ID="Link12" SrcID="NetworkNode2" DstID="NetworkNode5" SrcPortID="CO3" DstPortID="CI2" /> 
-		<Link ID="Link13" SrcID="NetworkNode3" DstID="ClientNode2" SrcPortID="CO1" DstPortID="CI1" /> 
-		<Link ID="Link14" SrcID="NetworkNode3" DstID="NetworkNode1" SrcPortID="CO2" DstPortID="CI3" /> 
-		<Link ID="Link15" SrcID="NetworkNode3" DstID="NetworkNode4" SrcPortID="CO3" DstPortID="CI3" />
-		<Link ID="Link16" SrcID="NetworkNode4" DstID="ClientNode1" SrcPortID="CO1" DstPortID="CI2" />
-		<Link ID="Link17" SrcID="NetworkNode4" DstID="ClientNode2" SrcPortID="CO2" DstPortID="CI2" /> 
-		<Link ID="Link18" SrcID="NetworkNode4" DstID="NetworkNode3" SrcPortID="CO3" DstPortID="CI3" /> 
-		<Link ID="Link19" SrcID="NetworkNode4" DstID="NetworkNode5" SrcPortID="CO4" DstPortID="CI3" /> 
-		<Link ID="Link20" SrcID="NetworkNode5" DstID="ClientNode2" SrcPortID="CO1" DstPortID="CI3" /> 
-		<Link ID="Link21" SrcID="NetworkNode5" DstID="NetworkNode2" SrcPortID="CO2" DstPortID="CI4" /> 
-		<Link ID="Link22" SrcID="NetworkNode5" DstID="NetworkNode4" SrcPortID="CO3" DstPortID="CI3" />   
+		<Link ID="Link2" SrcID="ClientNode2" DstID="NetworkNode3" SrcPortID="CO1" DstPortID="CI1" />
+		<Link ID="Link3" SrcID="ClientNode3" DstID="NetworkNode2" SrcPortID="CO1" DstPortID="CI1" />
+		 
+		<Link ID="Link4" SrcID="NetworkNode1" DstID="ClientNode1" SrcPortID="CO1" DstPortID="CI1" /> 
+		<Link ID="Link5" SrcID="NetworkNode1" DstID="NetworkNode2" SrcPortID="NO2" DstPortID="NI2" /> 
+		<Link ID="Link6" SrcID="NetworkNode1" DstID="NetworkNode3" SrcPortID="NO3" DstPortID="NI2" /> 
+		
+		<Link ID="Link7" SrcID="NetworkNode2" DstID="ClientNode3" SrcPortID="CO1" DstPortID="CI1" /> 
+		<Link ID="Link8" SrcID="NetworkNode2" DstID="NetworkNode1" SrcPortID="NO2" DstPortID="NI2" /> 
+		<Link ID="Link9" SrcID="NetworkNode2" DstID="NetworkNode5" SrcPortID="NO3" DstPortID="NI2" /> 
+		
+		<Link ID="Link10" SrcID="NetworkNode3" DstID="ClientNode2" SrcPortID="CO1" DstPortID="CI1" /> 
+		<Link ID="Link11" SrcID="NetworkNode3" DstID="NetworkNode1" SrcPortID="NO2" DstPortID="NI3" /> 
+		<Link ID="Link12" SrcID="NetworkNode3" DstID="NetworkNode4" SrcPortID="NO3" DstPortID="NI3" />
+		
+		<Link ID="Link13" SrcID="NetworkNode4" DstID="NetworkNode3" SrcPortID="NO3" DstPortID="NI3" /> 
+		<Link ID="Link14" SrcID="NetworkNode4" DstID="NetworkNode5" SrcPortID="NO4" DstPortID="NI3" /> 
+		
+		<Link ID="Link15" SrcID="NetworkNode5" DstID="NetworkNode2" SrcPortID="NO2" DstPortID="NI4" /> 
+		<Link ID="Link16" SrcID="NetworkNode5" DstID="NetworkNode4" SrcPortID="NO3" DstPortID="NI3" />   
 	</Topology>
 </Cloud>

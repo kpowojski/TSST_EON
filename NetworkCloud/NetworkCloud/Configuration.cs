@@ -9,7 +9,9 @@ namespace NetworkCloud
 {
     class Configuration
     {
+        private Logs logs;
         private ListView linksListView;
+
         private string cloudId;
         public string CloudId
         {
@@ -21,19 +23,19 @@ namespace NetworkCloud
         {
             get { return cloudPort; }
         }
-        private Forwarder forwarder;
-        public Forwarder Forwarder
+        private Dictionary<string, string> dic;
+        public Dictionary<string, string> Dic
         {
-            get
-            {
-                return forwarder;
-            }
+            get { return dic; }
         }
-        private Logs logs;
+        private List<Link> linksList;
+        public List<Link> LinksList
+        {
+            get { return linksList; }
+        }
 
         public Configuration(ListView linksListView, Logs logs)
         {
-            
             this.linksListView = linksListView;
             this.logs = logs;
         }
@@ -47,15 +49,14 @@ namespace NetworkCloud
                 nodeConfig.Add(cloudId);
                 string cloudPort = xnode.Attributes["cloudPort"].Value;
                 nodeConfig.Add(cloudPort);
-
             }
             return nodeConfig;
         }
 
-
-        private Dictionary<string, string> readLinks (XmlDocument xml, string nodeName, ListView linksListView)
+        private void readLinks (XmlDocument xml, string nodeName, ListView linksListView)
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic = new Dictionary<string, string>();
+            linksList = new List<Link>();
 
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
@@ -67,42 +68,34 @@ namespace NetworkCloud
 
                 string[] row = { srcId, dstId, srcPortId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);
+                linksList.Add(new Link(id, srcId, dstId, srcPortId, dstPortId));
 
                 string key = srcId + " " + srcPortId;
                 string value = dstId + " " + dstPortId;
                 dic.Add(key, value);
             }
-            return dic;
         }
 
-
-        public void loadConfiguration(string path)
+        public bool loadConfiguration(string path)
         {
             XmlDocument xml = new XmlDocument();
             try
             {
                 xml.Load(path);
                 this.linksListView.Items.Clear();
-                //podstawowe informacje o cloudzie (id, nazwy pipow)
                 List<string> config = readConfig(xml);
                 this.cloudId = config[0];
                 this.cloudPort = Convert.ToInt32(config[1]) ;
-                //zaczynamy czytac wszystkie linki jakie mamy w pliku wskazanym 
-                Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic = readLinks(xml, "//Link[@ID]", linksListView); //metoda ta ładnie wypisuje w linksListView i zwaraca slownik
-
-                forwarder = new Forwarder(dic);
-
+                readLinks(xml, "//Link[@ID]", linksListView);
 
                 string[] filePath = path.Split('\\');
-                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, 0);
+                logs.addLog(Constants.CONFIG_LOADED + filePath[filePath.Length - 1], true, 0);
+                return true;
             }
-            catch (Exception)
-            { }
-
-
+            catch
+            {
+                return false;
+            }
         }
-
-
     }
 }

@@ -23,7 +23,7 @@ namespace ClientNode
         {
             if (showLogs)
             {
-                logs.addLogFromAnotherThread(Constants.SENT + msg, true, Constants.TEXT);
+                logs.addLog(Constants.SENT + msg, true, Constants.LOG_TEXT, true);
             }
             string[] bitRateWords = bitRate.Split(' ');     //[0] - value, [1] - 'Gb/s'
             return portOut.ElementAt(0) + " " + bitRateWords[0] + " " + msg;
@@ -41,7 +41,7 @@ namespace ClientNode
                     valueToReturn = signalWords[1];
                     if (showLogs)
                     {
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + valueToReturn, true, Constants.TEXT);
+                        logs.addLog(Constants.RECEIVED_MSG + valueToReturn, true, Constants.LOG_RECEIVED, true);
                     }
                 }
             }

@@ -7,12 +7,12 @@ namespace NetworkNode
 {
     class Parser
     {
-        private List<string> portIn;
-        private List<string> portOut;
+        private List<String> portIn;
+        private List<String> portOut;
         private Logs logs;
         private int[] commutation;
 
-        public Parser(List<string> portIn, List<string> portOut, int[] commutation, Logs logs)
+        public Parser(List<String> portIn, List<String> portOut, int[] commutation, Logs logs)
         {
             this.portIn = portIn;
             this.portOut = portOut;
@@ -21,20 +21,36 @@ namespace NetworkNode
         }
 
         //Syntax: PORT_OUT CARRIER SLOTS MSG
-        public string parseMsgToCloud(string portOut, string carrier, string slots, string msg, bool showLogs)
+        public string parseMsgToCloud(string portOut, string carrier, string slots, string msg, bool showLogs, bool more)
         {
-            if (showLogs)
+            if (showLogs && !more)
             {
-                logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + msg, true, Constants.TEXT);
+                logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
             }
             //MSG ON NETWORK OUTPUT PORT - COLORED SIGNAL
             if (!portOut.Contains('C'))
             {
+                if (showLogs && more)
+                {
+                    logs.addLogFromAnotherThread(
+                        "Port: " + portOut
+                        + ", Carrier: " + carrier
+                        + ", Slots: " + slots,
+                        true, Constants.TEXT);
+                    logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, false, Constants.TEXT);
+                }
                 return portOut + " " + carrier + " " + slots + " " + msg;
             }
             //MSG ON CLIENT OUTPUT PORT - GRAY SIGNAL
             else
             {
+                if (showLogs && more)
+                {
+                    logs.addLogFromAnotherThread(
+                        "Port: " + portOut,
+                        true, Constants.TEXT);
+                    logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, false, Constants.TEXT);
+                }
                 return portOut + " " + msg;     
             }
         }
@@ -57,13 +73,39 @@ namespace NetworkNode
             }
         }
 
-        public string forwardSignal(string[] signalWords)
+        public string[] forwardSignal(string[] signalWords)
         {
-            if (signalWords.Length > 2)
+            if (signalWords.Length == 4)
             {
-                // forwardowanie
+                int i = 0;
+                while (!portIn[i].Equals(signalWords[0]))
+                {
+                    i++;
+                }
+                signalWords[0] = portOut[commutation[i]];
+                return signalWords;
             }
-            return null;
+            else if (signalWords.Length == 3)
+            {
+                string[] coloredSignal = new string[4];
+                int i = 0;
+                while (!portIn[i].Equals(signalWords[0]))
+                {
+                    i++;
+                }
+                coloredSignal[0] = portOut[commutation[i]];
+                coloredSignal[3] = signalWords[2];
+
+                //bitRate2Carrier&Slots
+                coloredSignal[1] = "" + 1;
+                coloredSignal[2] = "" + 3;
+
+                return coloredSignal;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void displayMsgFromCloud(string[] signalWords, bool more)
@@ -75,16 +117,16 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLogFromAnotherThread(signalWords[3], true, Constants.RECEIVED);
+                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[3], true, Constants.RECEIVED);
                     }
                     else
                     {
                         logs.addLogFromAnotherThread(
                             "Port: " + signalWords[0]
-                            + "Carrier: " + signalWords[1]
-                            + "Slots: " + signalWords[2], 
+                            + ", Carrier: " + signalWords[1]
+                            + ", Slots: " + signalWords[2], 
                             true, Constants.RECEIVED);
-                        logs.addLogFromAnotherThread("Msg: " + signalWords[3], false, Constants.RECEIVED);
+                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[3], false, Constants.RECEIVED);
                     }
                 }
             }
@@ -95,15 +137,15 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLogFromAnotherThread(signalWords[2], true, Constants.RECEIVED);
+                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[2], true, Constants.RECEIVED);
                     }
                     else
                     {
                         logs.addLogFromAnotherThread(
                             "Port: " + signalWords[0]
-                            + "BitRate: " + signalWords[1],
+                            + ", BitRate: " + signalWords[1],
                             true, Constants.RECEIVED);
-                        logs.addLogFromAnotherThread("Msg: " + signalWords[2], true, Constants.RECEIVED);
+                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[2], false, Constants.RECEIVED);
                     }
                 }
             }

@@ -84,7 +84,7 @@ namespace NetworkNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
+                //logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
             }
         }
 
@@ -115,7 +115,9 @@ namespace NetworkNode
                     sendMessage(forwardedMessage);
                 }
                 logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);*/
-                parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
+                string[] receive = parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
+                string[] response = parser.forwardSignal(receive);
+                sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], true, true));
             }
             if (client != null)
             {

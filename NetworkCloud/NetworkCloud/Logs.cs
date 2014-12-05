@@ -16,7 +16,7 @@ namespace NetworkCloud
             this.logsListView = logsListView;
         }
 
-        public void addLog(String log, Boolean time, int flag)
+        public void addLog(String log, Boolean time, int flag, bool anotherThread=false)
         {
             ListViewItem item = new ListViewItem();
             switch (flag)
@@ -39,41 +39,21 @@ namespace NetworkCloud
                 item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
             else
                 item.Text = log;
-
-            logsListView.Items.Add(item);
-            logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-        }
-        public void addLogFromAnotherThread(String log, Boolean time, int flag)
-        {
-            ListViewItem item = new ListViewItem();
-            switch (flag)
+            if (!anotherThread)
             {
-                case 0:
-                    item.ForeColor = Color.Blue;
-                    break;
-                case 1:
-                    item.ForeColor = Color.Black;
-                    break;
-                case 2:
-                    item.ForeColor = Color.Red;
-                    break;
-                case 3:
-                    item.ForeColor = Color.Green;
-                    break;
-
+                logsListView.Items.Add(item);
+                logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
             }
-            if (time)
-                item.Text = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + log;
             else
-                item.Text = log;
-
-            logsListView.Invoke(
-                new MethodInvoker(delegate()
-                {
-                    logsListView.Items.Add(item);
-                    logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
-                })
-            );
+            {
+                logsListView.Invoke(
+                    new MethodInvoker(delegate()
+                    {
+                        logsListView.Items.Add(item);
+                        logsListView.Items[logsListView.Items.Count - 1].EnsureVisible();
+                    })
+                );
+            }
         }
     }
 }
