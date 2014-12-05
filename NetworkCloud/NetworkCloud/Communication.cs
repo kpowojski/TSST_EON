@@ -22,10 +22,10 @@ namespace NetworkCloud
         public Communication(Logs logs, Forwarder forwarder)
         {
             this.encoder = new ASCIIEncoding();
+            this.forwarder = forwarder;
             this.logs = logs;
         }
 
-        //Rozpoczyna pracę serwera
         public bool startServer(int port)
         {
             if (serverSocket == null && serverThread == null)
@@ -43,7 +43,6 @@ namespace NetworkCloud
             }
         }
 
-        //Kończy pracę serwera
         public void stopServer()
         {
             foreach (TcpClient clientSocket in clientSockets.Keys.ToList())
@@ -60,7 +59,6 @@ namespace NetworkCloud
             serverThread = null;
         }
 
-        //Wysyła wiadomość do wybranego klienta
         public void sendMessage(string name, string msg)
         {
             if (serverSocket != null)
@@ -102,7 +100,6 @@ namespace NetworkCloud
             }
         }
 
-        //Wysyła wiadomość do wszystkich klientów
         public void sendMessageToAll(string msg)
         {
             if (serverSocket != null)
@@ -122,7 +119,6 @@ namespace NetworkCloud
             }
         }
 
-        //Oczekiwanie na połączenie nowych klientów
         private void ListenForClients()
         {
             this.serverSocket.Start();
@@ -142,7 +138,6 @@ namespace NetworkCloud
             }
         }
 
-        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived(object client)
         {
             TcpClient clientSocket = (TcpClient)client;
@@ -200,7 +195,6 @@ namespace NetworkCloud
 
         }
 
-        //Pobiera z wiadomości nazwę klienta
         private bool getClientName(TcpClient client, string msg)
         {
             if (msg.Contains("//NAME// "))

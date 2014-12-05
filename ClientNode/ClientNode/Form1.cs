@@ -19,13 +19,14 @@ namespace ClientNode
 
     public partial class ClientNode : Form
     {
-        private TCPClient client;
+        private Communication communication;
         private string nodeId;
         private string cloudIp;
         private int cloudPort;
         private List<String> portIn = new List<String>();
         private List<String> portOut = new List<String>();
         private Checker checker;
+        private Parser parser;
 
         private Logs logs;
 
@@ -38,17 +39,14 @@ namespace ClientNode
             logs = new Logs(logsListView);
             encoder = new ASCIIEncoding();
             configuration = new Configuration(this.logs);
-            //configuration.loadConfiguration(Constants.PATH_TO_CONFIG);
             checkId();
-
         }
-
 
         private void sendButton_Click(object sender, EventArgs e)
         {
             if (messageTextBox.Text != "")
             {
-                client.sendMessage(messageTextBox.Text);
+                communication.sendMessage(messageTextBox.Text, bitRateBox.Text);
                 messageTextBox.Text = "";
             }
             messageTextBox.Focus();
@@ -56,7 +54,7 @@ namespace ClientNode
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            if (client.connectToServer(configuration.CloudIp, configuration.CloudPort))
+            if (communication.connectToCloud(configuration.CloudIp, configuration.CloudPort))
             {
                 buttonsEnabled();
             }
@@ -64,7 +62,7 @@ namespace ClientNode
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
-            client.disconnectFromServer();
+            communication.disconnectFromCloud();
             buttonsEnabled();
         }
 
@@ -93,7 +91,8 @@ namespace ClientNode
             this.portOut = configuration.PortOut;
             this.checker = configuration.Checker;
             this.Text = nodeId;
-            client = new TCPClient(nodeId, this.logs); 
+            parser = new Parser(portIn, portOut, logs);
+            communication = new Communication(nodeId, logs, parser); 
         }
 
         private void checkId()
@@ -111,8 +110,8 @@ namespace ClientNode
                     else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
                         position++;
                 }
-                configName = Constants.CLIENT_NODE + position + "Config.xml";
-                configuration.loadConfiguration(@"Config\ClientNode\" + configName);
+                configName = Constants.CLIENT_NODE + position + Constants.CONFIG_EXT;
+                configuration.loadConfiguration(Constants.PATH_TO_CONFIG + configName);
                 loadDataFromConfiguraion();
             }
         }
@@ -129,6 +128,14 @@ namespace ClientNode
             clearButton.Enabled = enabled;
             if (enabled) statusLabel.Text = Constants.ACTIVE;
             else statusLabel.Text = Constants.INACTIVE;
+        }
+
+        private void ClientNode_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (communication != null)
+            {
+                communication.disconnectFromCloud();
+            }
         }
 
 

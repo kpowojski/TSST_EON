@@ -176,6 +176,7 @@
             this.Name = "ClientNode";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ClientNode - Unknown";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientNode_FormClosing);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);

@@ -9,26 +9,27 @@ using System.Net;
 
 namespace ClientNode
 {
-    class TCPClient
+    class Communication
     {
         private ASCIIEncoding encoder;
         private TcpClient client;
         private NetworkStream stream;
         private Thread clientThread;
         private Logs logs;
+        private Parser parser;
         private string myName;
 
-        public TCPClient(string name, Logs logs)
+        public Communication(string name, Logs logs, Parser parser)
         {
             this.encoder = new ASCIIEncoding();
             this.logs = logs;
             this.myName = name;
+            this.parser = parser;
         }
 
-        //Łączenie z serwerem
-        public bool connectToServer(string ip, int port)
+        public bool connectToCloud(string ip, int port)
         {
-            
+
             client = new TcpClient();
             IPAddress ipAddress;
             if (ip.Contains("localhost"))
@@ -39,7 +40,7 @@ namespace ClientNode
             {
                 ipAddress = IPAddress.Parse(ip);
             }
-                
+
             try
             {
                 client.Connect(new IPEndPoint(ipAddress, port));
@@ -51,20 +52,18 @@ namespace ClientNode
                 clientThread = new Thread(new ThreadStart(displayMessageReceived));
                 clientThread.Start();
                 sendMyName();
-                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS,true, Constants.INFO);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS, true, Constants.INFO);
                 return true;
             }
             else
             {
                 client = null;
-                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL,true, Constants.ERROR);
+                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL, true, Constants.ERROR);
                 return false;
             }
-            
         }
 
-        //Kończy połączenie z serwerem
-        public void disconnectFromServer()
+        public void disconnectFromCloud()
         {
             if (client != null)
             {
@@ -75,19 +74,17 @@ namespace ClientNode
             }
         }
 
-        //Wysyłanie wiadomości
-        public void sendMessage(string msg)
+        public void sendMessage(string msg, string bitRate)
         {
             if (client != null && client.Connected)
             {
-                byte[] buffer = encoder.GetBytes(msg);
+                byte[] buffer = encoder.GetBytes(parser.parseMsgToCloud(bitRate, msg, true));
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                logs.addLogFromAnotherThread(msg, true, Constants.INFO);
+                //logs.addLogFromAnotherThread(msg, true, Constants.INFO);
             }
         }
 
-        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived()
         {
             byte[] message = new byte[4096];
@@ -107,17 +104,17 @@ namespace ClientNode
 
                 if (bytesRead == 0) break;
 
-                string str = encoder.GetString(message, 0, bytesRead);
-                logs.addLogFromAnotherThread(str, true, Constants.TEXT);
+                //string str = encoder.GetString(message, 0, bytesRead);
+                //logs.addLogFromAnotherThread(str, true, Constants.TEXT);
+                parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true);
             }
             if (client != null)
             {
                 logs.addLogFromAnotherThread(Constants.CONNECTION_DISCONNECTED, true, Constants.RECEIVED);
-                disconnectFromServer();
+                disconnectFromCloud();
             }
         }
 
-        //Wysyła serwerowi swoją nazwę, aby mógł zidentyfikować tego klienta
         private void sendMyName()
         {
             byte[] buffer = encoder.GetBytes("//NAME// " + myName);

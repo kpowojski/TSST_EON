@@ -22,5 +22,6 @@ namespace NetworkCloud
         public const string SENT_MSG = "Sent: ";
         public const string NODE_UNREACHABLE = "Node is unreachable";
         public const string NODE_NOT_CONNECTED = "Node you want to reach is not connected";
+        public const string SIGNAL = "Signal passed through: ";
     }
 }

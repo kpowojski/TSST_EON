@@ -18,13 +18,15 @@ namespace NetworkNode
         private string myName;
         private Logs logs;
         private Checker checker;
+        private Parser parser;
 
-        public Communication(string name, Logs logs, Checker checker)
+        public Communication(string name, Logs logs, Checker checker, Parser parser)
         {
             this.encoder = new ASCIIEncoding();
             this.myName = name;
             this.logs = logs;
             this.checker = checker;
+            this.parser = parser;
         }
 
         //Łączenie z serwerem
@@ -106,13 +108,14 @@ namespace NetworkNode
 
                 if (bytesRead == 0) break;
 
-                string str = encoder.GetString(message, 0, bytesRead);
+                /*string str = encoder.GetString(message, 0, bytesRead);
                 string forwardedMessage = this.checker.checkDestination(str);
                 if (checker.forwardMessage(forwardedMessage))
                 {
                     sendMessage(forwardedMessage);
                 }
-                logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);
+                logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);*/
+                parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
             }
             if (client != null)
             {

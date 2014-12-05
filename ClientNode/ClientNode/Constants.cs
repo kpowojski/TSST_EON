@@ -13,6 +13,7 @@ namespace ClientNode
         public const int RECEIVED = 3;
 
         public const string PATH_TO_CONFIG = @"Config\ClientNode\";
+        public const string CONFIG_EXT = "Config.xml";
 
         public const string ACTIVE = "Active";
         public const string INACTIVE = "Inactive";

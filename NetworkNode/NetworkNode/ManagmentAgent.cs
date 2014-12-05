@@ -124,6 +124,7 @@ namespace NetworkNode
                     {
                         if (response[i] != "null" && response[i] != null)
                             sendMessage(response[i]);
+
                        
                     }
                 }
