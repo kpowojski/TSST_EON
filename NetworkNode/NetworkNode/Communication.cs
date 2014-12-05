@@ -15,21 +15,20 @@ namespace NetworkNode
         private TcpClient client;
         private NetworkStream stream;
         private Thread clientThread;
-        private string myName;
         private Logs logs;
-        private Checker checker;
         private Parser parser;
+        private NetworkNode form;
+        private string myName;
 
-        public Communication(string name, Logs logs, Checker checker, Parser parser)
+        public Communication(string name, Logs logs, Parser parser, NetworkNode form)
         {
             this.encoder = new ASCIIEncoding();
             this.myName = name;
             this.logs = logs;
-            this.checker = checker;
             this.parser = parser;
+            this.form = form;
         }
 
-        //Łączenie z serwerem
         public bool connectToCloud(string ip, int port)
         {
             client = new TcpClient();
@@ -53,30 +52,38 @@ namespace NetworkNode
                 clientThread = new Thread(new ThreadStart(displayMessageReceived));
                 clientThread.Start();
                 sendMyName();
-                logs.addLogFromAnotherThread(Constants.CONNECTION_PASS, true, Constants.INFO);
+                logs.addLog(Constants.CONNECTION_PASS, true, Constants.LOG_INFO, true);
                 return true;
             }
             else
             {
                 client = null;
-                logs.addLogFromAnotherThread(Constants.CONNECTION_FAIL, true, Constants.ERROR);
+                logs.addLog(Constants.CONNECTION_FAILED, true, Constants.LOG_ERROR, true);
                 return false;
             }
         }
 
-        //Kończy połączenie z serwerem
-        public void disconnectFromCloud()
+        public void disconnectFromCloud(bool error=false)
         {
             if (client != null)
             {
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLogFromAnotherThread(Constants.NETWORKNODE_STOPPED, true, Constants.ERROR);
+                if (!error)
+                {
+                    logs.addLog(Constants.CONNECTION_STOP, true, Constants.LOG_INFO, true);
+                }
+                else
+                {
+                    logs.addLog(Constants.CONNECTION_ERROR, true, Constants.LOG_ERROR, true);
+                    form.Invoke(new MethodInvoker(delegate() {
+                        form.enableCloudButtons();
+                    }));
+                }
             }
         }
 
-        //Wysyłanie wiadomości
         public void sendMessage(string msg)
         {
             if (client != null && client.Connected)
@@ -84,11 +91,9 @@ namespace NetworkNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                //logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
             }
         }
 
-        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived()
         {
             byte[] message = new byte[4096];
@@ -108,25 +113,16 @@ namespace NetworkNode
 
                 if (bytesRead == 0) break;
 
-                /*string str = encoder.GetString(message, 0, bytesRead);
-                string forwardedMessage = this.checker.checkDestination(str);
-                if (checker.forwardMessage(forwardedMessage))
-                {
-                    sendMessage(forwardedMessage);
-                }
-                logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + forwardedMessage, true, Constants.RECEIVED);*/
                 string[] receive = parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
                 string[] response = parser.forwardSignal(receive);
                 sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], true, true));
             }
             if (client != null)
             {
-                logs.addLogFromAnotherThread(Constants.CLOUD_DISCONNECTED, true, Constants.ERROR);
-                disconnectFromCloud();
+                disconnectFromCloud(true);
             }
         }
 
-        //Wysyła serwerowi swoją nazwę, aby mógł zidentyfikować tego klienta
         private void sendMyName()
         {
             byte[] buffer = encoder.GetBytes("//NAME// " + myName);

@@ -15,7 +15,7 @@ using System.Diagnostics;
 
 namespace NetworkNode
 {
-    public partial class Form1 : Form
+    public partial class NetworkNode : Form
     {
         private Communication communication;
         private ManagmentAgent managmentAgent;
@@ -24,17 +24,15 @@ namespace NetworkNode
         private List<String> portIn;
         private List<String> portOut;
         private int[] comutation;
-        private Checker checker;
         private Parser parser;
 
         private Logs logs;
         private Configuration configuration;
 
-        public Form1()
+        public NetworkNode()
         {
             InitializeComponent();
             
-
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
             checkId();
@@ -52,14 +50,9 @@ namespace NetworkNode
 
         private void disconnectCloud_Click(object sender, EventArgs e)
         {
-            statusLabel.Text = Constants.INACTIVE;
-            disconnectCloudButton.Enabled = false;
-            connectCloudButton.Enabled = true;
-            configButton.Enabled = true;
             communication.disconnectFromCloud();
-            logs.addLog(Constants.NETWORKNODE_STOPPED, true, Constants.INFO);
+            enableCloudButtons();
         }
-
 
         private void connectManagerButton_Click(object sender, EventArgs e)
         {
@@ -72,15 +65,12 @@ namespace NetworkNode
 
         private void disconnectManagerButton_Click(object sender, EventArgs e)
         {
-            disconnectManagerButton.Enabled = false;
-            connectManagerButton.Enabled = true;
             managmentAgent.disconnectFromManager();
-            logs.addLog(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.INFO);
         }
 
         private void configButton_Click(object sender, EventArgs e)
         {
-            DialogResult result = openFileDialog.ShowDialog();
+            openFileDialog.ShowDialog();
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -123,13 +113,28 @@ namespace NetworkNode
             this.portIn = configuration.PortIn;
             this.portOut = configuration.PortOut;
             this.comutation = configuration.Comutation;
-            this.checker = configuration.Checker;
             enableButtonAfterConfiguration();
             this.Text = nodeId;
 
+            AgentParser agentParser = new AgentParser(
+                configuration.NodeId, configuration.PortIn, configuration.PortOut, configuration.Comutation);
             parser = new Parser(this.portIn, this.portOut, this.comutation, this.logs);
-            communication = new Communication(this.nodeId, this.logs, this.checker, this.parser);
-            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.checker);
+            communication = new Communication(this.nodeId, this.logs, this.parser, this);
+            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, agentParser, this);
+        }
+
+        public void enableCloudButtons()
+        {
+            statusLabel.Text = Constants.INACTIVE;
+            disconnectCloudButton.Enabled = false;
+            connectCloudButton.Enabled = true;
+            configButton.Enabled = true;
+        }
+
+        public void enableAgentButtons()
+        {
+            disconnectManagerButton.Enabled = false;
+            connectManagerButton.Enabled = true;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -143,9 +148,5 @@ namespace NetworkNode
                 managmentAgent.disconnectFromManager();
             }
         }
-
-
-
-         
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace NetworkNode
 {
-    partial class Form1
+    partial class NetworkNode
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NetworkNode));
             this.configButton = new System.Windows.Forms.Button();
             this.connectCloudButton = new System.Windows.Forms.Button();
             this.disconnectCloudButton = new System.Windows.Forms.Button();
@@ -59,7 +59,7 @@
             this.connectCloudButton.Name = "connectCloudButton";
             this.connectCloudButton.Size = new System.Drawing.Size(150, 23);
             this.connectCloudButton.TabIndex = 3;
-            this.connectCloudButton.Text = "Connect to cloud";
+            this.connectCloudButton.Text = "Connect";
             this.connectCloudButton.UseVisualStyleBackColor = true;
             this.connectCloudButton.Click += new System.EventHandler(this.cloudConnect_Click);
             // 
@@ -70,7 +70,7 @@
             this.disconnectCloudButton.Name = "disconnectCloudButton";
             this.disconnectCloudButton.Size = new System.Drawing.Size(150, 23);
             this.disconnectCloudButton.TabIndex = 4;
-            this.disconnectCloudButton.Text = "Disconnect from cloud";
+            this.disconnectCloudButton.Text = "Disconnect";
             this.disconnectCloudButton.UseVisualStyleBackColor = true;
             this.disconnectCloudButton.Click += new System.EventHandler(this.disconnectCloud_Click);
             // 
@@ -78,7 +78,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 326);
+            this.statusStrip.Location = new System.Drawing.Point(0, 328);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(449, 22);
             this.statusStrip.TabIndex = 5;
@@ -118,7 +118,7 @@
             this.connectManagerButton.Name = "connectManagerButton";
             this.connectManagerButton.Size = new System.Drawing.Size(150, 23);
             this.connectManagerButton.TabIndex = 7;
-            this.connectManagerButton.Text = "Connect to manager";
+            this.connectManagerButton.Text = "Agent: Connect";
             this.connectManagerButton.UseVisualStyleBackColor = true;
             this.connectManagerButton.Click += new System.EventHandler(this.connectManagerButton_Click);
             // 
@@ -129,15 +129,15 @@
             this.disconnectManagerButton.Name = "disconnectManagerButton";
             this.disconnectManagerButton.Size = new System.Drawing.Size(150, 23);
             this.disconnectManagerButton.TabIndex = 8;
-            this.disconnectManagerButton.Text = "Disconnect from manager";
+            this.disconnectManagerButton.Text = "Agent: Disconnect";
             this.disconnectManagerButton.UseVisualStyleBackColor = true;
             this.disconnectManagerButton.Click += new System.EventHandler(this.disconnectManagerButton_Click);
             // 
-            // Form1
+            // NetworkNode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 348);
+            this.ClientSize = new System.Drawing.Size(449, 350);
             this.Controls.Add(this.disconnectManagerButton);
             this.Controls.Add(this.connectManagerButton);
             this.Controls.Add(this.logsListView);
@@ -148,7 +148,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "NetworkNode";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NetworkNode - Unknown";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);

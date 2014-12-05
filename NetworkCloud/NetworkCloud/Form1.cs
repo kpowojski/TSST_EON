@@ -71,8 +71,10 @@ namespace NetworkCloud
 
         private void NetworkCloud_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(communication != null)
+            if (communication != null)
+            {
                 communication.stopServer();
+            }
         }
     }
 }

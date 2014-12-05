@@ -97,7 +97,7 @@ namespace ClientNode
                     else if (cur_process.StartTime == proc.StartTime && cur_process.Id > proc.Id)
                         position++;
                 }
-                configName = Constants.CLIENT_NODE + position + Constants.CONFIG_EXT;
+                configName = Constants.CLIENT_NODE + position + Constants.CONFIG_XML;
                 if (configuration.loadConfiguration(Constants.PATH_TO_CONFIG + configName))
                 {
                     connectButton.Enabled = true;

@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Checker.cs" />
+    <Compile Include="AgentParser.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />

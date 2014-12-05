@@ -15,74 +15,76 @@ namespace NetworkNode
         private TcpClient client;
         private NetworkStream stream;
         private Thread clientThread;
-        private string myName;
         private Logs logs;
-        private Checker checker;
+        private AgentParser agentParser;
+        private NetworkNode form;
+        private string myName;
 
-        public ManagmentAgent(string name, Logs logs, Checker checker)
+        public ManagmentAgent(string name, Logs logs, AgentParser agentParser, NetworkNode form)
         {
             this.encoder = new ASCIIEncoding();
             this.myName = name;
             this.logs = logs;
-            this.checker = checker;
+            this.agentParser = agentParser;
+            this.form = form;
         }
 
-        //Łączenie z serwerem
         public bool connectToManager(string ip, int port)
         {
-            if (client == null)
+            client = new TcpClient();
+            IPAddress ipAddress;
+            if (ip.Contains("localhost"))
             {
-                client = new TcpClient();
-                IPAddress ipAddress;
-                if (ip.Contains("localhost"))
-                {
-                    ipAddress = IPAddress.Loopback;
-                }
-                else
-                {
-                    ipAddress = IPAddress.Parse(ip);
-                }
-                try
-                {
-                    client.Connect(new IPEndPoint(ipAddress, port));
-                }
-                catch { }
-                if (client.Connected)
-                {
-                    stream = client.GetStream();
-                    clientThread = new Thread(new ThreadStart(displayMessageReceived));
-                    clientThread.Start();
-                    sendMyName();
-                    logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_SUCCESSFULL, true, Constants.INFO);
-                    return true;
-                }
-                else
-                {
-                    client = null;
-                    logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_ERROR, true, Constants.ERROR);
-                    return false;
-                }
+                ipAddress = IPAddress.Loopback;
             }
             else
             {
-                logs.addLogFromAnotherThread(Constants.CONNECTION_MANAGER_CONNECTED_ALREADY, true, Constants.ERROR);
+                ipAddress = IPAddress.Parse(ip);
+            }
+            try
+            {
+                client.Connect(new IPEndPoint(ipAddress, port));
+            }
+            catch { }
+            if (client.Connected)
+            {
+                stream = client.GetStream();
+                clientThread = new Thread(new ThreadStart(displayMessageReceived));
+                clientThread.Start();
+                sendMyName();
+                logs.addLog(Constants.AGENT_PASS, true, Constants.LOG_INFO, true);
+                return true;
+            }
+            else
+            {
+                client = null;
+                logs.addLog(Constants.AGENT_FAILED, true, Constants.LOG_ERROR, true);
                 return false;
             }
         }
 
-        //Kończy połączenie z serwerem
-        public void disconnectFromManager()
+        public void disconnectFromManager(bool error=false)
         {
             if (client != null)
             {
                 client.GetStream().Close();
                 client.Close();
                 client = null;
-                logs.addLogFromAnotherThread(Constants.DISCONNECTED_FROM_MANAGEMENT, true, Constants.ERROR);
+                if (!error)
+                {
+                    logs.addLog(Constants.AGENT_DISCONNECTED, true, Constants.LOG_ERROR, true);
+                }
+                else
+                {
+                    logs.addLog(Constants.AGENT_ERROR, true, Constants.LOG_ERROR, true);
+                    form.Invoke(new MethodInvoker(delegate()
+                    {
+                        form.enableAgentButtons();
+                    }));
+                }
             }
         }
 
-        //Wysyłanie wiadomości
         public void sendMessage(string msg)
         {
             if (client != null && client.Connected)
@@ -90,11 +92,9 @@ namespace NetworkNode
                 byte[] buffer = encoder.GetBytes(msg);
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
-                //logs.addLogFromAnotherThread("", true, Constants.TEXT);
             }
         }
 
-        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived()
         {
             byte[] message = new byte[4096];
@@ -116,27 +116,23 @@ namespace NetworkNode
 
                 string str = encoder.GetString(message, 0, bytesRead);
 
-                string[] response = this.checker.checkManagerCommand(str);
+                string[] response = this.agentParser.checkManagerCommand(str);
                 if (response != null)
                 {
-                    logs.addLogFromAnotherThread(Constants.MANAGER_MSG + response[0], true, Constants.RECEIVED);
+                    logs.addLog(Constants.MANAGER_MSG + response[0], true, Constants.LOG_RECEIVED, true);
                     for (int i = 1; i < response.Length; i++)
                     {
                         if (response[i] != "null" && response[i] != null)
                             sendMessage(response[i]);
-
-                       
                     }
                 }
             }
             if (client != null)
             {
-                logs.addLogFromAnotherThread(Constants.NETWORK_MANAGER_DISCONNECTED, true, Constants.ERROR);
-                disconnectFromManager();
+                disconnectFromManager(true);
             }
         }
 
-        //Wysyła serwerowi swoją nazwę, aby mógł zidentyfikować tego klienta
         private void sendMyName()
         {
             byte[] buffer = encoder.GetBytes("//NAME// " + myName);

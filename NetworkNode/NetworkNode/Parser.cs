@@ -25,19 +25,21 @@ namespace NetworkNode
         {
             if (showLogs && !more)
             {
-                logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, true, Constants.TEXT);
+                logs.addLog(Constants.SENT_MSG + msg, 
+                    true, Constants.LOG_TEXT, true);
             }
             //MSG ON NETWORK OUTPUT PORT - COLORED SIGNAL
             if (!portOut.Contains('C'))
             {
                 if (showLogs && more)
                 {
-                    logs.addLogFromAnotherThread(
-                        "Port: " + portOut
-                        + ", Carrier: " + carrier
-                        + ", Slots: " + slots,
-                        true, Constants.TEXT);
-                    logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, false, Constants.TEXT);
+                    logs.addLog(
+                        Constants.PARSER_PORT + portOut
+                        + Constants.PARSER_CARRIER + calculateCarrier(carrier)
+                        + Constants.PARSER_SLOTS + slots,
+                        true, Constants.LOG_TEXT, true);
+                    logs.addLog(Constants.SENT_MSG + msg, 
+                        false, Constants.LOG_TEXT, true);
                 }
                 return portOut + " " + carrier + " " + slots + " " + msg;
             }
@@ -46,10 +48,11 @@ namespace NetworkNode
             {
                 if (showLogs && more)
                 {
-                    logs.addLogFromAnotherThread(
-                        "Port: " + portOut,
-                        true, Constants.TEXT);
-                    logs.addLogFromAnotherThread(Constants.SENT_MSG + msg, false, Constants.TEXT);
+                    logs.addLog(
+                        Constants.PARSER_PORT + portOut,
+                        true, Constants.LOG_TEXT, true);
+                    logs.addLog(Constants.SENT_MSG + msg, 
+                        false, Constants.LOG_TEXT, true);
                 }
                 return portOut + " " + msg;     
             }
@@ -117,16 +120,18 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[3], true, Constants.RECEIVED);
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[3], 
+                            true, Constants.LOG_RECEIVED, true);
                     }
                     else
                     {
-                        logs.addLogFromAnotherThread(
-                            "Port: " + signalWords[0]
-                            + ", Carrier: " + signalWords[1]
-                            + ", Slots: " + signalWords[2], 
-                            true, Constants.RECEIVED);
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[3], false, Constants.RECEIVED);
+                        logs.addLog(
+                            Constants.PARSER_PORT + signalWords[0]
+                            + Constants.PARSER_CARRIER + calculateCarrier(signalWords[1])
+                            + Constants.PARSER_SLOTS + signalWords[2],
+                            true, Constants.LOG_RECEIVED, true);
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[3], 
+                            false, Constants.LOG_RECEIVED, true);
                     }
                 }
             }
@@ -137,18 +142,25 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[2], true, Constants.RECEIVED);
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[2],
+                            true, Constants.LOG_RECEIVED, true);
                     }
                     else
                     {
-                        logs.addLogFromAnotherThread(
-                            "Port: " + signalWords[0]
-                            + ", BitRate: " + signalWords[1],
-                            true, Constants.RECEIVED);
-                        logs.addLogFromAnotherThread(Constants.RECEIVED_MSG + signalWords[2], false, Constants.RECEIVED);
+                        logs.addLog(
+                            Constants.PARSER_PORT + signalWords[0]
+                            + Constants.PARSER_BITRATE + signalWords[1],
+                            true, Constants.LOG_RECEIVED, true);
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[2], false, Constants.LOG_RECEIVED, true);
                     }
                 }
             }
+        }
+
+        private string calculateCarrier(string carString)
+        {
+            double carNumber = 191.1 + Convert.ToDouble(carString) * 0.00625;
+            return carNumber + " THz";
         }
     }
 }

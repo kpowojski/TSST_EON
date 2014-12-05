@@ -16,6 +16,7 @@ namespace NetworkNode
         {
             get { return managerIp; }
         }
+
         private int managerPort;
         public int ManagerPort
         {
@@ -40,7 +41,6 @@ namespace NetworkNode
             get { return nodeId; }
         }
 
-
         private List<String> portIn;
         public List<String> PortIn
         {
@@ -57,12 +57,6 @@ namespace NetworkNode
         public int[] Comutation
         {
             get { return comutation; }
-        }
-
-        private Checker checker;
-        public Checker Checker
-        {
-            get { return checker; }
         }
 
         public Configuration(Logs logs)
@@ -107,7 +101,6 @@ namespace NetworkNode
             List<string> portOut = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-
                 string input = xnode.Attributes["ID"].Value;
                 portOut.Add(input);
             }
@@ -136,10 +129,9 @@ namespace NetworkNode
                 {
                     this.comutation[i] = -1;
                 }
-                this.checker = new Checker(this.nodeId, this.portIn, this.portOut, this.comutation);
 
                 string[] filePath = path.Split('\\');
-                logs.addLog(Constants.CONFIGURATION_LOADED + filePath[filePath.Length - 1], true, Constants.INFO);
+                logs.addLog(Constants.CONFIG_LOADED + filePath[filePath.Length - 1], true, Constants.LOG_INFO);
                 
             }
             catch (Exception)
