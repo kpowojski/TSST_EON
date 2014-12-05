@@ -40,6 +40,7 @@
             this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.connectButton = new System.Windows.Forms.Button();
             this.disconnectButton = new System.Windows.Forms.Button();
+            this.bitRateBox = new System.Windows.Forms.ComboBox();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,9 +57,9 @@
             // messageTextBox
             // 
             this.messageTextBox.Enabled = false;
-            this.messageTextBox.Location = new System.Drawing.Point(12, 316);
+            this.messageTextBox.Location = new System.Drawing.Point(91, 316);
             this.messageTextBox.Name = "messageTextBox";
-            this.messageTextBox.Size = new System.Drawing.Size(205, 20);
+            this.messageTextBox.Size = new System.Drawing.Size(126, 20);
             this.messageTextBox.TabIndex = 2;
             // 
             // clearButton
@@ -140,12 +141,27 @@
             this.disconnectButton.UseVisualStyleBackColor = true;
             this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
             // 
-            // Form1
+            // bitRateBox
+            // 
+            this.bitRateBox.Enabled = false;
+            this.bitRateBox.FormattingEnabled = true;
+            this.bitRateBox.Items.AddRange(new object[] {
+            "10 Gb/s",
+            "40 Gb/s",
+            "100 Gb/s"});
+            this.bitRateBox.Location = new System.Drawing.Point(12, 316);
+            this.bitRateBox.Name = "bitRateBox";
+            this.bitRateBox.Size = new System.Drawing.Size(73, 21);
+            this.bitRateBox.TabIndex = 10;
+            this.bitRateBox.Text = "10 Gb/s";
+            // 
+            // ClientNode
             // 
             this.AcceptButton = this.sendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 367);
+            this.Controls.Add(this.bitRateBox);
             this.Controls.Add(this.disconnectButton);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.logsListView);
@@ -157,7 +173,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "ClientNode";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ClientNode - Unknown";
             this.statusStrip.ResumeLayout(false);
@@ -180,6 +196,7 @@
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Button disconnectButton;
         public System.Windows.Forms.ColumnHeader col1;
+        private System.Windows.Forms.ComboBox bitRateBox;
     }
 }
 

@@ -117,13 +117,13 @@ namespace ClientNode
             }
         }
 
-
         private void buttonsEnabled()
         {
             bool enabled = connectButton.Enabled;
             connectButton.Enabled = !enabled;
             configButton.Enabled = !enabled;
             disconnectButton.Enabled = enabled;
+            bitRateBox.Enabled = enabled;
             messageTextBox.Enabled = enabled;
             sendButton.Enabled = enabled;
             clearButton.Enabled = enabled;
