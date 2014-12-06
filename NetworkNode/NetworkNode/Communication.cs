@@ -115,7 +115,15 @@ namespace NetworkNode
 
                 string[] receive = parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
                 string[] response = parser.forwardSignal(receive);
-                sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], true, true));
+                if (response[0] != Constants.COMMUTATION_NOT_EXIST)
+                {
+                    sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], true, true));
+                }
+                else
+                {
+                    logs.addLog(Constants.COMMUTATION_NOT_EXIST, false, Constants.LOG_ERROR);
+
+                }
             }
             if (client != null)
             {

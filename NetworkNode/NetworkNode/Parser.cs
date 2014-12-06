@@ -41,6 +41,7 @@ namespace NetworkNode
                     logs.addLog(Constants.SENT_MSG + msg, 
                         false, Constants.LOG_TEXT, true);
                 }
+                Console.WriteLine(portOut + " " + carrier + " " + slots + " " + msg);
                 return portOut + " " + carrier + " " + slots + " " + msg;
             }
             //MSG ON CLIENT OUTPUT PORT - GRAY SIGNAL
@@ -76,27 +77,58 @@ namespace NetworkNode
             }
         }
 
+        public void updateCommutationTable(int[] commutation)
+        {
+            this.commutation = commutation;
+        }
+
+
         public string[] forwardSignal(string[] signalWords)
         {
+
             if (signalWords.Length == 4)
             {
-                int i = 0;
-                while (!portIn[i].Equals(signalWords[0]))
+                int commutatedOutput = 0;
+                for (int n = 0; n < portIn.Count; n++)
                 {
-                    i++;
+                    if (portIn[n].Equals(signalWords[0]))
+                    {
+                        commutatedOutput = n;
+                        break;
+                    }
                 }
-                signalWords[0] = portOut[commutation[i]];
+
+                //tutaj zmiana. SPRAWDZAMY CZY Istnieje taka komutacja. 
+                if (commutation[commutatedOutput] != -1)
+                {
+                    signalWords[0] = portOut[commutation[commutatedOutput]];
+                }
+                else
+                {
+                    signalWords[0] = "ERROR COMMUTATION NOT EXIST";
+                }
                 return signalWords;
             }
             else if (signalWords.Length == 3)
             {
                 string[] coloredSignal = new string[4];
-                int i = 0;
-                while (!portIn[i].Equals(signalWords[0]))
+                int commutatedOutput = 0;
+                for (int n=0 ; n < portIn.Count; n++)
                 {
-                    i++;
+                    if (portIn[n].Equals(signalWords[0]))
+                    {
+                        commutatedOutput = n;
+                        break;
+                    }
                 }
-                coloredSignal[0] = portOut[commutation[i]];
+                if (commutation[commutatedOutput] != -1)
+                {
+                   coloredSignal[0] = portOut[commutation[commutatedOutput]];
+                }
+                else
+                {
+                    coloredSignal[0] = "ERROR COMMUTATION NOT EXIST";
+                }
                 coloredSignal[3] = signalWords[2];
 
                 //bitRate2Carrier&Slots

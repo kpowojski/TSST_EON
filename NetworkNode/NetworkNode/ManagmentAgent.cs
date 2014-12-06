@@ -122,6 +122,7 @@ namespace NetworkNode
                     logs.addLog(Constants.MANAGER_MSG + response[0], true, Constants.LOG_RECEIVED, true);
                     for (int i = 1; i < response.Length; i++)
                     {
+                        Thread.Sleep(10); // tutaj troche oszukujemy ale narazie inaczej sie nie da. Gdyby to nie stalo na jednym kompie wtedy mozna wyjebać
                         if (response[i] != "null" && response[i] != null)
                             sendMessage(response[i]);
                     }

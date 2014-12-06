@@ -12,13 +12,15 @@ namespace NetworkNode
         private List<string> portIn;
         private List<string> portOut;
         private int[] commutation;
+        private Parser parser;
 
-        public AgentParser(string nodeId, List<string> portIn, List<string> portOut, int[] commutation)
+        public AgentParser(string nodeId, List<string> portIn, List<string> portOut, int[] commutation, Parser parser)
         {
             this.nodeId = nodeId;
             this.portIn = portIn;
             this.portOut = portOut;
             this.commutation = commutation;
+            this.parser = parser;
             loadCross();
         }
 
@@ -154,6 +156,7 @@ namespace NetworkNode
             if (commutation[input] == -1)
             {
                 commutation[input] = output;
+                this.parser.updateCommutationTable(this.commutation); // we have to update commutation table in parser 
                 saveCross();
                 return true;
             }

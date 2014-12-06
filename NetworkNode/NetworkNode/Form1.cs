@@ -25,7 +25,7 @@ namespace NetworkNode
         private List<String> portOut;
         private int[] comutation;
         private Parser parser;
-
+        private AgentParser agentParser; 
         private Logs logs;
         private Configuration configuration;
 
@@ -116,11 +116,11 @@ namespace NetworkNode
             enableButtonAfterConfiguration();
             this.Text = nodeId;
 
-            AgentParser agentParser = new AgentParser(
-                configuration.NodeId, configuration.PortIn, configuration.PortOut, configuration.Comutation);
-            parser = new Parser(this.portIn, this.portOut, this.comutation, this.logs);
+            parser = new Parser(this.portIn, this.portOut, this.comutation, this.logs); // parse message from cloud
+            agentParser = new AgentParser(this.nodeId, this.portIn, this.portOut, this.comutation, this.parser); //parse message from mamanger 
+            
             communication = new Communication(this.nodeId, this.logs, this.parser, this);
-            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, agentParser, this);
+            managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.agentParser, this);
         }
 
         public void enableCloudButtons()
