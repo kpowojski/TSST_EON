@@ -34,7 +34,7 @@ namespace ClientNode
 
             client = new TcpClient();
             IPAddress ipAddress;
-            if (ip.Contains("localhost"))
+            if (ip.Contains(Constants.LOCALHOST))
             {
                 ipAddress = IPAddress.Loopback;
             }

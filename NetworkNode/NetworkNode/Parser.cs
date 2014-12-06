@@ -128,11 +128,13 @@ namespace NetworkNode
                 else
                 {
                     coloredSignal[0] = Constants.COMMUTATION_NOT_EXIST;
+                    return coloredSignal; // there is no sens to more. Information will stuck in that node
                 }
                 coloredSignal[3] = signalWords[2];
 
                 //bitRate2Carrier&Slots
                 string[] carrierAndSlots = CarrierAndSlotsConverter.convertFromBitRate(signalWords[1]);
+                Console.WriteLine(carrierAndSlots[0]);
                 coloredSignal[1] = carrierAndSlots[0];
                 coloredSignal[2] = carrierAndSlots[1];
 

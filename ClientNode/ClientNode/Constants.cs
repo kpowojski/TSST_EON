@@ -14,7 +14,7 @@ namespace ClientNode
 
         public const string PATH_TO_CONFIG = @"Config\ClientNode\";
         public const string CONFIG_XML = "Config.xml";
-
+        public const string LOCALHOST = "localhost";
         public const string ACTIVE = "Active";
         public const string INACTIVE = "Inactive";
         public const string CLIENT_NODE = "ClientNode";
@@ -25,5 +25,13 @@ namespace ClientNode
         public const string CONNECTION_FAIL = "Connection failed! Try again.";
         public const string CONNECTION_DISCONNECTED = "Disconnected.";
         public const string CONNECTION_DISCONNECTED_ERROR = "Disconnected! Error occured in the Network.";
+
+
+        public const string ID = "ID";
+        public const string CLOUD_IP = "cloudIp";
+        public const string CLOUD_PORT = "cloudPort";
+        public const string INPUT_PORT_NODE = "//InputPorts/Port";
+        public const string OUTPUT_PORT_NODE = "//OutputPorts/Port";
+        public const string CONFIGURATION_LOADED_FROM = "Configuration loaded from file: ";
     }
 }

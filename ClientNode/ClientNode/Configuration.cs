@@ -50,11 +50,11 @@ namespace ClientNode
             List<string> nodeConfig = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Node[@ID]"))
             {
-                string nodeId = xnode.Attributes["ID"].Value;
+                string nodeId = xnode.Attributes[Constants.ID].Value;
                 nodeConfig.Add(nodeId);
-                string pipeCloudName = xnode.Attributes["cloudIp"].Value;
+                string pipeCloudName = xnode.Attributes[Constants.CLOUD_IP].Value;
                 nodeConfig.Add(pipeCloudName);
-                string pipeManagerName = xnode.Attributes["cloudPort"].Value;
+                string pipeManagerName = xnode.Attributes[Constants.CLOUD_PORT].Value;
                 nodeConfig.Add(pipeManagerName);
             }
             return nodeConfig;
@@ -62,11 +62,11 @@ namespace ClientNode
 
         private List<string> readPortIn(XmlDocument xml)
         {
-            string nodeName = "//InputPorts/Port";
+            string nodeName = Constants.INPUT_PORT_NODE;
             List<string> portIn = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-                string input = xnode.Attributes["ID"].Value;
+                string input = xnode.Attributes[Constants.ID].Value;
                 portIn.Add(input);
             }
             return portIn;
@@ -74,12 +74,12 @@ namespace ClientNode
 
         private List<string> readPortOut(XmlDocument xml)
         {
-            string nodeName = "//OutputPorts/Port";
+            string nodeName = Constants.OUTPUT_PORT_NODE;
             List<string> portOut = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
 
-                string input = xnode.Attributes["ID"].Value;
+                string input = xnode.Attributes[Constants.ID].Value;
                 portOut.Add(input);
             }
             return portOut;
@@ -101,7 +101,7 @@ namespace ClientNode
                 this.portOut = readPortOut(xml);
 
                 string[] filePath = path.Split('\\');
-                logs.addLog("Configuration loaded from file: " + filePath[filePath.Length - 1], true, Constants.LOG_INFO);
+                logs.addLog(Constants.CONFIGURATION_LOADED_FROM + filePath[filePath.Length - 1], true, Constants.LOG_INFO);
                 return true;
             }
             catch (Exception)
