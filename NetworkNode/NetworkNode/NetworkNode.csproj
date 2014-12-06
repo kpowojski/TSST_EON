@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentParser.cs" />
+    <Compile Include="CarrierAndSlotsConverter.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />

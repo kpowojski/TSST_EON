@@ -21,7 +21,7 @@ namespace NetworkNode
             this.portOut = portOut;
             this.commutation = commutation;
             this.parser = parser;
-            ////loadCross();
+            loadCross();
         }
 
         public string checkDestination(string message)

@@ -132,8 +132,9 @@ namespace NetworkNode
                 coloredSignal[3] = signalWords[2];
 
                 //bitRate2Carrier&Slots
-                coloredSignal[1] = "" + 1;
-                coloredSignal[2] = "" + 3;
+                string[] carrierAndSlots = CarrierAndSlotsConverter.convertFromBitRate(signalWords[1]);
+                coloredSignal[1] = carrierAndSlots[0];
+                coloredSignal[2] = carrierAndSlots[1];
 
                 return coloredSignal;
             }

@@ -40,5 +40,14 @@ namespace NetworkNode
         public const string PARSER_BITRATE = ", BitRate: ";
 
         public const string COMMUTATION_NOT_EXIST = "Error commutation does not exist!!! Check commutation table using Manager";
+
+
+        public const double CENRTAL_FREQUENCY = 193.1;
+        public const double MIN_FREQUENCY = 190.1;
+        public const double MAX_FREQUENCY = 197.2;
+        public const double DISTANCE_BETWEEN_FREQUENCIES = 0.00625;
+        public const int SLOTS_FOR_BITRATE_10 = 1;
+        public const int SLOTS_FOR_BITRATE_40 = 2;
+        public const int SLOTS_FOR_BITRATE_100 = 3;
     }
 }
