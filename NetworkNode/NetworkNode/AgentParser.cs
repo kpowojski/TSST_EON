@@ -64,7 +64,7 @@ namespace NetworkNode
         public bool forwardMessage(string msg)
         {
             string[] words = msg.Split(' ');
-            if (words[0].Equals("NO_REDIRECTION"))
+            if (words[0].Equals(Constants.NO_REDIRECTION))
                 return false;
             else
                 return true;
@@ -98,18 +98,18 @@ namespace NetworkNode
                         string portIn = words[2];
                         string portOut = words[3];
                         if (setCommutation(portIn, portOut))
-                            result[1] = "SET_RESPONSE SUCCESS";
+                            result[1] = Constants.SET_RESPONSE_SUCCESS;
                         else
-                            result[1] = "SET_RESPONSE ERROR";
+                            result[1] = Constants.SET_RESPONSE_ERROR;
                         return result;
 
                     case "DELETE":
                         string deletePortIn = words[2];
                         string deletePortOut = words[3];
                         if (deleteCommutation(deletePortIn, deletePortOut))
-                            result[1] = "DELETE_RESPONSE SUCESS";
+                            result[1] = Constants.DELETE_RESPONSE_SUCCESS;
                         else
-                            result[1] = "DELETE_RESPONSE ERROR";
+                            result[1] = Constants.DELETE_RESPONSE_ERROR;
                         return result;
                 }
             }
@@ -119,20 +119,20 @@ namespace NetworkNode
         private string getPortsIn()
         {
             string portsIn = string.Join(" ", this.portIn.ToArray());
-            string result = "PORTS_IN " + portsIn;
+            string result = Constants.PORTS_IN +portsIn;
             return result;
         }
 
         private string getPortsOut()
         {
             string portsOut = string.Join(" ", this.portOut.ToArray());
-            string result = "PORTS_OUT " + portsOut;
+            string result = Constants.PORTS_OUT + portsOut;
             return result;
         }
 
         public string getCommutation()
         {
-            string configuration = "COMMUTATION ";
+            string configuration = Constants.COMMUTATION;
             for (int i = 0; i < portIn.Count; i++)
             {
                 if (commutation[i] != -1)

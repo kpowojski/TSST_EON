@@ -69,15 +69,15 @@ namespace NetworkNode
             List<string> nodeConfig =new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Node[@ID]"))
             {
-                string nodeId = xnode.Attributes["ID"].Value;
+                string nodeId = xnode.Attributes[Constants.ID].Value;
                 nodeConfig.Add(nodeId);
-                string cloudIp = xnode.Attributes["cloudIp"].Value;
+                string cloudIp = xnode.Attributes[Constants.CLOUD_IP].Value;
                 nodeConfig.Add(cloudIp);
-                string cloudPort = xnode.Attributes["cloudPort"].Value;
+                string cloudPort = xnode.Attributes[Constants.CLOUD_PORT].Value;
                 nodeConfig.Add(cloudPort);
-                string managerIp = xnode.Attributes["managerIp"].Value;
+                string managerIp = xnode.Attributes[Constants.MANAGER_IP].Value;
                 nodeConfig.Add(managerIp);
-                string managerPort = xnode.Attributes["managerPort"].Value;
+                string managerPort = xnode.Attributes[Constants.MANAGER_PORT].Value;
                 nodeConfig.Add(managerPort);
             }
             return nodeConfig;
@@ -85,11 +85,11 @@ namespace NetworkNode
 
         private List<string> readPortIn(XmlDocument xml)
         {
-            string nodeName = "//InputPorts/Port";
+            string nodeName = Constants.INPUT_PORT_NODE;
             List<string> portIn = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-                string input = xnode.Attributes["ID"].Value;
+                string input = xnode.Attributes[Constants.ID].Value;
                 portIn.Add(input);
             }
             return portIn;
@@ -97,11 +97,11 @@ namespace NetworkNode
 
         private List<string> readPortOut(XmlDocument xml)
         {
-            string nodeName = "//OutputPorts/Port";
+            string nodeName = Constants.OUTPUT_PORT_NODE;
             List<string> portOut = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-                string input = xnode.Attributes["ID"].Value;
+                string input = xnode.Attributes[Constants.ID].Value;
                 portOut.Add(input);
             }
             return portOut;

@@ -12,6 +12,7 @@ namespace NetworkNode
         public const int LOG_ERROR = 2;
         public const int LOG_RECEIVED = 3;
 
+        public const string LOCALHOST = "localhost";
         public const string PATH_TO_CONFIG = @"Config\NetworkNode\";
         public const string CONFIG_XML = "Config.xml";
         public const string CONFIG_LOADED = "Configuration loaded from file: ";
@@ -39,9 +40,28 @@ namespace NetworkNode
         public const string PARSER_PORT = "Port: ";
         public const string PARSER_BITRATE = ", BitRate: ";
 
-        public const string COMMUTATION_NOT_EXIST = "Error commutation does not exist!!! Check commutation table using Manager";
+        public const string COMMUTATION_NOT_EXIST = "ERROR COMMUTATION NOT EXIST";
+        public const string COMMUTATION_NOT_EXIST_MSG = "Error commutation does not exist!!! Check commutation table using Manager";
+        public const string NO_REDIRECTION = "NO_REDIRECTION";
+        public const string SET_RESPONSE_SUCCESS = "SET_RESPONSE SUCCESS";
+        public const string SET_RESPONSE_ERROR = "SET_RESPONSE ERROR";
+        public const string DELETE_RESPONSE_SUCCESS = "DELETE_RESPONSE SUCCESS";
+        public const string DELETE_RESPONSE_ERROR = "DELETE_RESPONSE ERROR";
+        public const string PORTS_IN = "PORTS_IN ";
+        public const string PORTS_OUT = "PORTS_OUT ";
+        public const string COMMUTATION = "COMMUTATION ";
 
 
+        //constants used in loading configuration from xml file
+        public const string ID = "ID";
+        public const string CLOUD_IP = "cloudIp";
+        public const string CLOUD_PORT = "cloudPort";
+        public const string MANAGER_IP = "managerIp";
+        public const string MANAGER_PORT = "managerPort";
+        public const string INPUT_PORT_NODE = "//InputPorts/Port";
+        public const string OUTPUT_PORT_NODE = "//OutputPorts/Port";
+
+        //constants used in counting carrier and number of slots
         public const double CENRTAL_FREQUENCY = 193.1;
         public const double MIN_FREQUENCY = 190.1;
         public const double MAX_FREQUENCY = 197.2;

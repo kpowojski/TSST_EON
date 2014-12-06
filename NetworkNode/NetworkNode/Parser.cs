@@ -105,7 +105,7 @@ namespace NetworkNode
                 }
                 else
                 {
-                    signalWords[0] = "ERROR COMMUTATION NOT EXIST";
+                    signalWords[0] = Constants.COMMUTATION_NOT_EXIST;
                 }
                 return signalWords;
             }

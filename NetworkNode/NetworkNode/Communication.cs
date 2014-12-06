@@ -33,7 +33,7 @@ namespace NetworkNode
         {
             client = new TcpClient();
             IPAddress ipAddress;
-            if (ip.Contains("localhost"))
+            if (ip.Contains(Constants.LOCALHOST))
             {
                 ipAddress = IPAddress.Loopback;
             }
@@ -121,7 +121,7 @@ namespace NetworkNode
                 }
                 else
                 {
-                    logs.addLog(Constants.COMMUTATION_NOT_EXIST, false, Constants.LOG_INFO);
+                    logs.addLog(Constants.COMMUTATION_NOT_EXIST_MSG, false, Constants.LOG_INFO);
 
                 }
             }

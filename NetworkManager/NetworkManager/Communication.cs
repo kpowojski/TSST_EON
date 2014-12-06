@@ -162,7 +162,7 @@ namespace NetworkManager
                     TcpClient clientSocket = this.serverSocket.AcceptTcpClient();
                     /*if (clientSockets.ContainsKey(clientSocket))
                         clientSockets.Remove(clientSocket);*/
-                    clientSockets.Add(clientSocket, "Unknown");
+                    clientSockets.Add(clientSocket, Constants.UNKNOWN);
                     Thread clientThread = new Thread(new ParameterizedThreadStart(displayMessageReceived));
                     clientThread.Start(clientSocket);
                 }
@@ -197,7 +197,7 @@ namespace NetworkManager
                 if (bytesRead == 0) break;
 
                 string str = encoder.GetString(message, 0, bytesRead);
-                if (clientSockets[clientSocket].Equals("Unknown"))
+                if (clientSockets[clientSocket].Equals(Constants.UNKNOWN))
                 {
                     if (!getNodeName(clientSocket, str))
                     {

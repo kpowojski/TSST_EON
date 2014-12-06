@@ -12,6 +12,7 @@ using System.Threading;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Diagnostics;
+using System.IO;
 
 namespace NetworkNode
 {
@@ -36,6 +37,7 @@ namespace NetworkNode
             logs = new Logs(this.logsListView);
             configuration = new Configuration(this.logs);
             checkId();
+
         }
 
         private void cloudConnect_Click(object sender, EventArgs e)

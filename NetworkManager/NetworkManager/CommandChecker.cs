@@ -19,7 +19,7 @@ namespace NetworkManager
         {
             error_msg = "";
             string[] words = command.Split(' ');
-            if (words[0].Equals("GET"))
+            if (words[0].Equals(Constants.GET))
             {
                 if (words.Length == 2)
                     return true;
@@ -29,7 +29,7 @@ namespace NetworkManager
                     return false;
                 }
             }
-            else if (words[0].Equals("SET"))
+            else if (words[0].Equals(Constants.SET))
             {
                 if (words.Length == 4)
                     return true;
@@ -39,7 +39,7 @@ namespace NetworkManager
                     return false;
                 }
             }
-            else if (words[0].Equals("DELETE"))
+            else if (words[0].Equals(Constants.DELETE))
             {
                 if (words.Length == 4)
                     return true;
@@ -66,30 +66,30 @@ namespace NetworkManager
                 string[] tmp2 = null;
                 switch (words[0])
                 {
-                    case "SET_RESPONSE":
+                    case Constants.SET_RESPONSE:
                         logsList.Add(words[1]);
                         break;
-                    case "DELETE_RESPONSE":
+                    case Constants.DELETE_RESPONSE:
                         logsList.Add(words[1]);
                         break;
-                    case "PORTS_IN":
-                        tmp = "Input ports: ";
+                    case Constants.PORTS_IN:
+                        tmp = Constants.INPUT_PORTS;
                         for (int i = 1; i < words.Length; i++)
                         {
                             tmp += words[i] + ", ";
                         }
                         logsList.Add(tmp);
                         break;
-                    case "PORTS_OUT":
-                        tmp = "Output ports: ";
+                    case Constants.PORTS_OUT:
+                        tmp = Constants.OUTPUT_PORTS;
                         for (int i = 1; i < words.Length; i++)
                         {
                             tmp += words[i] + ", ";
                         }
                         logsList.Add(tmp);
                         break;
-                    case "COMMUTATION":
-                        logsList.Add("Commutation:");
+                    case Constants.COMMUTATION:
+                        logsList.Add(Constants.COMMUTATION_MSG);
                         for (int i = 1; i < words.Length; i++)
                         {
                             tmp2 = words[i].Split('-');
