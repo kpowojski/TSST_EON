@@ -24,6 +24,9 @@ namespace NetworkManager
         public const string PATH_TO_CONFIG = @"Config\ManagerConfig.xml";
         public const string ACTIVE = "Active";
         public const string DISCONNECTED_NODE = "Someone has been disconnected";
+        public const string ID = "ID";
+        public const string MANAGER_PORT = "managerPort";
+
         
         //strings which are displayed in logs 
         public const string NETWORK_STARTED_CORRECTLY = "NetworkManager has been started";

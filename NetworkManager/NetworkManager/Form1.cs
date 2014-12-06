@@ -18,7 +18,6 @@ namespace NetworkManager
 
         private Logs logs;
         private Configuration configuration;
-        //private Communication2 communication;
         private Communication communication;
         
         public Form1()

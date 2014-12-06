@@ -19,9 +19,19 @@ namespace NetworkCloud
         public const string RECEIVED_MSG = "Received: ";
         public const string SENT_MSG = "Sent: ";
 
+        public const string UNKNOWN = "Unknown";
+
         public const string CLOUD_STARTED_CORRECTLY = "Started.";
         public const string CLOUD_STARTED_ERROR = "Started failed! Try again.";
         public const string DISCONNECTED_NODE = "Someone has been disconnected.";
         public const string SIGNAL = "Signal passed through: ";
+
+        //constants from loading configuration. 
+        public const string ID = "ID";
+        public const string CLOUD_PORT = "cloudPort";
+        public const string SRC_ID = "SrcID";
+        public const string DST_ID = "DstID";
+        public const string SRC_PORT_ID = "SrcPortID";
+        public const string DST_PORT_ID = "DstPortID";
     }
 }

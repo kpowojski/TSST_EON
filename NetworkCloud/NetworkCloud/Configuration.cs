@@ -45,9 +45,9 @@ namespace NetworkCloud
             List<string> nodeConfig = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Cloud[@ID]"))
             {
-                string cloudId = xnode.Attributes["ID"].Value;
+                string cloudId = xnode.Attributes[Constants.ID].Value;
                 nodeConfig.Add(cloudId);
-                string cloudPort = xnode.Attributes["cloudPort"].Value;
+                string cloudPort = xnode.Attributes[Constants.CLOUD_PORT].Value;
                 nodeConfig.Add(cloudPort);
             }
             return nodeConfig;
@@ -60,11 +60,11 @@ namespace NetworkCloud
 
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-                string id = xnode.Attributes["ID"].Value;
-                string srcId = xnode.Attributes["SrcID"].Value;
-                string dstId = xnode.Attributes["DstID"].Value;
-                string srcPortId = xnode.Attributes["SrcPortID"].Value;
-                string dstPortId = xnode.Attributes["DstPortID"].Value;
+                string id = xnode.Attributes[Constants.ID].Value;
+                string srcId = xnode.Attributes[Constants.SRC_ID].Value;
+                string dstId = xnode.Attributes[Constants.DST_ID].Value;
+                string srcPortId = xnode.Attributes[Constants.SRC_PORT_ID].Value;
+                string dstPortId = xnode.Attributes[Constants.DST_PORT_ID].Value;
 
                 string[] row = { srcId, dstId, srcPortId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);

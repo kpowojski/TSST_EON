@@ -18,7 +18,6 @@ namespace NetworkCloud
             this.linkList = linkList;
         }
 
-        // [0] - dstNode, [1] - dstSignal
         public string[] parseSignal(string srcNode, string signal, bool showLogs)
         {
             string[] parsedSignal = new string[2];
@@ -38,7 +37,6 @@ namespace NetworkCloud
         public string findLink(string srcNode, string dstNode, string srcPort, string dstPort)
         {
             string valueToReturn = null;
-            Console.WriteLine(linkList.Count);
             foreach (Link link in linkList)
             {
                 if(link.nodeIn.Equals(srcNode) && link.nodeOut.Equals(dstNode) && link.portIn.Equals(srcPort) && link.portOut.Equals(dstPort))

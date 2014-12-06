@@ -33,9 +33,9 @@ namespace NetworkManager
             List<string> nodeConfig = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes("//Manager[@ID]"))
             {
-                string nodeId = xnode.Attributes["ID"].Value;
+                string nodeId = xnode.Attributes[Constants.ID].Value;
                 nodeConfig.Add(nodeId);
-                string managerPort = xnode.Attributes["managerPort"].Value;
+                string managerPort = xnode.Attributes[Constants.MANAGER_PORT].Value;
                 nodeConfig.Add(managerPort);
             }
             return nodeConfig;

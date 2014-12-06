@@ -102,7 +102,7 @@ namespace NetworkCloud
                 try
                 {
                     TcpClient clientSocket = this.serverSocket.AcceptTcpClient();
-                    clientSockets.Add(clientSocket, "Unknown");
+                    clientSockets.Add(clientSocket, Constants.UNKNOWN);
                     Thread clientThread = new Thread(new ParameterizedThreadStart(displayMessageReceived));
                     clientThread.Start(clientSocket);
                 }
@@ -139,7 +139,7 @@ namespace NetworkCloud
                 }
 
                 string signal = encoder.GetString(message, 0, bytesRead);
-                if (!clientSockets[clientSocket].Equals("Unknown"))
+                if (!clientSockets[clientSocket].Equals(Constants.UNKNOWN))
                 {
                     string[] response = parser.parseSignal(clientSockets[clientSocket], signal, true);
                     sendMessage(response[0], response[1]);
