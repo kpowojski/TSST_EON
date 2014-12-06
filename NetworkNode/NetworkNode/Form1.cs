@@ -117,7 +117,7 @@ namespace NetworkNode
             this.Text = nodeId;
 
             parser = new Parser(this.portIn, this.portOut, this.comutation, this.logs); // parse message from cloud
-            agentParser = new AgentParser(this.nodeId, this.portIn, this.portOut, this.comutation, this.parser); //parse message from mamanger 
+            agentParser = new AgentParser(this.nodeId, this.portIn, this.portOut, this.comutation, this.parser); //parse message from manager 
             
             communication = new Communication(this.nodeId, this.logs, this.parser, this);
             managmentAgent = new ManagmentAgent(this.nodeId, this.logs, this.agentParser, this);

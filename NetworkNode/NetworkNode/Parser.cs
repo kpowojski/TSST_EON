@@ -127,7 +127,7 @@ namespace NetworkNode
                 }
                 else
                 {
-                    coloredSignal[0] = "ERROR COMMUTATION NOT EXIST";
+                    coloredSignal[0] = Constants.COMMUTATION_NOT_EXIST;
                 }
                 coloredSignal[3] = signalWords[2];
 

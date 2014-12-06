@@ -39,6 +39,6 @@ namespace NetworkNode
         public const string PARSER_PORT = "Port: ";
         public const string PARSER_BITRATE = ", BitRate: ";
 
-        public const string COMMUTATION_NOT_EXIST = "ERROR COMMUTATION NOT EXIST";
+        public const string COMMUTATION_NOT_EXIST = "Error commutation does not exist!!! Check commutation table using Manager";
     }
 }
