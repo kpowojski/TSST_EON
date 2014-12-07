@@ -41,7 +41,7 @@ namespace NetworkNode
         public const string PARSER_BITRATE = ", BitRate: ";
 
         public const string COMMUTATION_NOT_EXIST = "ERROR COMMUTATION NOT EXIST";
-        public const string COMMUTATION_NOT_EXIST_MSG = "Error commutation does not exist!!! Check commutation table using Manager";
+        public const string COMMUTATION_NOT_EXIST_MSG = "Commutation does not exist. Check commutation table using Manager.";
         public const string NO_REDIRECTION = "NO_REDIRECTION";
         public const string SET_RESPONSE_SUCCESS = "SET_RESPONSE SUCCESS";
         public const string SET_RESPONSE_ERROR = "SET_RESPONSE ERROR";

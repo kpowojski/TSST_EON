@@ -22,8 +22,7 @@ namespace NetworkCloud
         public const string UNKNOWN = "Unknown";
 
         public const string CLOUD_STARTED_CORRECTLY = "Started.";
-        public const string CLOUD_STARTED_ERROR = "Started failed! Try again.";
-        public const string DISCONNECTED_NODE = "Someone has been disconnected.";
+        public const string CLOUD_STARTED_ERROR = "Starting failed! Try again.";
         public const string SIGNAL = "Signal passed through: ";
 
         //constants from loading configuration. 

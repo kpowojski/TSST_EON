@@ -151,7 +151,6 @@ namespace NetworkManager
             return ret;
         }
 
-        //Oczekiwanie na połączenie nowych klientów
         private void ListenForClients()
         {
             this.serverSocket.Start();
@@ -160,8 +159,6 @@ namespace NetworkManager
                 try
                 {
                     TcpClient clientSocket = this.serverSocket.AcceptTcpClient();
-                    /*if (clientSockets.ContainsKey(clientSocket))
-                        clientSockets.Remove(clientSocket);*/
                     clientSockets.Add(clientSocket, Constants.UNKNOWN);
                     Thread clientThread = new Thread(new ParameterizedThreadStart(displayMessageReceived));
                     clientThread.Start(clientSocket);
@@ -173,7 +170,6 @@ namespace NetworkManager
             }
         }
 
-        //Wyświetlanie wiadomości (automatyczne po połączeniu z serwerem)
         private void displayMessageReceived(object client)
         {
             TcpClient clientSocket = (TcpClient)client;
@@ -227,7 +223,6 @@ namespace NetworkManager
 
         }
 
-        //Pobiera z wiadomości nazwę klienta
         private bool getNodeName(TcpClient client, string msg)
         {
             if (msg.Contains("//NAME// "))
