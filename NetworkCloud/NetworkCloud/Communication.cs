@@ -14,16 +14,18 @@ namespace NetworkCloud
         private ASCIIEncoding encoder;
         private Logs logs;
         private Parser parser;
+        private NumericUpDown delay;
 
         private TcpListener serverSocket;
         private Thread serverThread;
         private Dictionary<TcpClient, string> clientSockets = new Dictionary<TcpClient, string>();
 
-        public Communication(Logs logs, Parser parser)
+        public Communication(Logs logs, Parser parser, NumericUpDown delay)
         {
             this.encoder = new ASCIIEncoding();
             this.parser = parser;
             this.logs = logs;
+            this.delay = delay;
         }
 
         public bool startServer(int port)
@@ -144,6 +146,7 @@ namespace NetworkCloud
                     string[] response = parser.parseSignal(clientSockets[clientSocket], signal, true);
                     if (response != null)
                     {
+                        Thread.Sleep(((int) delay.Value)*1000);
                         sendMessage(response[0], response[1]);
                     }
                 }

@@ -41,6 +41,8 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.helpButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.loadScriptDialog = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,14 +72,14 @@
             this.commandTextBox.Enabled = false;
             this.commandTextBox.Location = new System.Drawing.Point(12, 286);
             this.commandTextBox.Name = "commandTextBox";
-            this.commandTextBox.Size = new System.Drawing.Size(522, 20);
+            this.commandTextBox.Size = new System.Drawing.Size(441, 20);
             this.commandTextBox.TabIndex = 3;
             this.commandTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.commandTextBox_KeyDown);
             // 
             // sendButton
             // 
             this.sendButton.Enabled = false;
-            this.sendButton.Location = new System.Drawing.Point(540, 284);
+            this.sendButton.Location = new System.Drawing.Point(459, 284);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(65, 23);
             this.sendButton.TabIndex = 4;
@@ -146,7 +148,7 @@
             // clearButton
             // 
             this.clearButton.Enabled = false;
-            this.clearButton.Location = new System.Drawing.Point(611, 284);
+            this.clearButton.Location = new System.Drawing.Point(530, 284);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(65, 23);
             this.clearButton.TabIndex = 10;
@@ -154,12 +156,26 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(601, 284);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "Load Script";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // loadScriptDialog
+            // 
+            this.loadScriptDialog.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AcceptButton = this.sendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(688, 362);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.logsListView);
@@ -197,6 +213,8 @@
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.OpenFileDialog loadScriptDialog;
     }
 }
 

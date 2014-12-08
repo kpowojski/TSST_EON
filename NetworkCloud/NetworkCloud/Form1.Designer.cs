@@ -43,7 +43,10 @@
             this.port_out = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.logsListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label2 = new System.Windows.Forms.Label();
+            this.delayNumber = new System.Windows.Forms.NumericUpDown();
             this.statusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.delayNumber)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -59,7 +62,7 @@
             // 
             this.configButton.Location = new System.Drawing.Point(12, 368);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(261, 23);
+            this.configButton.Size = new System.Drawing.Size(207, 23);
             this.configButton.TabIndex = 2;
             this.configButton.Text = "Load Configuration";
             this.configButton.UseVisualStyleBackColor = true;
@@ -68,9 +71,9 @@
             // startButton
             // 
             this.startButton.Enabled = false;
-            this.startButton.Location = new System.Drawing.Point(279, 368);
+            this.startButton.Location = new System.Drawing.Point(225, 368);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(258, 23);
+            this.startButton.Size = new System.Drawing.Size(223, 23);
             this.startButton.TabIndex = 3;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
@@ -159,11 +162,29 @@
             this.columnHeader1.Text = "Logs";
             this.columnHeader1.Width = 525;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(454, 373);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(37, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Delay:";
+            // 
+            // delayNumber
+            // 
+            this.delayNumber.Location = new System.Drawing.Point(497, 371);
+            this.delayNumber.Name = "delayNumber";
+            this.delayNumber.Size = new System.Drawing.Size(40, 20);
+            this.delayNumber.TabIndex = 11;
+            // 
             // NetworkCloud
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 419);
+            this.Controls.Add(this.delayNumber);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.logsListView);
             this.Controls.Add(this.linksListView);
             this.Controls.Add(this.statusStrip);
@@ -179,6 +200,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NetworkCloud_FormClosing);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.delayNumber)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -200,6 +222,8 @@
         private System.Windows.Forms.ColumnHeader port_out;
         private System.Windows.Forms.ListView logsListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown delayNumber;
     }
 }
 
