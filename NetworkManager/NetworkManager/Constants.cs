@@ -59,6 +59,8 @@ namespace NetworkManager
         public const string UNKNOWN_COMMAND_ERROR = "Unknown command!";
         public const string NOT_REDIRECT = " do not redirect";
         public const string REDIRECT = " redirect to ";
+        public const string MAX_DISTANCE = "maxDistance";
+        public const string SLOT_MULTIPLIER = "slotMultiplier";
 
 
 
