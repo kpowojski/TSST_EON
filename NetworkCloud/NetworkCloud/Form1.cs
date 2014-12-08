@@ -65,8 +65,8 @@ namespace NetworkCloud
         
         private void loadDataFromConfiguration()
         {
-            this.parser = new Parser(configuration.Dic, this.logs, configuration.LinksList);
-            this.communication = new Communication(this.logs, this.parser);
+            this.parser = new Parser(this.configuration.Dic, this.logs, this.configuration.LinksList, this.linksListView);
+            this.communication = new Communication(this.logs, this.parser, this.delayNumber);
         }
 
         private void NetworkCloud_FormClosing(object sender, FormClosingEventArgs e)

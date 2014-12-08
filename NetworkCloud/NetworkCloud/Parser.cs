@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace NetworkCloud
 {
@@ -10,12 +11,14 @@ namespace NetworkCloud
         private Dictionary<string, string> dic;
         private Logs logs;
         private List<Link> linkList;
+        private ListView linksView;
 
-        public Parser(Dictionary<string, string> dic, Logs logs, List<Link> linkList)
+        public Parser(Dictionary<string, string> dic, Logs logs, List<Link> linkList, ListView linksView)
         {
             this.dic = dic;
             this.logs = logs;
             this.linkList = linkList;
+            this.linksView = linksView;
         }
 
         public string[] parseSignal(string srcNode, string signal, bool showLogs)
@@ -27,8 +30,7 @@ namespace NetworkCloud
                 string[] dstNodeAndPort = dic[srcNode + " " + signalWords[0]].Split(' ');
                 if (showLogs)
                 {
-                    string link = findLink(srcNode, dstNodeAndPort[0], signalWords[0], dstNodeAndPort[1]);
-                    logs.addLog(Constants.SIGNAL + link, true, Constants.LOG_TEXT, true);
+                    showLink(srcNode, dstNodeAndPort[0], signalWords[0], dstNodeAndPort[1]);
                 }
                 signalWords[0] = dstNodeAndPort[1];
                 parsedSignal[0] = dstNodeAndPort[0];
@@ -41,17 +43,27 @@ namespace NetworkCloud
             }
         }
 
-        public string findLink(string srcNode, string dstNode, string srcPort, string dstPort)
+        public void showLink(string srcNode, string dstNode, string srcPort, string dstPort)
         {
-            string valueToReturn = null;
+            int i = 0;
             foreach (Link link in linkList)
             {
                 if(link.nodeIn.Equals(srcNode) && link.nodeOut.Equals(dstNode) && link.portIn.Equals(srcPort) && link.portOut.Equals(dstPort))
                 {
-                    valueToReturn = link.linkID;
+                    logs.addLog(Constants.SIGNAL + link.linkID, true, Constants.LOG_TEXT, true);
+                    linksView.Invoke(
+                        new MethodInvoker(delegate()
+                        {
+                            linksView.SelectedItems.Clear();
+                            linksView.FullRowSelect = true;
+                            linksView.Items[i].Selected = true;
+                            linksView.Focus();
+                            linksView.Items[i].EnsureVisible();
+                        })
+                    );
                 }
+                i++;
             }
-            return valueToReturn;
         }
     }
 }
