@@ -37,7 +37,7 @@ namespace ClientNode
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            communication.sendMessage(messageTextBox.Text, bitRateBox.Text);
+            communication.sendMessage(messageTextBox.Text);
             messageTextBox.Text = "";
             messageTextBox.Focus();
         }
@@ -112,7 +112,6 @@ namespace ClientNode
             connectButton.Enabled = !enabled;
             configButton.Enabled = !enabled;
             disconnectButton.Enabled = enabled;
-            bitRateBox.Enabled = enabled;
             messageTextBox.Enabled = enabled;
             sendButton.Enabled = enabled;
             clearButton.Enabled = enabled;
