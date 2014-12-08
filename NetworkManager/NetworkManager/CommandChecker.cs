@@ -40,11 +40,11 @@ namespace NetworkManager
                     }
                     else if (words.Length != 4)
                     {
-                        err = 1;
+                        err = 0;
                     }
                     else
                     {
-                        err = 0;
+                        err = 1;
                     }
                 }
                 else if (words[2].Contains("N"))
