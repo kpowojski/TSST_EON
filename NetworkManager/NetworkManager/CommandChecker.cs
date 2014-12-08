@@ -88,15 +88,19 @@ namespace NetworkManager
             switch (words[3])
             {
                 case "BPSK":
+                    words[3] = 10 + "";
                     break;
                 case "QPSK":
+                    words[3] = 6 + "";
                     break;
                 case "8QAM":
+                    words[3] = 3 + "";
                     break;
                 case "16QAM":
+                    words[3] = 1 + "";
                     break;
             }
-            return command;
+            return String.Join(" ", words);
         }
 
         public List<string> parseMessage(string msg)
