@@ -96,12 +96,67 @@ namespace NetworkNode
 
                     case "SET":
                         string portIn = words[2];
-                        string portOut = words[3];
-                        if (setCommutation(portIn, portOut))
-                            result[1] = Constants.SET_RESPONSE_SUCCESS;
-                        else
-                            result[1] = Constants.SET_RESPONSE_ERROR;
-                        return result;
+                        if (words.Length == 7 && words[4].Contains("CO"))
+                        {
+                            //SET NetworkNode1 CI1 QPSK NO2 105Thz 5
+                            string portOut = words[4];
+                            string numberOfHops = words[3];
+                            string carrier = words[5];
+                            string slots = words[6];
+                            bool commutation = setCommutation(portIn, portOut);
+                            bool hops = setNumberOfHops(numberOfHops);
+                            bool portCarrierSlots = setPortCarrierSlotsBegin(portIn,portOut, carrier, slots);
+                            
+                            if (commutation && hops && portCarrierSlots)
+                                result[1] = Constants.SET_RESPONSE_SUCCESS;
+                            else
+                                result[1] = Constants.SET_RESPONSE_ERROR;
+                            return result;
+
+                        }
+
+                        else if (words.Length == 7 && words[5].Contains("NO"))
+                        {
+                            //SET NetworkNode2 NI1 105Thz 5 NO1 104Thz
+                            string portOut = words[5];
+                            string carrierIn = words[3];
+                            string slots = words[4];
+                            string carrierOut = words[6];
+                            bool commutation = setCommutation(portIn, portOut);
+                            bool hops = updateNumberOfHops();
+                            bool portCarrierSlots = setPortCarrierSlots(portIn, carrierIn, portOut, carrierOut, slots);
+                            if (commutation && hops && portCarrierSlots)
+                                result[1] = Constants.SET_RESPONSE_SUCCESS;
+                            else
+                                result[1] = Constants.SET_RESPONSE_ERROR;
+                            return result;
+                        }
+                        else if (words.Length == 6 && words[5].Contains("NO"))
+                        {
+                            //SET NetworkNode3 NI1 104Thz 5 CO1
+                            string portOut = words[5];
+                            string carrierIn = words[3];
+                            string slots = words[4];
+                            bool commutation = setCommutation(portIn, portOut);
+                            bool hops = updateNumberOfHops();
+                            bool portCarrierSlots = setPortCarrierSlotsFinish(portOut, carrierIn, slots, portOut);
+                            if (commutation && hops && portCarrierSlots)
+                                result[1] = Constants.SET_RESPONSE_SUCCESS;
+                            else
+                                result[1] = Constants.SET_RESPONSE_ERROR;
+                            return result;
+
+                        }
+                        else if (words.Length == 4)
+                        {
+                            string portOut = words[3];
+                            if (setCommutation(portIn, portOut))
+                                result[1] = Constants.SET_RESPONSE_SUCCESS;
+                            else
+                                result[1] = Constants.SET_RESPONSE_ERROR;
+                            return result;
+                        }
+                        break;
 
                     case "DELETE":
                         string deletePortIn = words[2];
@@ -164,6 +219,37 @@ namespace NetworkNode
             {
                 return false;
             }
+        }
+
+        public bool setNumberOfHops(string numberOfHops)
+        {
+            int numOfHops = Convert.ToInt32(numberOfHops);
+            this.parser.setNumberOfHops(numOfHops);
+            return true;
+        }
+
+        public bool updateNumberOfHops()
+        {
+            this.parser.updateNumberOfHops();
+            return true;
+        }
+
+        public bool setPortCarrierSlotsBegin(string portIn, string portOut, string carrier, string slots)
+        {
+            this.parser.setPortCarrierSlotsBegin(portIn, portOut, carrier, slots);
+            return true;
+        }
+
+        public bool setPortCarrierSlots(string portIn, string carrierIn, string portOut, string carrierOut, string slots)
+        {
+            this.parser.setPortCarrierSlots(portIn, carrierIn, portOut, carrierOut, slots);
+            return true;
+        }
+
+        public bool setPortCarrierSlotsFinish(string portIn, string carrier, string slots, string portOut)
+        {
+            this.parser.setPortCarrierSlotsFinish(portIn, carrier, slots, portOut);
+            return true;
         }
 
         public bool deleteCommutation(string deletePortIn, string deletePortOut)
