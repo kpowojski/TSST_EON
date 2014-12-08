@@ -78,7 +78,6 @@ namespace ClientNode
             List<string> portOut = new List<string>();
             foreach (XmlNode xnode in xml.SelectNodes(nodeName))
             {
-
                 string input = xnode.Attributes[Constants.ID].Value;
                 portOut.Add(input);
             }
