@@ -149,6 +149,7 @@ namespace NetworkNode
                         }
                         else if (words.Length == 4)
                         {
+                            //SET NetworkNode1 CI1 CO3
                             string portOut = words[3];
                             if (setCommutation(portIn, portOut))
                                 result[1] = Constants.SET_RESPONSE_SUCCESS;
