@@ -104,8 +104,8 @@
             this.linksListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.id,
             this.node_in,
-            this.node_out,
             this.port_in,
+            this.node_out,
             this.port_out});
             this.linksListView.Enabled = false;
             this.linksListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -123,25 +123,25 @@
             // 
             // node_in
             // 
-            this.node_in.Text = "Node IN";
+            this.node_in.Text = "Source Node";
             this.node_in.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.node_in.Width = 140;
             // 
             // node_out
             // 
-            this.node_out.Text = "Node OUT";
+            this.node_out.Text = "Destination Node";
             this.node_out.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.node_out.Width = 140;
             // 
             // port_in
             // 
-            this.port_in.Text = "Port IN";
+            this.port_in.Text = "Source Port";
             this.port_in.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.port_in.Width = 100;
             // 
             // port_out
             // 
-            this.port_out.Text = "Port OUT";
+            this.port_out.Text = "Dest. Port";
             this.port_out.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.port_out.Width = 100;
             // 
