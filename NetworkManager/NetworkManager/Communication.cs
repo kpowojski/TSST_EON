@@ -77,7 +77,7 @@ namespace NetworkManager
                 {
                     if (serverSocket != null)
                     {
-                        if (commandValid == 1)
+                        if (commandValid == 2)
                         {
                             msg = commandChecker.replaceModulation(msg);
                         }
@@ -139,7 +139,7 @@ namespace NetworkManager
                     }
                     else
                     {
-                        if (commandValid == 1)
+                        if (commandValid == 2)
                         {
                             msg = commandChecker.replaceModulation(msg);
                         }

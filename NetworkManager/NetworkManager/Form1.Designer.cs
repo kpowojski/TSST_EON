@@ -169,7 +169,7 @@
             // 
             // loadScriptDialog
             // 
-            this.loadScriptDialog.FileName = "openFileDialog1";
+            this.loadScriptDialog.FileName = "script.txt";
             this.loadScriptDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.loadScriptDialog_FileOk);
             // 
             // Form1
