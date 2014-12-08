@@ -96,15 +96,15 @@ namespace NetworkNode
 
                     case "SET":
                         string portIn = words[2];
-                        if (words.Length == 7 && words[4].Contains("CO"))
+                        if (words.Length == 7 && words[4].Contains("NO"))
                         {
                             //SET NetworkNode1 CI1 QPSK NO2 105Thz 5
                             string portOut = words[4];
-                            string numberOfHops = words[3];
+                            string distance = words[3];
                             string carrier = words[5];
                             string slots = words[6];
                             bool commutation = setCommutation(portIn, portOut);
-                            bool hops = setNumberOfHops(numberOfHops);
+                            bool hops = setNumberOfHops(distance);
                             bool portCarrierSlots = setPortCarrierSlotsBegin(portIn,portOut, carrier, slots);
                             
                             if (commutation && hops && portCarrierSlots)
@@ -131,9 +131,10 @@ namespace NetworkNode
                                 result[1] = Constants.SET_RESPONSE_ERROR;
                             return result;
                         }
-                        else if (words.Length == 6 && words[5].Contains("NO"))
+                        else if (words.Length == 6 && words[5].Contains("CO"))
                         {
                             //SET NetworkNode3 NI1 104Thz 5 CO1
+                            Console.WriteLine("jestem tutaj 3 ");
                             string portOut = words[5];
                             string carrierIn = words[3];
                             string slots = words[4];
@@ -209,6 +210,12 @@ namespace NetworkNode
             int input = this.portIn.IndexOf(portIn);
             int output = this.portOut.IndexOf(portOut);
 
+            if (!this.portIn.Contains(portIn) || !this.portOut.Contains(portOut))
+            {
+                return false;
+
+            }
+
             if (commutation[input] == -1)
             {
                 commutation[input] = output;
@@ -222,16 +229,16 @@ namespace NetworkNode
             }
         }
 
-        public bool setNumberOfHops(string numberOfHops)
+        public bool setNumberOfHops(string distanceStr)
         {
-            int numOfHops = Convert.ToInt32(numberOfHops);
-            this.parser.setNumberOfHops(numOfHops);
+            int distance = Convert.ToInt32(distanceStr);
+            this.parser.setDistance(distance);
             return true;
         }
 
         public bool updateNumberOfHops()
         {
-            this.parser.updateNumberOfHops();
+            this.parser.updateDistance();
             return true;
         }
 

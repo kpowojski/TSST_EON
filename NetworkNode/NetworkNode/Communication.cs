@@ -117,7 +117,7 @@ namespace NetworkNode
                 string[] response = parser.forwardSignal(receive);
                 if (response[0] != Constants.COMMUTATION_NOT_EXIST)
                 {
-                    sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], true, true));
+                    sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], response[4], true, true));
                 }
                 else
                 {
