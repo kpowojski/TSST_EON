@@ -18,15 +18,14 @@ namespace ClientNode
             this.logs = logs;
         }
 
-        //Syntax: PORT_OUT BITRATE MSG
-        public string parseMsgToCloud(string bitRate, string msg, bool showLogs)
+        //Syntax: PORT_OUT MSG
+        public string parseMsgToCloud(string msg, bool showLogs)
         {
             if (showLogs)
             {
                 logs.addLog(Constants.SENT + msg, true, Constants.LOG_TEXT, true);
             }
-            string[] bitRateWords = bitRate.Split(' ');     //[0] - value, [1] - 'Gb/s'
-            return portOut.ElementAt(0) + " " + bitRateWords[0] + " " + msg;
+            return portOut.ElementAt(0) + " " + msg;
         }
 
         //Syntax: PORT_IN CARRIER SLOTS MSG

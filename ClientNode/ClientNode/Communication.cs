@@ -84,11 +84,11 @@ namespace ClientNode
             }
         }
 
-        public void sendMessage(string msg, string bitRate)
+        public void sendMessage(string msg)
         {
             if (client != null && client.Connected && msg != "")
             {
-                byte[] buffer = encoder.GetBytes(parser.parseMsgToCloud(bitRate, msg, true));
+                byte[] buffer = encoder.GetBytes(parser.parseMsgToCloud(msg, true));
                 stream.Write(buffer, 0, buffer.Length);
                 stream.Flush();
             }
