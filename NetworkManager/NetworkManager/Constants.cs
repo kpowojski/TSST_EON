@@ -44,8 +44,8 @@ namespace NetworkManager
         public const string COMMUTATION_MSG = "Commutation:";
 
         //strings which are displayed in logs 
-        public const string NETWORK_STARTED_CORRECTLY = "NetworkManager has been started";
-        public const string NETWORK_STARTED_ERROR = "An error occurred during start NetworkManager";
+        public const string NETWORK_STARTED_CORRECTLY = "Started.";
+        public const string NETWORK_STARTED_ERROR = "Starting failed! Try again.";
         public const string COMMAND = "Command: ";
         public const string ERROR_MSG = "Error: ";
         public const string LOADED_CONFIG = "Configuration loaded from file: ";

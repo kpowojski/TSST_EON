@@ -142,7 +142,10 @@ namespace NetworkCloud
                 if (!clientSockets[clientSocket].Equals(Constants.UNKNOWN))
                 {
                     string[] response = parser.parseSignal(clientSockets[clientSocket], signal, true);
-                    sendMessage(response[0], response[1]);
+                    if (response != null)
+                    {
+                        sendMessage(response[0], response[1]);
+                    }
                 }
                 else
                 {
@@ -154,7 +157,6 @@ namespace NetworkCloud
                 clientSocket.GetStream().Close();
                 clientSocket.Close();
                 clientSockets.Remove(clientSocket);
-                logs.addLog(Constants.DISCONNECTED_NODE, true, Constants.LOG_ERROR, true);
             }
 
         }

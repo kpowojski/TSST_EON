@@ -44,6 +44,7 @@ namespace NetworkNode
         {
             if (communication.connectToCloud(configuration.CloudIp, configuration.CloudPort))
             {
+                statusLabel.Text = Constants.ACTIVE;
                 disconnectCloudButton.Enabled = true;
                 configButton.Enabled = false;
                 connectCloudButton.Enabled = false;
@@ -68,6 +69,7 @@ namespace NetworkNode
         private void disconnectManagerButton_Click(object sender, EventArgs e)
         {
             managmentAgent.disconnectFromManager();
+            enableAgentButtons();
         }
 
         private void configButton_Click(object sender, EventArgs e)

@@ -22,16 +22,23 @@ namespace NetworkCloud
         {
             string[] parsedSignal = new string[2];
             string[] signalWords = signal.Split(' ');
-            string[] dstNodeAndPort = dic[srcNode + " " + signalWords[0]].Split(' ');
-            if (showLogs)
+            if (dic.ContainsKey(srcNode + " " + signalWords[0]))
             {
-                string link = findLink(srcNode, dstNodeAndPort[0], signalWords[0], dstNodeAndPort[1]);
-                logs.addLog(Constants.SIGNAL + link, true, Constants.LOG_TEXT, true);
+                string[] dstNodeAndPort = dic[srcNode + " " + signalWords[0]].Split(' ');
+                if (showLogs)
+                {
+                    string link = findLink(srcNode, dstNodeAndPort[0], signalWords[0], dstNodeAndPort[1]);
+                    logs.addLog(Constants.SIGNAL + link, true, Constants.LOG_TEXT, true);
+                }
+                signalWords[0] = dstNodeAndPort[1];
+                parsedSignal[0] = dstNodeAndPort[0];
+                parsedSignal[1] = String.Join(" ", signalWords);
+                return parsedSignal;
             }
-            signalWords[0] = dstNodeAndPort[1];
-            parsedSignal[0] = dstNodeAndPort[0];
-            parsedSignal[1] = String.Join(" ", signalWords);
-            return parsedSignal;
+            else
+            {
+                return null;
+            }
         }
 
         public string findLink(string srcNode, string dstNode, string srcPort, string dstPort)
