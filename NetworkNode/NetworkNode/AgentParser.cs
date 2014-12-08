@@ -95,6 +95,12 @@ namespace NetworkNode
                         return result;
 
                     case "SET":
+                        foreach (string s in words)
+                        {
+                            Console.WriteLine(s + " ");
+                        }
+
+
                         string portIn = words[2];
                         if (words.Length == 7 && words[4].Contains("NO"))
                         {
