@@ -1,0 +1,3 @@
+GET NetworkNode1
+GET NetworkNode2
+GET NetworkNode3
