@@ -67,7 +67,8 @@ namespace NetworkManager
             bool ret = false;
             if (msg != null)
             {
-                if (!commandChecker.checkCommand(msg))
+                int commandValid = commandChecker.checkCommand(msg);
+                if (commandValid == 0)
                 {
                     logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.ERROR);
                     logs.addLogFromAnotherThread(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
@@ -76,6 +77,11 @@ namespace NetworkManager
                 {
                     if (serverSocket != null)
                     {
+                        if (commandValid == 1)
+                        {
+                            msg = commandChecker.replaceModulation(msg);
+                        }
+
                         NetworkStream stream = null;
                         TcpClient client = null;
                         List<TcpClient> clientsList = clientSockets.Keys.ToList();
@@ -125,13 +131,19 @@ namespace NetworkManager
             {
                 if (serverSocket != null)
                 {
-                    if (!commandChecker.checkCommand(msg))
+                    int commandValid = commandChecker.checkCommand(msg);
+                    if (commandValid == 0)
                     {
                         logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.ERROR);
                         logs.addLogFromAnotherThread(Constants.ERROR_MSG + commandChecker.getErrorMsg(), false, Constants.ERROR);
                     }
                     else
                     {
+                        if (commandValid == 1)
+                        {
+                            msg = commandChecker.replaceModulation(msg);
+                        }
+
                         NetworkStream stream;
                         foreach (TcpClient client in clientSockets.Keys.ToList())
                         {

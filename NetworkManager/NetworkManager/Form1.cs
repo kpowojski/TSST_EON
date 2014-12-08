@@ -123,14 +123,19 @@ namespace NetworkManager
         private void loadScriptDialog_FileOk(object sender, CancelEventArgs e)
         {
             string[] lines = System.IO.File.ReadAllLines(loadScriptDialog.FileName);
-            foreach (string line in lines)
+            Thread scriptThread = new Thread(new ThreadStart(delegate
             {
-                if (communication.sendCommandToAll(line))
+                foreach (string line in lines)
                 {
-                    lastCommands.Add(line);
-                    Thread.Sleep(300);
+                    if (communication.sendCommandToAll(line))
+                    {
+                        lastCommands.Add(line);
+                        Thread.Sleep(300);
+                    }
                 }
-            }
+            }));
+            scriptThread.IsBackground = true;
+            scriptThread.Start();
         }
     }
 }
