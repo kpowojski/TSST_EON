@@ -15,45 +15,88 @@ namespace NetworkManager
             return error_msg;
         }
 
-        public Boolean checkCommand(string command)
+        public int checkCommand(string command)
         {
             error_msg = "";
             string[] words = command.Split(' ');
             if (words[0].Equals(Constants.GET))
             {
                 if (words.Length == 2)
-                    return true;
+                    return 1;
                 else
                 {
                     error_msg = Constants.GET_ERROR;
-                    return false;
+                    return 0;
                 }
             }
             else if (words[0].Equals(Constants.SET))
             {
-                if (words.Length == 4)
-                    return true;
+                int err = 1;
+                if (words[2].Contains("C"))
+                {
+                    if (words.Length == 7)
+                    {
+                        err = 2;
+                    }
+                    else if (words.Length != 4)
+                    {
+                        err = 1;
+                    }
+                    else
+                    {
+                        err = 0;
+                    }
+                }
+                else if (words[2].Contains("N"))
+                {
+                    if (words.Length != 6 && words.Length != 7)
+                    {
+                        err = 0;
+                    }
+                }
                 else
                 {
-                    error_msg = Constants.SET_ERROR;
-                    return false;
+                    err = 0;
                 }
+
+                if (err == 0)
+                {
+                    error_msg = Constants.SET_ERROR;
+                }
+                return err;
             }
             else if (words[0].Equals(Constants.DELETE))
             {
                 if (words.Length == 4)
-                    return true;
+                    return 1;
                 else
                 {
                     error_msg = Constants.DELETE_ERROR;
-                    return false;
+                    return 0;
                 }
             }
             else
             {
                 error_msg = Constants.UNKNOWN_COMMAND_ERROR;
-                return false;
+                return 0;
             }
+        }
+
+        public string replaceModulation(string command)
+        {
+            string[] words = command.Split(' ');
+            switch (words[3])
+            {
+                case "BPSK":
+                    break;
+                case "QPSK":
+                    break;
+                case "8QAM":
+                    break;
+                case "16QAM":
+                    break;
+            }
+            return command;
         }
 
         public List<string> parseMessage(string msg)

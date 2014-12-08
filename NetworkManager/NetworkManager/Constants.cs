@@ -15,8 +15,14 @@ namespace NetworkManager
         public const string HELP_MSG = "LIST OF COMMANDS\n\n"
                 + "Command: GET NODE_NAME\n"
                 + "Description: Shows commutation matrix in specified network node.\n\n"
-                + "Command: SET NODE_NAME PORT_IN PORT_OUT\n"
-                + "Description: Sets commutation between input and output ports in specified network node.\n\n"
+                + "Command: SET NODE_NAME CLIENT_PORT_IN MODULATION NETWORK_PORT_OUT CARRIER SLOTS\n"
+                + "Description: Sets commutation between input client port and output network port in specified network node.\n\n"
+                + "Command: SET NODE_NAME NETWORK_PORT_IN CARRIER SLOTS NETWORK_PORT_OUT CARRIER SLOTS\n"
+                + "Description: Sets commutation between input and output network ports in specified network node.\n\n"
+                + "Command: SET NODE_NAME NETWORK_PORT_IN CARRIER SLOTS CLIENT_PORT_OUT\n"
+                + "Description: Sets commutation between input network port and output client port in specified network node.\n\n"
+                + "Command: SET NODE_NAME CLIENT_PORT_IN CLIENT_PORT_OUT\n"
+                + "Description: Sets commutation between input and output client ports in specified network node.\n\n"
                 + "Command: DELETE NODE_NAME PORT_IN PORT_OUT\n"
                 + "Description: Deletes commutation between input and output ports in specified network node.\n\n";
 
