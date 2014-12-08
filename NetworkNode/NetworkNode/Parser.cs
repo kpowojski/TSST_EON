@@ -9,8 +9,8 @@ namespace NetworkNode
     {
         private List<String> portIn;
         private List<String> portOut;
-        private Dictionary<string, string> portCarrierSlots;
-        private int numOfHops;
+        private Dictionary<string, string[]> portCarrierSlots;
+        private int distance;
         private Logs logs;
         private int[] commutation;
 
@@ -20,12 +20,14 @@ namespace NetworkNode
             this.portOut = portOut;
             this.commutation = commutation;
             this.logs = logs;
-            portCarrierSlots = new Dictionary<string, string>();
+            this.portCarrierSlots = new Dictionary<string, string[]>();
         }
 
         //Syntax: PORT_OUT CARRIER SLOTS MSG
-        public string parseMsgToCloud(string portOut, string carrier, string slots, string msg, bool showLogs, bool more)
+        public string parseMsgToCloud(string portOut, string carrier, string slots,string distance, string msg, bool showLogs, bool more)
         {
+            
+
             if (showLogs && !more)
             {
                 logs.addLog(Constants.SENT_MSG + msg, 
@@ -44,8 +46,8 @@ namespace NetworkNode
                     logs.addLog(Constants.SENT_MSG + msg, 
                         false, Constants.LOG_TEXT, true);
                 }
-                Console.WriteLine(portOut + " " + carrier + " " + slots + " " + msg);
-                return portOut + " " + carrier + " " + slots + " " + msg;
+                Console.WriteLine(portOut + " " + carrier + " " + slots + " "+ distance + " "  + msg);
+                return portOut + " " + carrier + " " + slots + " " + distance + " "+ msg;
             }
             //MSG ON CLIENT OUTPUT PORT - GRAY SIGNAL
             else
@@ -67,7 +69,7 @@ namespace NetworkNode
         {
             if (signal.Contains(' '))
             {
-                string[] signalWords = signal.Split(' ');   //[0] - portIn, [1] - carrier, [2] - slots, [3] - msg
+                string[] signalWords = signal.Split(' ');   //[0] - portIn, [1] - carrier, [2] - slots, [3] - distance,[4] - msg
                 if (showLogs)
                 {
                     displayMsgFromCloud(signalWords, more);
@@ -85,36 +87,42 @@ namespace NetworkNode
             this.commutation = commutation;
         }
 
-        public void setNumberOfHops(int numberOfHops)
+        public void setDistance(int distance)
         {
-            this.numOfHops = numberOfHops;
+            this.distance = distance;
         }
 
-        public void updateNumberOfHops()
+        public void updateDistance()
         {
-            this.numOfHops -= numOfHops;
+            this.distance -= 1;
         }
 
         public void setPortCarrierSlotsBegin(string portIn, string portOut, string carrier, string slots)
         {
-            portCarrierSlots.Add(portIn, portOut + carrier + slots);
+            string[] table = { portOut, carrier , slots}; 
+            this.portCarrierSlots.Add(portIn,  table);
         }
 
         public void setPortCarrierSlots(string portIn, string carrierIn, string portOut, string carrierOut, string slots)
         {
-            portCarrierSlots.Add(portIn + carrierIn + slots, portOut + carrierOut + slots); 
+            string[] table = {portOut + carrierOut + slots};
+            portCarrierSlots.Add(portIn + carrierIn + slots, table ); 
         }
 
         public void setPortCarrierSlotsFinish(string portIn, string portOut, string carrier, string slots)
         {
-            portCarrierSlots.Add(portIn + carrier + slots, portOut);
+            string[] table = {portOut};
+            portCarrierSlots.Add(portIn + carrier + slots, table);
         }
 
         public string[] forwardSignal(string[] signalWords)
         {
 
-            if (signalWords.Length == 4)
+            if (signalWords.Length == 5)
             {
+                this.distance = Convert.ToInt32(signalWords[3]);
+                updateDistance();
+
                 int commutatedOutput = 0;
                 for (int n = 0; n < portIn.Count; n++)
                 {
@@ -134,11 +142,18 @@ namespace NetworkNode
                 {
                     signalWords[0] = Constants.COMMUTATION_NOT_EXIST;
                 }
+                string[] table = this.portCarrierSlots[signalWords[0]+signalWords[1] + signalWords[2]];
+                signalWords[0] = table[0]; //portOut
+                signalWords[1] = table[1]; //new carrier
+                signalWords[2] = table[2]; //slots
+                signalWords[3] = Convert.ToString(this.distance); // distance 
+
                 return signalWords;
+
             }
-            else if (signalWords.Length == 3)
+            else if (signalWords.Length == 2)
             {
-                string[] coloredSignal = new string[4];
+                string[] coloredSignal = new string[5];
                 int commutatedOutput = 0;
                 for (int n=0 ; n < portIn.Count; n++)
                 {
@@ -157,14 +172,15 @@ namespace NetworkNode
                     coloredSignal[0] = Constants.COMMUTATION_NOT_EXIST;
                     return coloredSignal; // there is no sens to more. Information will stuck in that node
                 }
-                coloredSignal[3] = signalWords[2];
+                
 
                 //bitRate2Carrier&Slots
-                string[] carrierAndSlots = CarrierAndSlotsConverter.convertFromBitRate(signalWords[1]);
-                Console.WriteLine(carrierAndSlots[0]);
-                coloredSignal[1] = carrierAndSlots[0];
-                coloredSignal[2] = carrierAndSlots[1];
-
+                string[] table = this.portCarrierSlots[signalWords[0]];
+                coloredSignal[0] = table[0];
+                coloredSignal[1] = table[1];
+                coloredSignal[2] = table[2];
+                coloredSignal[3] = Convert.ToString(this.distance);
+                coloredSignal[4] = signalWords[1];
                 return coloredSignal;
             }
             else
@@ -176,7 +192,7 @@ namespace NetworkNode
         public void displayMsgFromCloud(string[] signalWords, bool more)
         {
             //MSG FROM NETWORK INPUT PORT - COLORED SIGNAL
-            if (signalWords.Length == 4)
+            if (signalWords.Length == 5)
             {
                 if(signalWords[0].Contains("N"))
                 {
@@ -192,28 +208,27 @@ namespace NetworkNode
                             + Constants.PARSER_CARRIER + calculateCarrier(signalWords[1])
                             + Constants.PARSER_SLOTS + signalWords[2],
                             true, Constants.LOG_RECEIVED, true);
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[3], 
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[4], 
                             false, Constants.LOG_RECEIVED, true);
                     }
                 }
             }
             //MSG FROM CLIENT INPUT PORT - GRAY SIGNAL
-            else if (signalWords.Length == 3)
+            else if (signalWords.Length == 2)
             {
                 if (signalWords[0].Contains("C"))
                 {
                     if (!more)
                     {
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[2],
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[1],
                             true, Constants.LOG_RECEIVED, true);
                     }
                     else
                     {
                         logs.addLog(
-                            Constants.PARSER_PORT + signalWords[0]
-                            + Constants.PARSER_BITRATE + signalWords[1],
+                            Constants.PARSER_PORT + signalWords[0],
                             true, Constants.LOG_RECEIVED, true);
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[2], false, Constants.LOG_RECEIVED, true);
+                        logs.addLog(Constants.RECEIVED_MSG + signalWords[1], false, Constants.LOG_RECEIVED, true);
                     }
                 }
             }
