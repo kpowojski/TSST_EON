@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Threading;
 
 namespace NetworkManager
 {
@@ -101,6 +102,7 @@ namespace NetworkManager
             statusLabel.Text = Constants.ACTIVE;
             startButton.Enabled = false;
             sendButton.Enabled = true;
+            loadScriptButton.Enabled = true;
             helpButton.Enabled = true;
             clearButton.Enabled = true;
             configButton.Enabled = false;
@@ -111,6 +113,24 @@ namespace NetworkManager
         {
             if(communication != null)
                 communication.stopManager();
+        }
+
+        private void loadScriptButton_Click(object sender, EventArgs e)
+        {
+            loadScriptDialog.ShowDialog();
+        }
+
+        private void loadScriptDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            string[] lines = System.IO.File.ReadAllLines(loadScriptDialog.FileName);
+            foreach (string line in lines)
+            {
+                if (communication.sendCommandToAll(line))
+                {
+                    lastCommands.Add(line);
+                    Thread.Sleep(300);
+                }
+            }
         }
     }
 }
