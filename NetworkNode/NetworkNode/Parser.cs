@@ -9,6 +9,8 @@ namespace NetworkNode
     {
         private List<String> portIn;
         private List<String> portOut;
+        private Dictionary<string, string> portCarrierSlots;
+        private int numOfHops;
         private Logs logs;
         private int[] commutation;
 
@@ -18,6 +20,7 @@ namespace NetworkNode
             this.portOut = portOut;
             this.commutation = commutation;
             this.logs = logs;
+            portCarrierSlots = new Dictionary<string, string>();
         }
 
         //Syntax: PORT_OUT CARRIER SLOTS MSG
@@ -82,6 +85,30 @@ namespace NetworkNode
             this.commutation = commutation;
         }
 
+        public void setNumberOfHops(int numberOfHops)
+        {
+            this.numOfHops = numberOfHops;
+        }
+
+        public void updateNumberOfHops()
+        {
+            this.numOfHops -= numOfHops;
+        }
+
+        public void setPortCarrierSlotsBegin(string portIn, string portOut, string carrier, string slots)
+        {
+            portCarrierSlots.Add(portIn, portOut + carrier + slots);
+        }
+
+        public void setPortCarrierSlots(string portIn, string carrierIn, string portOut, string carrierOut, string slots)
+        {
+            portCarrierSlots.Add(portIn + carrierIn + slots, portOut + carrierOut + slots); 
+        }
+
+        public void setPortCarrierSlotsFinish(string portIn, string portOut, string carrier, string slots)
+        {
+            portCarrierSlots.Add(portIn + carrier + slots, portOut);
+        }
 
         public string[] forwardSignal(string[] signalWords)
         {
