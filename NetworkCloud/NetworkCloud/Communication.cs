@@ -32,11 +32,19 @@ namespace NetworkCloud
         {
             if (serverSocket == null && serverThread == null)
             {
-                this.serverSocket = new TcpListener(IPAddress.Any, port);
-                this.serverThread = new Thread(new ThreadStart(ListenForClients));
-                this.serverThread.Start();
-                logs.addLog(Constants.CLOUD_STARTED_CORRECTLY, true, Constants.LOG_INFO, true);
-                return true;
+                try
+                {
+                    this.serverSocket = new TcpListener(IPAddress.Any, port);
+                    this.serverThread = new Thread(new ThreadStart(ListenForClients));
+                    this.serverThread.Start();
+                    logs.addLog(Constants.CLOUD_STARTED_CORRECTLY, true, Constants.LOG_INFO, true);
+                    return true;
+                }
+                catch
+                {
+                    Console.WriteLine("Unable to start cloud");
+                    return false;
+                }
             }
             else
             {
@@ -49,13 +57,27 @@ namespace NetworkCloud
         {
             foreach (TcpClient clientSocket in clientSockets.Keys.ToList())
             {
-                clientSocket.GetStream().Close();
-                clientSocket.Close();
-                clientSockets.Remove(clientSocket);
+                try
+                {
+                    clientSocket.GetStream().Close();
+                    clientSocket.Close();
+                    clientSockets.Remove(clientSocket);
+                }
+                catch
+                {
+                    Console.WriteLine("Problems with disconnecting clients from cloud");
+                }
             }
             if (serverSocket != null)
             {
-                serverSocket.Stop();
+                try
+                {
+                    serverSocket.Stop();
+                }
+                catch
+                {
+                    Console.WriteLine("Unable to stop cloud");
+                }
             }
             serverSocket = null;
             serverThread = null;
