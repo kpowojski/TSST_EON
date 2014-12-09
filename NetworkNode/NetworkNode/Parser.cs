@@ -143,7 +143,7 @@ namespace NetworkNode
                 Console.WriteLine(ta.Length);
                 string[] coloredSignal = new string[5];
                 string[] inputSignal = { signalWords[0] };
-                if (this.commutation.ContainsKey(inputSignal))
+                if (this.commutation.ContainsKey(inputSignal)) ///////TUTTAJJJJ JEST COS ZLEEEE
                 {
                     string[] outputSignal = commutation[inputSignal];
                     Console.WriteLine("znaleziono wpis w slowniku " + outputSignal);
