@@ -50,6 +50,7 @@ namespace NetworkNode
         public const string PORTS_IN = "PORTS_IN ";
         public const string PORTS_OUT = "PORTS_OUT ";
         public const string COMMUTATION = "COMMUTATION ";
+        public const string UNKNOWN_COMMAND = "Unknown command";
 
 
         //constants used in loading configuration from xml file

@@ -11,7 +11,7 @@ namespace NetworkNode
         private string nodeId;
         private List<string> portIn;
         private List<string> portOut;
-        private int[] commutation;
+        private Dictionary<string[], string[]> commutation;
         private Parser parser;
 
         public AgentParser(string nodeId, List<string> portIn, List<string> portOut, int[] commutation, Parser parser)
@@ -19,62 +19,65 @@ namespace NetworkNode
             this.nodeId = nodeId;
             this.portIn = portIn;
             this.portOut = portOut;
-            this.commutation = commutation;
+            this.commutation = new Dictionary<string[], string[]>();
             this.parser = parser;
-            loadCross();
+            //loadCross();
         }
 
-        public string checkDestination(string message)
-        {
+        //public string checkDestination(string message)
+        //{
 
-            string[] words = message.Split(' ');
-            string dstId = words[0];
-            string dstPortId = words[1];
-            bool destitantionReached = false;
+        //    string[] words = message.Split(' ');
+        //    string dstId = words[0];
+        //    string dstPortId = words[1];
+        //    bool destitantionReached = false;
 
-            if (this.nodeId == dstId)
-            {
-                if (this.portIn.Contains(dstPortId))
-                {
-                    destitantionReached = true;
-                }
-            }
+        //    if (this.nodeId == dstId)
+        //    {
+        //        if (this.portIn.Contains(dstPortId))
+        //        {
+        //            destitantionReached = true;
+        //        }
+        //    }
 
-            if (destitantionReached == true)
-            {
-                string originalMessage = null;
-                for (int i = 2; i < words.Length; i++)
-                {
-                    originalMessage += " " + words[i];
-                }
-                message = null;
-                if (commutation[this.portIn.IndexOf(dstPortId)] != -1)
-                    message = this.nodeId + " " + this.portOut.ElementAt(commutation[this.portIn.IndexOf(dstPortId)]) + " " + originalMessage;
-                else
-                    message = "NO_REDIRECTION " + originalMessage;
-            }
-            else
-            {
-                message = "null";
-            }
+        //    if (destitantionReached == true)
+        //    {
+        //        string originalMessage = null;
+        //        for (int i = 2; i < words.Length; i++)
+        //        {
+        //            originalMessage += " " + words[i];
+        //        }
+        //        message = null;
+        //        if (commutation[this.portIn.IndexOf(dstPortId)] != -1)
+        //            message = this.nodeId + " " + this.portOut.ElementAt(commutation[this.portIn.IndexOf(dstPortId)]) + " " + originalMessage;
+        //        else
+        //            message = "NO_REDIRECTION " + originalMessage;
+        //    }
+        //    else
+        //    {
+        //        message = "null";
+        //    }
 
-            return message;
-        }
+        //    return message;
+        //}
 
-        public bool forwardMessage(string msg)
-        {
-            string[] words = msg.Split(' ');
-            if (words[0].Equals(Constants.NO_REDIRECTION))
-                return false;
-            else
-                return true;
-        }
+        //public bool forwardMessage(string msg)
+        //{
+        //    string[] words = msg.Split(' ');
+        //    if (words[0].Equals(Constants.NO_REDIRECTION))
+        //        return false;
+        //    else
+        //        return true;
+        //}
 
         public string[] checkManagerCommand(string message)
         {
             string[] words = message.Split(' ');
             string command = words[0];
             string nodeId = words[1];
+
+            bool commutation = false;
+            bool hop = false;
 
             string[] result = new string[4];
             if (this.nodeId != nodeId)
@@ -95,89 +98,87 @@ namespace NetworkNode
                         return result;
 
                     case "SET":
-                        foreach (string s in words)
-                        {
-                            Console.WriteLine(s + " ");
-                        }
-
-
                         string portIn = words[2];
+
                         if (words.Length == 7 && words[4].Contains("NO"))
                         {
                             //SET NetworkNode1 CI1 QPSK NO2 105Thz 5
+                            //message client-newtork
                             string portOut = words[4];
                             string distance = words[3];
                             string carrier = words[5];
                             string slots = words[6];
-                            bool commutation = setCommutation(portIn, portOut);
-                            bool hops = setNumberOfHops(distance);
-                            bool portCarrierSlots = setPortCarrierSlotsBegin(portIn,portOut, carrier, slots);
-                            
-                            if (commutation && hops && portCarrierSlots)
-                                result[1] = Constants.SET_RESPONSE_SUCCESS;
-                            else
-                                result[1] = Constants.SET_RESPONSE_ERROR;
-                            return result;
-
+                            commutation = setCommutationClientNetwork(portIn, portOut, carrier, slots);
+                            hop = setDistance(distance);
                         }
 
                         else if (words.Length == 7 && words[5].Contains("NO"))
                         {
                             //SET NetworkNode2 NI1 105Thz 5 NO1 104Thz
-                            string portOut = words[5];
+                            //message network-network
                             string carrierIn = words[3];
                             string slots = words[4];
+                            string portOut = words[5];
                             string carrierOut = words[6];
-                            bool commutation = setCommutation(portIn, portOut);
-                            bool hops = updateNumberOfHops();
-                            bool portCarrierSlots = setPortCarrierSlots(portIn, carrierIn, portOut, carrierOut, slots);
-                            if (commutation && hops && portCarrierSlots)
-                                result[1] = Constants.SET_RESPONSE_SUCCESS;
-                            else
-                                result[1] = Constants.SET_RESPONSE_ERROR;
-                            return result;
+                            commutation = setCommutationNetworkNetwork(portIn,carrierIn,slots, portOut, carrierOut);
+                            hop = updateDistance();
                         }
                         else if (words.Length == 6 && words[5].Contains("CO"))
                         {
                             //SET NetworkNode3 NI1 104Thz 5 CO1
-                            Console.WriteLine("jestem tutaj 3 ");
-                            string portOut = words[5];
-                            string carrierIn = words[3];
+                            //message network-client
+                            string carrier = words[3];
                             string slots = words[4];
-                            bool commutation = setCommutation(portIn, portOut);
-                            bool hops = updateNumberOfHops();
-                            bool portCarrierSlots = setPortCarrierSlotsFinish(portOut, carrierIn, slots, portOut);
-                            if (commutation && hops && portCarrierSlots)
-                                result[1] = Constants.SET_RESPONSE_SUCCESS;
-                            else
-                                result[1] = Constants.SET_RESPONSE_ERROR;
-                            return result;
+                            string portOut = words[5];
+                            commutation = setCommutationNetworkClient(portIn,carrier, slots, portOut);
+                            hop = true; // there is no longer important
 
                         }
+
                         else if (words.Length == 4)
                         {
                             //SET NetworkNode1 CI1 CO3
+                            //client-client
                             string portOut = words[3];
-                            if (setCommutation(portIn, portOut))
-                                result[1] = Constants.SET_RESPONSE_SUCCESS;
-                            else
-                                result[1] = Constants.SET_RESPONSE_ERROR;
-                            return result;
+                            commutation = setCommutationClientClient(portIn, portOut);
+                            hop = true;
                         }
-                        break;
+                        if (commutation && hop)
+                                result[1] = Constants.SET_RESPONSE_SUCCESS;
+                        else
+                            result[1] = Constants.SET_RESPONSE_ERROR;
+                        
+                        return result;
 
                     case "DELETE":
-                        string deletePortIn = words[2];
-                        string deletePortOut = words[3];
-                        if (deleteCommutation(deletePortIn, deletePortOut))
+                        if (words[2] == "*") //let delete all commutation fast using syntax 'DELETE nodeName *'
+                        {
+                            this.commutation.Clear();
                             result[1] = Constants.DELETE_RESPONSE_SUCCESS;
+                        }
                         else
-                            result[1] = Constants.DELETE_RESPONSE_ERROR;
+                        {
+                            string deletePortIn = words[2];
+                            string deletePortOut = words[3];
+                            if (deleteCommutation(deletePortIn, deletePortOut))
+                                result[1] = Constants.DELETE_RESPONSE_SUCCESS;
+                            else
+                                result[1] = Constants.DELETE_RESPONSE_ERROR;
+
+                        }
                         return result;
+                    default:
+                        {
+                            result[1] = Constants.UNKNOWN_COMMAND;
+                            return result;
+                        }
                 }
             }
-            return result;
         }
+
+        
+
+        
 
         private string getPortsIn()
         {
@@ -196,130 +197,200 @@ namespace NetworkNode
         public string getCommutation()
         {
             string configuration = Constants.COMMUTATION;
-            for (int i = 0; i < portIn.Count; i++)
+            for (int i = 0; i < commutation.Count; i++)
             {
-                if (commutation[i] != -1)
+
+                string[] key = this.commutation.ElementAt(i).Value;
+                string[] value = this.commutation[key];
+                
+                for (int n=0; n<key.Length;n++)
                 {
-                    configuration += portIn[i] + "-" + portOut[commutation[i]] + " ";
+                    if (n != key.Length-1)
+                        configuration =configuration+ key[n]+"-";
+                    else
+                        configuration =configuration+ key[n]+" ";
                 }
-                else
+                for (int n = 0; n < value.Length; n++)
                 {
-                    configuration += portIn[i] + "-" + "0 ";
+                    if (n != value.Length - 1)
+                        configuration = configuration + value[n] + "-";
+                    else
+                        configuration = configuration + value[n] + " ";
                 }
             }
             return configuration;
         }
 
-        public bool setCommutation(string portIn, string portOut)
+        public bool setCommutationClientNetwork(string portIn, string portOut, string carrier, string slots)
         {
-            saveCross();
-            int input = this.portIn.IndexOf(portIn);
-            int output = this.portOut.IndexOf(portOut);
+            /// we use that method to set commutation between client and network
+            ///saveCross(); now we don't have saveCross
 
-            if (!this.portIn.Contains(portIn) || !this.portOut.Contains(portOut))
+
+            if (checkPorts(portIn, portOut))
             {
-                return false;
+                string[] inTable = { portIn };
+                string[] outTable = { portOut, carrier, slots };
+                if (addCommutation(inTable, outTable)) return true;
+                else return false;
+            }
+            else return false;
+
+        }
+
+        public bool setCommutationNetworkNetwork(string portIn,string carrierIn, string slots, string portOut, string carrierOut)
+        {
+            /// we use that method to set commutation between client and network
+            ///saveCross(); now we don't have saveCross
+
+            if (checkPorts(portIn, portOut))
+            {
+                string[] inTable = { portIn, carrierIn, slots };
+                string[] outTable = { portOut, carrierOut, slots };
+
+                if (addCommutation(inTable, outTable)) return true;
+                else return false;
+            }
+            else return false;
+        }
+
+        private bool setCommutationNetworkClient(string portIn, string carrier, string slots, string portOut)
+        {
+            if (checkPorts(portIn, portOut))
+            {
+                string[] inTable = { portIn, carrier, slots };
+                string[] outTable = { portOut};
+
+                if (addCommutation(inTable, outTable)) return true;
+                else return false;
 
             }
+            else return false;
 
-            if (commutation[input] == -1)
+        }
+
+        private bool setCommutationClientClient(string portIn, string portOut)
+        {
+            if (checkPorts(portIn, portOut))
             {
-                commutation[input] = output;
-                this.parser.updateCommutationTable(this.commutation); // we have to update commutation table in parser 
-                saveCross();
-                return true;
+                string[] inTable = { portIn };
+                string[] outTable = { portOut };
+
+                if (addCommutation(inTable, outTable)) return true;
+                else return false;
+
+            }
+            else return false;
+        }
+        
+        private bool addCommutation(string[] inTable, string[] outTable)
+        {
+            //method check if there is not that save in dic ant update dictionary in parser class
+            if (commutation.ContainsKey(inTable))
+            {
+                return false; //in dictionary we already have commutation connected with that portIn
             }
             else
             {
-                return false;
+                commutation.Add(inTable, outTable);
+                this.parser.updateCommutation(this.commutation);
+                return true;
             }
         }
+        
+        private bool checkPorts(string portIn, string portOut)
+        {
+            int input = this.portIn.IndexOf(portIn);
+            int output = this.portOut.IndexOf(portOut);
 
-        public bool setNumberOfHops(string distanceStr)
+            if (!this.portIn.Contains(portIn) || !this.portOut.Contains(portOut)) //we have to check if our node has that ports
+            {
+                return false;
+
+            }
+            else return true;
+        }
+
+        public bool setDistance(string distanceStr)
         {
             int distance = Convert.ToInt32(distanceStr);
             this.parser.setDistance(distance);
             return true;
         }
 
-        public bool updateNumberOfHops()
+        public bool updateDistance()
         {
             this.parser.updateDistance();
             return true;
         }
 
-        public bool setPortCarrierSlotsBegin(string portIn, string portOut, string carrier, string slots)
-        {
-            this.parser.setPortCarrierSlotsBegin(portIn, portOut, carrier, slots);
-            return true;
-        }
-
-        public bool setPortCarrierSlots(string portIn, string carrierIn, string portOut, string carrierOut, string slots)
-        {
-            this.parser.setPortCarrierSlots(portIn, carrierIn, portOut, carrierOut, slots);
-            return true;
-        }
-
-        public bool setPortCarrierSlotsFinish(string portIn, string carrier, string slots, string portOut)
-        {
-            this.parser.setPortCarrierSlotsFinish(portIn, carrier, slots, portOut);
-            return true;
-        }
 
         public bool deleteCommutation(string deletePortIn, string deletePortOut)
         {
-            int input = this.portIn.IndexOf(deletePortIn);
-            int output = this.portOut.IndexOf(deletePortOut);
-
-            if (commutation[input] == output)
+            if (checkPorts(deletePortIn, deletePortOut))
             {
-                commutation[input] = -1;
-                saveCross();
+                for (int i = 0; i < this.commutation.Count; i++)
+                {
+                    string[] key = this.commutation.ElementAt(i).Value;
+                    bool checkerKey = false;
+                    for (int n = 0; n < key.Length; n++)
+                    {
+                        if (key[n] == deletePortIn)
+                            checkerKey = true;
+                    }
+
+                    string[] value = this.commutation[key];
+                    bool checkerValue = false;
+                    for (int n = 0; n < value.Length; n++)
+                    {
+                        if (value[n] == deletePortOut)
+                            checkerValue = true;
+                    }
+                    if (checkerValue && checkerKey)
+                        this.commutation.Remove(key);
+
+                }
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+            } return false;
         }
 
-        public void saveCross()
-        {
-            try
-            {
-                string folderPath = "/Config/NetworkNode";
-                System.IO.Directory.CreateDirectory(folderPath);
-                using (StreamWriter outfile = new StreamWriter(folderPath + "/" + nodeId + "Cross.xml"))
-                {
-                    outfile.WriteLine(commutation.Length);
-                    int i = 0;
-                    foreach (int c in commutation)
-                    {
-                        outfile.WriteLine(commutation[i]);
-                        i++;
-                    }
-                }
-            }
-            catch
-            { }
-        }
+        //public void saveCross()
+        //{
+        //    try
+        //    {
+        //        string folderPath = "/Config/NetworkNode";
+        //        System.IO.Directory.CreateDirectory(folderPath);
+        //        using (StreamWriter outfile = new StreamWriter(folderPath + "/" + nodeId + "Cross.xml"))
+        //        {
+        //            outfile.WriteLine(commutation.Length);
+        //            int i = 0;
+        //            foreach (int c in commutation)
+        //            {
+        //                outfile.WriteLine(commutation[i]);
+        //                i++;
+        //            }
+        //        }
+        //    }
+        //    catch
+        //    { }
+        //}
 
-        public void loadCross()
-        {
-            try
-            {
-                string folderPath = "/Config/NetworkNode";
-                string[] lines = System.IO.File.ReadAllLines(folderPath + "/" + nodeId + "Cross.xml");
-                if (Convert.ToInt32(lines[0]) == portIn.Count)
-                {
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        commutation[i-1] = Convert.ToInt32(lines[i]);
-                    }
-                }
-            }
-            catch
-            { }
-        }
+        //public void loadCross()
+        //{
+        //    try
+        //    {
+        //        string folderPath = "/Config/NetworkNode";
+        //        string[] lines = System.IO.File.ReadAllLines(folderPath + "/" + nodeId + "Cross.xml");
+        //        if (Convert.ToInt32(lines[0]) == portIn.Count)
+        //        {
+        //            for (int i = 1; i < lines.Length; i++)
+        //            {
+        //                commutation[i-1] = Convert.ToInt32(lines[i]);
+        //            }
+        //        }
+        //    }
+        //    catch
+        //    { }
+        //}
     }
 }

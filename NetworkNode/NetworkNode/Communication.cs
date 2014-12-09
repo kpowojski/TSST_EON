@@ -112,10 +112,16 @@ namespace NetworkNode
                 }
 
                 if (bytesRead == 0) break;
-
+                Console.WriteLine("otrzymalem " + encoder.GetString(message, 0, bytesRead));
                 string[] receive = parser.parseMsgFromCloud(encoder.GetString(message, 0, bytesRead), true, true);
+                Console.WriteLine("dlugosc receive wynosci " + receive.Length);
+                foreach (string s in receive)
+                {
+                    Console.WriteLine(s);
+                }
                 string[] response = parser.forwardSignal(receive);
-                if (response[0] != Constants.COMMUTATION_NOT_EXIST)
+
+                if (response[0] != Constants.COMMUTATION_NOT_EXIST && response[0] != null)
                 {
                     sendMessage(parser.parseMsgToCloud(response[0], response[1], response[2], response[3], response[4], true, true));
                 }

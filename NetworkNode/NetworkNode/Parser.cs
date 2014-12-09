@@ -9,18 +9,16 @@ namespace NetworkNode
     {
         private List<String> portIn;
         private List<String> portOut;
-        private Dictionary<string, string[]> portCarrierSlots;
+        private Dictionary<string[], string[]> commutation;
         private int distance;
         private Logs logs;
-        private int[] commutation;
 
         public Parser(List<String> portIn, List<String> portOut, int[] commutation, Logs logs)
         {
             this.portIn = portIn;
             this.portOut = portOut;
-            this.commutation = commutation;
+            this.commutation = new Dictionary<string[], string[]>();
             this.logs = logs;
-            this.portCarrierSlots = new Dictionary<string, string[]>();
         }
 
         //Syntax: PORT_OUT CARRIER SLOTS MSG
@@ -34,7 +32,7 @@ namespace NetworkNode
                     true, Constants.LOG_TEXT, true);
             }
             //MSG ON NETWORK OUTPUT PORT - COLORED SIGNAL
-            if (!portOut.Contains('C'))
+            if (!portOut.Contains("C"))
             {
                 if (showLogs && more)
                 {
@@ -82,109 +80,98 @@ namespace NetworkNode
             }
         }
 
-        public void updateCommutationTable(int[] commutation)
+        //method used by AgentParser
+        public void updateCommutation(Dictionary<string[], string[]> commutation)
         {
             this.commutation = commutation;
+            
         }
-
+        //method used by AgentParser
         public void setDistance(int distance)
         {
             this.distance = distance;
         }
-
+        //method used by AgentParser
         public void updateDistance()
         {
             this.distance -= 1;
         }
 
-        public void setPortCarrierSlotsBegin(string portIn, string portOut, string carrier, string slots)
-        {
-            string[] table = { portOut, carrier , slots}; 
-            this.portCarrierSlots.Add(portIn,  table);
-        }
-
-        public void setPortCarrierSlots(string portIn, string carrierIn, string portOut, string carrierOut, string slots)
-        {
-            string[] table = {portOut + carrierOut + slots};
-            portCarrierSlots.Add(portIn + carrierIn + slots, table ); 
-        }
-
-        public void setPortCarrierSlotsFinish(string portIn, string portOut, string carrier, string slots)
-        {
-            string[] table = {portOut};
-            portCarrierSlots.Add(portIn + carrier + slots, table);
-        }
 
         public string[] forwardSignal(string[] signalWords)
         {
 
             if (signalWords.Length == 5)
             {
+                //signalWords : [0] portIn,[1] carrier,[2] slots,[3] distance,[4] msg
                 this.distance = Convert.ToInt32(signalWords[3]);
                 updateDistance();
 
-                int commutatedOutput = 0;
-                for (int n = 0; n < portIn.Count; n++)
-                {
-                    if (portIn[n].Equals(signalWords[0]))
-                    {
-                        commutatedOutput = n;
-                        break;
-                    }
-                }
+
+                string[] inputSignal = { signalWords[0], signalWords[1], signalWords[2] };
 
                 //tutaj zmiana. SPRAWDZAMY CZY Istnieje taka komutacja. 
-                if (commutation[commutatedOutput] != -1)
+                if (commutation.ContainsKey(inputSignal))
                 {
-                    signalWords[0] = portOut[commutation[commutatedOutput]];
+                    string[] outputSignal = commutation[inputSignal];
+                    if (outputSignal.Length ==3)
+                    {
+                        signalWords[0] = outputSignal[0];
+                        signalWords[1] = outputSignal[1];
+                        signalWords[2] = outputSignal[2];
+                        signalWords[3] = Convert.ToString(this.distance);
+                    }
+                    else if (outputSignal.Length == 1)
+                    {
+                        signalWords[0] = outputSignal[0];
+                        signalWords[1] = signalWords[4];
+                    }
                 }
                 else
                 {
                     signalWords[0] = Constants.COMMUTATION_NOT_EXIST;
                 }
-                string[] table = this.portCarrierSlots[signalWords[0]+signalWords[1] + signalWords[2]];
-                signalWords[0] = table[0]; //portOut
-                signalWords[1] = table[1]; //new carrier
-                signalWords[2] = table[2]; //slots
-                signalWords[3] = Convert.ToString(this.distance); // distance 
 
                 return signalWords;
 
             }
             else if (signalWords.Length == 2)
             {
+                //signalWords : [0] portIn,[1] msg
+                Console.WriteLine("forwardSignal "+ signalWords[0]);
+                string[] ta = commutation.ElementAt(0).Key;
+                Console.WriteLine(ta.Length);
                 string[] coloredSignal = new string[5];
-                int commutatedOutput = 0;
-                for (int n=0 ; n < portIn.Count; n++)
+                string[] inputSignal = { signalWords[0] };
+                if (this.commutation.ContainsKey(inputSignal))
                 {
-                    if (portIn[n].Equals(signalWords[0]))
-                    {
-                        commutatedOutput = n;
-                        break;
+                    string[] outputSignal = commutation[inputSignal];
+                    Console.WriteLine("znaleziono wpis w slowniku " + outputSignal);
+                    if (outputSignal.Length == 1)
+                    {//communication clien client using the same network node
+                        coloredSignal[0] = outputSignal[0];
+                        coloredSignal[1] = outputSignal[1];
                     }
-                }
-                if (commutation[commutatedOutput] != -1)
-                {
-                   coloredSignal[0] = portOut[commutation[commutatedOutput]];
+                    else if (outputSignal.Length == 3)
+                    {//communication client - network node 
+
+                        coloredSignal[0] = outputSignal[0]; //port out
+                        coloredSignal[1] = outputSignal[1]; //carrier
+                        coloredSignal[2] = outputSignal[2]; //slots
+                        coloredSignal[3] = Convert.ToString(this.distance);
+                        coloredSignal[4] = signalWords[1]; // msg
+                    }
+
                 }
                 else
                 {
-                    coloredSignal[0] = Constants.COMMUTATION_NOT_EXIST;
-                    return coloredSignal; // there is no sens to more. Information will stuck in that node
+                    Console.WriteLine("brak wpisu w tablicy");
                 }
-                
-
-                //bitRate2Carrier&Slots
-                string[] table = this.portCarrierSlots[signalWords[0]];
-                coloredSignal[0] = table[0];
-                coloredSignal[1] = table[1];
-                coloredSignal[2] = table[2];
-                coloredSignal[3] = Convert.ToString(this.distance);
-                coloredSignal[4] = signalWords[1];
                 return coloredSignal;
             }
             else
             {
+                Console.WriteLine("parser / forwardMsg zwraca null");
                 return null;
             }
         }
@@ -194,7 +181,7 @@ namespace NetworkNode
             //MSG FROM NETWORK INPUT PORT - COLORED SIGNAL
             if (signalWords.Length == 5)
             {
-                if(signalWords[0].Contains("N"))
+                if(signalWords[0].Contains("NI"))
                 {
                     if (!more)
                     {
@@ -216,7 +203,7 @@ namespace NetworkNode
             //MSG FROM CLIENT INPUT PORT - GRAY SIGNAL
             else if (signalWords.Length == 2)
             {
-                if (signalWords[0].Contains("C"))
+                if (signalWords[0].Contains("CI"))
                 {
                     if (!more)
                     {
