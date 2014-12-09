@@ -28,7 +28,8 @@ namespace NetworkNode
         {
             if (showLogs && !more)
             {
-                logs.addLog(Constants.SENT_MSG + msg, 
+                string[] msgWords = msg.Split('&');
+                logs.addLog(Constants.SENT_MSG + String.Join(" ", msgWords), 
                     true, Constants.LOG_TEXT, true);
             }
             //MSG ON NETWORK OUTPUT PORT - COLORED SIGNAL
@@ -36,12 +37,13 @@ namespace NetworkNode
             {
                 if (showLogs && more)
                 {
+                    string[] msgWords = msg.Split('&');
                     logs.addLog(
                         Constants.PARSER_PORT + portOut
                         + Constants.PARSER_CARRIER + calculateCarrier(carrier)
                         + Constants.PARSER_SLOTS + slots,
                         true, Constants.LOG_TEXT, true);
-                    logs.addLog(Constants.SENT_MSG + msg, 
+                    logs.addLog(Constants.SENT_MSG + String.Join(" ", msgWords), 
                         false, Constants.LOG_TEXT, true);
                 }
                 return portOut + " " + carrier + " " + slots + " " + distance + " "+ msg;
@@ -51,13 +53,14 @@ namespace NetworkNode
             {
                 if (showLogs && more)
                 {
+                    string[] msgWords = msg.Split('&');
                     logs.addLog(
                         Constants.PARSER_PORT + portOut,
                         true, Constants.LOG_TEXT, true);
-                    logs.addLog(Constants.SENT_MSG + msg, 
+                    logs.addLog(Constants.SENT_MSG + String.Join(" ", msgWords), 
                         false, Constants.LOG_TEXT, true);
                 }
-                return portOut + " " + msg;     
+                return portOut + " " + String.Join(" ", msg);     
             }
         }
 
@@ -160,17 +163,19 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[3], 
+                        string[] msgWords = signalWords[3].Split('&');
+                        logs.addLog(Constants.RECEIVED_MSG + String.Join(" ", msgWords), 
                             true, Constants.LOG_RECEIVED, true);
                     }
                     else
                     {
+                        string[] msgWords = signalWords[4].Split('&');
                         logs.addLog(
                             Constants.PARSER_PORT + signalWords[0]
                             + Constants.PARSER_CARRIER + calculateCarrier(signalWords[1])
                             + Constants.PARSER_SLOTS + signalWords[2],
                             true, Constants.LOG_RECEIVED, true);
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[4], 
+                        logs.addLog(Constants.RECEIVED_MSG + String.Join(" ", msgWords), 
                             false, Constants.LOG_RECEIVED, true);
                     }
                 }
@@ -182,15 +187,17 @@ namespace NetworkNode
                 {
                     if (!more)
                     {
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[1],
+                        string[] msgWords = signalWords[1].Split('&');
+                        logs.addLog(Constants.RECEIVED_MSG + String.Join(" ", msgWords),
                             true, Constants.LOG_RECEIVED, true);
                     }
                     else
                     {
+                        string[] msgWords = signalWords[1].Split('&');
                         logs.addLog(
                             Constants.PARSER_PORT + signalWords[0],
                             true, Constants.LOG_RECEIVED, true);
-                        logs.addLog(Constants.RECEIVED_MSG + signalWords[1], false, Constants.LOG_RECEIVED, true);
+                        logs.addLog(Constants.RECEIVED_MSG + String.Join(" ", msgWords), false, Constants.LOG_RECEIVED, true);
                     }
                 }
             }
