@@ -162,7 +162,7 @@ namespace NetworkManager
                     case Constants.COMMUTATION:
                         logsList.Add(Constants.COMMUTATION_MSG);
                         Console.WriteLine(words.Length);
-                        if (words.Length < 4)
+                        if (words.Length < 2)
                         {
                             logsList.Add("Empty");
                         }
@@ -171,20 +171,21 @@ namespace NetworkManager
                             for (int i = 1; i < words.Length; i++)
                             {
                                 tmp2 = words[i].Split('-');
+                                Console.WriteLine(tmp2.Length);
                                 if (tmp2.Length == 6)
                                 {
-                                    tmp = tmp2[0] + " on " + tmp2[1] + " with " + tmp2[2] + Constants.REDIRECT + tmp2[3] + " on " + tmp2[4] + " with " + tmp2[5];
+                                    tmp = tmp2[0] + calculateCarrier(tmp2[1], tmp2[2]) + Constants.REDIRECT + tmp2[3] + calculateCarrier(tmp2[4], tmp2[5]);
                                     logsList.Add(tmp);
                                 }
                                 else if (tmp2.Length == 4)
                                 {
                                     if (tmp2[0].Contains("C"))
                                     {
-                                        tmp = tmp2[0] + Constants.REDIRECT + tmp2[1] + " on " + calculateCarrier(tmp2[2]) + " with " + tmp2[3] + " slots" ;
+                                        tmp = tmp2[0] + Constants.REDIRECT + tmp2[1]+ calculateCarrier(tmp2[2], tmp2[3]);
                                     }
                                     else
                                     {
-                                        tmp = tmp2[0] + " on " + calculateCarrier(tmp2[1]) + " with " + tmp2[2] + " slots" + Constants.REDIRECT + tmp2[3];
+                                        tmp = tmp2[0] + calculateCarrier(tmp2[1], tmp2[2]) + Constants.REDIRECT + tmp2[3];
                                     }
                                     logsList.Add(tmp);
                                 }
@@ -213,10 +214,13 @@ namespace NetworkManager
             clientSockets = dic;
         }
 
-        private string calculateCarrier(string carString)
+        private string calculateCarrier(string carrierStr, string slotsStr)
         {
-            double carNumber = 191.1 + Convert.ToDouble(carString) * 0.00625;
-            return carNumber + " THz";
+            double carrier = 191.1 + Convert.ToDouble(carrierStr) * 0.00625;
+            double slots = Convert.ToDouble(slotsStr);
+            double from = carrier - slots * 0.00625;
+            double to = carrier + slots * 0.00625;
+            return " from " + from + " Thz to " + to + " Thz (" + slots + " slots)";
         }
     }
 }

@@ -340,7 +340,7 @@ namespace NetworkNode
             {
                 for (int i = 0; i < this.commutation.Count; i++)
                 {
-                    string key = this.commutation.ElementAt(i).Value;
+                    string key = this.commutation.Keys.ToList().ElementAt(i);
                     bool checkerKey = false;
                     for (int n = 0; n < key.Length; n++)
                     {
