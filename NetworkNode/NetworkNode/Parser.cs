@@ -92,6 +92,8 @@ namespace NetworkNode
             {
                 setDistance(inputSignalWords[0], Convert.ToInt32(inputSignalWords[3]));
                 updateDistance(inputSignalWords[0]);
+                if (this.distance[inputSignalWords[0]] == 0)
+                    inputSignalWords[4] = "!@#!@";
 
                 string inputSignal = inputSignalWords[0] + " " + inputSignalWords[1] + " " + inputSignalWords[2];
                 if (commutation.ContainsKey(inputSignal))
