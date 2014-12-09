@@ -25,7 +25,9 @@ namespace ClientNode
             {
                 logs.addLog(Constants.SENT + msg, true, Constants.LOG_TEXT, true);
             }
-            return portOut.ElementAt(0) + " " + msg;
+            string[] msgWords = msg.Split(' ');
+            string sendMsg = String.Join("&", msgWords);
+            return portOut.ElementAt(0) + " " + sendMsg;
         }
 
         //Syntax: PORT_IN CARRIER SLOTS MSG
@@ -37,7 +39,8 @@ namespace ClientNode
                 string[] signalWords = signal.Split(' ');   //[0] - portIn, [1] - msg
                 if (signalWords.Length > 1)
                 {
-                    valueToReturn = signalWords[1];
+                    string[] msgWords = signalWords[1].Split('&');
+                    valueToReturn = String.Join(" ", msgWords);
                     if (showLogs)
                     {
                         logs.addLog(Constants.RECEIVED_MSG + valueToReturn, true, Constants.LOG_RECEIVED, true);
