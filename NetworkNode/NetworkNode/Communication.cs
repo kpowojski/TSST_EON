@@ -127,7 +127,7 @@ namespace NetworkNode
                 }
                 else
                 {
-                    logs.addLog(Constants.COMMUTATION_NOT_EXIST_MSG, false, Constants.LOG_INFO);
+                    logs.addLog(Constants.COMMUTATION_NOT_EXIST_MSG, false, Constants.LOG_INFO, true);
 
                 }
             }

@@ -66,7 +66,7 @@ namespace NetworkCloud
                 string srcPortId = xnode.Attributes[Constants.SRC_PORT_ID].Value;
                 string dstPortId = xnode.Attributes[Constants.DST_PORT_ID].Value;
 
-                string[] row = { srcId, dstId, srcPortId, dstPortId };
+                string[] row = { srcId, srcPortId, dstId, dstPortId };
                 linksListView.Items.Add(id).SubItems.AddRange(row);
                 linksList.Add(new Link(id, srcId, dstId, srcPortId, dstPortId));
 
