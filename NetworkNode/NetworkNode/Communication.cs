@@ -67,19 +67,27 @@ namespace NetworkNode
         {
             if (client != null)
             {
-                client.GetStream().Close();
-                client.Close();
-                client = null;
-                if (!error)
+                try
                 {
-                    logs.addLog(Constants.CONNECTION_STOP, true, Constants.LOG_INFO, true);
+                    client.GetStream().Close();
+                    client.Close();
+                    client = null;
+                    if (!error)
+                    {
+                        logs.addLog(Constants.CONNECTION_STOP, true, Constants.LOG_INFO, true);
+                    }
+                    else
+                    {
+                        logs.addLog(Constants.CONNECTION_ERROR, true, Constants.LOG_ERROR, true);
+                        form.Invoke(new MethodInvoker(delegate()
+                        {
+                            form.enableCloudButtons();
+                        }));
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    logs.addLog(Constants.CONNECTION_ERROR, true, Constants.LOG_ERROR, true);
-                    form.Invoke(new MethodInvoker(delegate() {
-                        form.enableCloudButtons();
-                    }));
+                    Console.WriteLine("Exception in disconnecting from cloud");
                 }
             }
         }
