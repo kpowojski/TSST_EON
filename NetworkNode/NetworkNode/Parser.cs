@@ -10,7 +10,7 @@ namespace NetworkNode
         private List<String> portIn;
         private List<String> portOut;
         private Dictionary<string, string> commutation;
-        private int distance;
+        private Dictionary<string, int> distance;
         private Logs logs;
 
         public Parser(List<String> portIn, List<String> portOut, int[] commutation, Logs logs)
@@ -18,6 +18,7 @@ namespace NetworkNode
             this.portIn = portIn;
             this.portOut = portOut;
             this.commutation = new Dictionary<string, string>();
+            this.distance = new Dictionary<string, int>();
             this.logs = logs;
         }
 
@@ -89,8 +90,8 @@ namespace NetworkNode
             //signalWords : [0] portIn,[1] carrier,[2] slots,[3] distance,[4] msg
             if (inputSignalWords.Length == 5)
             {
-                this.distance = Convert.ToInt32(inputSignalWords[3]);
-                updateDistance();
+                setDistance(inputSignalWords[0], Convert.ToInt32(inputSignalWords[3]));
+                updateDistance(inputSignalWords[0]);
 
                 string inputSignal = inputSignalWords[0] + " " + inputSignalWords[1] + " " + inputSignalWords[2];
                 if (commutation.ContainsKey(inputSignal))
@@ -104,7 +105,7 @@ namespace NetworkNode
                         outputSignalWords[0] = outputSplited[0];
                         outputSignalWords[1] = outputSplited[1];
                         outputSignalWords[2] = outputSplited[2];
-                        outputSignalWords[3] = Convert.ToString(this.distance);
+                        outputSignalWords[3] = Convert.ToString(this.distance[inputSignalWords[0]]);
                         outputSignalWords[4] = inputSignalWords[4];
                     }
                     //NN -> CN Syntax: PORT_OUT MSG
@@ -132,7 +133,7 @@ namespace NetworkNode
                         outputSignalWords[0] = outputSplited[0];
                         outputSignalWords[1] = outputSplited[1];
                         outputSignalWords[2] = outputSplited[2];
-                        outputSignalWords[3] = Convert.ToString(this.distance);
+                        outputSignalWords[3] = Convert.ToString(this.distance[inputSignalWords[0]]);
                         outputSignalWords[4] = inputSignalWords[1];
                     }
                     else
@@ -204,13 +205,19 @@ namespace NetworkNode
             this.commutation = commutation;
 
         }
-        public void setDistance(int distance)
+        public void setDistance(string portIn, int distance)
         {
-            this.distance = distance;
+            if (this.distance.ContainsKey(portIn))
+            {
+                this.distance.Remove(portIn);
+            }
+            this.distance.Add(portIn, distance);
         }
-        public void updateDistance()
+        public void updateDistance(string portIn)
         {
-            this.distance -= 1;
+            int oldDistance = this.distance[portIn];
+            this.distance.Remove(portIn);
+            this.distance.Add(portIn, oldDistance - 1);
         }
         //End: Methods used by AgentParser
     }

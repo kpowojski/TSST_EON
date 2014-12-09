@@ -123,6 +123,9 @@ namespace NetworkManager
                 case "16QAM":
                     words[3] = 1 + "";
                     break;
+                default:
+                    words[3] = Constants.ERROR_MSG;
+                    break;
             }
             return String.Join(" ", words);
         }

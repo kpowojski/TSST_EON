@@ -109,7 +109,7 @@ namespace NetworkNode
                             string carrier = words[5];
                             string slots = words[6];
                             commutation = setCommutationClientNetwork(portIn, portOut, carrier, slots);
-                            hop = setDistance(distance);
+                            hop = setDistance(portIn, distance);
                         }
                         else if (words.Length == 7 && words[5].Contains("NO"))
                         {
@@ -120,7 +120,7 @@ namespace NetworkNode
                             string portOut = words[5];
                             string carrierOut = words[6];
                             commutation = setCommutationNetworkNetwork(portIn,carrierIn,slots, portOut, carrierOut);
-                            hop = updateDistance();
+                            hop = true;
                         }
                         else if (words.Length == 6 && words[5].Contains("CO"))
                         {
@@ -321,18 +321,13 @@ namespace NetworkNode
             else return true;
         }
 
-        public bool setDistance(string distanceStr)
+        public bool setDistance(string portIn, string distanceStr)
         {
             int distance = Convert.ToInt32(distanceStr);
-            this.parser.setDistance(distance);
+            this.parser.setDistance(portIn, distance);
             return true;
         }
 
-        public bool updateDistance()
-        {
-            this.parser.updateDistance();
-            return true;
-        }
 
         public bool deleteCommutation(string deletePortIn, string deletePortOut)
         {
