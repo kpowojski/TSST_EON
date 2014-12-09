@@ -139,6 +139,8 @@ namespace NetworkManager
                     }
                     else
                     {
+                        logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.TEXT);
+
                         if (commandValid == 2)
                         {
                             msg = commandChecker.replaceModulation(msg);
@@ -155,7 +157,6 @@ namespace NetworkManager
                                 stream.Flush();
                             }
                         }
-                        logs.addLogFromAnotherThread(Constants.COMMAND + msg, true, Constants.TEXT);
                         ret = true;
                     }
                 }
@@ -241,6 +242,7 @@ namespace NetworkManager
             {
                 string[] tmp = msg.Split(' ');
                 clientSockets[client] = tmp[1];
+                commandChecker.updateClientsDic(clientSockets);
                 return true;
             }
             else

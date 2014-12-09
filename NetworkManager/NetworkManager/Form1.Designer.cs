@@ -132,7 +132,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Logs";
-            this.columnHeader1.Width = 334;
+            this.columnHeader1.Width = 664;
             // 
             // helpButton
             // 

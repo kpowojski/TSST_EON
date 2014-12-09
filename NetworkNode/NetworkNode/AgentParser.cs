@@ -11,7 +11,7 @@ namespace NetworkNode
         private string nodeId;
         private List<string> portIn;
         private List<string> portOut;
-        private Dictionary<string[], string[]> commutation;
+        private Dictionary<string, string> commutation;
         private Parser parser;
 
         public AgentParser(string nodeId, List<string> portIn, List<string> portOut, int[] commutation, Parser parser)
@@ -19,7 +19,7 @@ namespace NetworkNode
             this.nodeId = nodeId;
             this.portIn = portIn;
             this.portOut = portOut;
-            this.commutation = new Dictionary<string[], string[]>();
+            this.commutation = new Dictionary<string, string>();
             this.parser = parser;
             //loadCross();
         }
@@ -111,7 +111,6 @@ namespace NetworkNode
                             commutation = setCommutationClientNetwork(portIn, portOut, carrier, slots);
                             hop = setDistance(distance);
                         }
-
                         else if (words.Length == 7 && words[5].Contains("NO"))
                         {
                             //SET NetworkNode2 NI1 105Thz 5 NO1 104Thz
@@ -132,9 +131,7 @@ namespace NetworkNode
                             string portOut = words[5];
                             commutation = setCommutationNetworkClient(portIn,carrier, slots, portOut);
                             hop = true; // there is no longer important
-
                         }
-
                         else if (words.Length == 4)
                         {
                             //SET NetworkNode1 CI1 CO3
@@ -175,11 +172,6 @@ namespace NetworkNode
                 }
             }
         }
-
-        
-
-        
-
         private string getPortsIn()
         {
             string portsIn = string.Join(" ", this.portIn.ToArray());
@@ -199,23 +191,40 @@ namespace NetworkNode
             string configuration = Constants.COMMUTATION;
             for (int i = 0; i < commutation.Count; i++)
             {
-
-                string[] key = this.commutation.ElementAt(i).Value;
-                string[] value = this.commutation[key];
-                
-                for (int n=0; n<key.Length;n++)
+                string[] keyTable;
+                string[] valueTable;
+                string key = this.commutation.Keys.ToList().ElementAt(i);
+                string value = this.commutation[key];
+                if (key.Contains(" "))
                 {
-                    if (n != key.Length-1)
-                        configuration =configuration+ key[n]+"-";
-                    else
-                        configuration =configuration+ key[n]+" ";
+                    keyTable = key.Split(' ');
                 }
-                for (int n = 0; n < value.Length; n++)
+                else
                 {
-                    if (n != value.Length - 1)
-                        configuration = configuration + value[n] + "-";
+                    keyTable = new string[] { key };
+                }
+                if (value.Contains(" "))
+                {
+                    valueTable = value.Split(' ');
+                }
+                else
+                {
+                    valueTable = new string[] { value };
+                }
+
+                for (int n = 0; n < keyTable.Length; n++)
+                {
+                    if (n != keyTable.Length-1)
+                        configuration += keyTable[n]+"-";
                     else
-                        configuration = configuration + value[n] + " ";
+                        configuration += keyTable[n] + "-";
+                }
+                for (int n = 0; n < valueTable.Length; n++)
+                {
+                    if (n != valueTable.Length - 1)
+                        configuration += valueTable[n] + "-";
+                    else
+                        configuration += valueTable[n] + " ";
                 }
             }
             return configuration;
@@ -226,12 +235,11 @@ namespace NetworkNode
             /// we use that method to set commutation between client and network
             ///saveCross(); now we don't have saveCross
 
-
             if (checkPorts(portIn, portOut))
             {
-                string[] inTable = { portIn };
-                string[] outTable = { portOut, carrier, slots };
-                if (addCommutation(inTable, outTable)) return true;
+                string inString = portIn;
+                string outString = portOut + " " + carrier + " " + slots;
+                if (addCommutation(inString, outString)) return true;
                 else return false;
             }
             else return false;
@@ -245,10 +253,10 @@ namespace NetworkNode
 
             if (checkPorts(portIn, portOut))
             {
-                string[] inTable = { portIn, carrierIn, slots };
-                string[] outTable = { portOut, carrierOut, slots };
+                string inString = portIn + " " + carrierIn + " " + slots;
+                string outString = portOut + " " + carrierOut + " " + slots;
 
-                if (addCommutation(inTable, outTable)) return true;
+                if (addCommutation(inString, outString)) return true;
                 else return false;
             }
             else return false;
@@ -258,10 +266,10 @@ namespace NetworkNode
         {
             if (checkPorts(portIn, portOut))
             {
-                string[] inTable = { portIn, carrier, slots };
-                string[] outTable = { portOut};
+                string inString = portIn + " " + carrier + " " + slots;
+                string outString = portOut;
 
-                if (addCommutation(inTable, outTable)) return true;
+                if (addCommutation(inString, outString)) return true;
                 else return false;
 
             }
@@ -273,26 +281,27 @@ namespace NetworkNode
         {
             if (checkPorts(portIn, portOut))
             {
-                string[] inTable = { portIn };
-                string[] outTable = { portOut };
+                string inString = portIn;
+                string outString = portOut;
 
-                if (addCommutation(inTable, outTable)) return true;
+                if (addCommutation(inString, outString)) return true;
                 else return false;
 
             }
             else return false;
         }
         
-        private bool addCommutation(string[] inTable, string[] outTable)
+        private bool addCommutation(string input, string output)
         {
             //method check if there is not that save in dic ant update dictionary in parser class
-            if (commutation.ContainsKey(inTable))
+            if (commutation.ContainsKey(input))
             {
-                return false; //in dictionary we already have commutation connected with that portIn
+                //in dictionary we already have commutation connected with that portIn
+                return false; 
             }
             else
             {
-                commutation.Add(inTable, outTable);
+                commutation.Add(input, output);
                 this.parser.updateCommutation(this.commutation);
                 return true;
             }
@@ -303,7 +312,8 @@ namespace NetworkNode
             int input = this.portIn.IndexOf(portIn);
             int output = this.portOut.IndexOf(portOut);
 
-            if (!this.portIn.Contains(portIn) || !this.portOut.Contains(portOut)) //we have to check if our node has that ports
+            //we have to check if our node has that ports
+            if (!this.portIn.Contains(portIn) || !this.portOut.Contains(portOut)) 
             {
                 return false;
 
@@ -324,26 +334,25 @@ namespace NetworkNode
             return true;
         }
 
-
         public bool deleteCommutation(string deletePortIn, string deletePortOut)
         {
             if (checkPorts(deletePortIn, deletePortOut))
             {
                 for (int i = 0; i < this.commutation.Count; i++)
                 {
-                    string[] key = this.commutation.ElementAt(i).Value;
+                    string key = this.commutation.ElementAt(i).Value;
                     bool checkerKey = false;
                     for (int n = 0; n < key.Length; n++)
                     {
-                        if (key[n] == deletePortIn)
+                        if (key == deletePortIn)
                             checkerKey = true;
                     }
 
-                    string[] value = this.commutation[key];
+                    string value = this.commutation[key];
                     bool checkerValue = false;
                     for (int n = 0; n < value.Length; n++)
                     {
-                        if (value[n] == deletePortOut)
+                        if (value == deletePortOut)
                             checkerValue = true;
                     }
                     if (checkerValue && checkerKey)

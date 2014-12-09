@@ -23,6 +23,8 @@ namespace NetworkManager
                 + "Description: Sets commutation between input network port and output client port in specified network node.\n\n"
                 + "Command: SET NODE_NAME CLIENT_PORT_IN CLIENT_PORT_OUT\n"
                 + "Description: Sets commutation between input and output client ports in specified network node.\n\n"
+                + "Command: DELETE NODE_NAME *\n"
+                + "Description: Deletes all commutations in specified network node.\n\n"
                 + "Command: DELETE NODE_NAME PORT_IN PORT_OUT\n"
                 + "Description: Deletes commutation between input and output ports in specified network node.\n\n";
 
@@ -59,10 +61,9 @@ namespace NetworkManager
         public const string NODE_NOT_CONNECTED = "Node you want to reach is not connected";
 
         //Command Checker
-        public const string GET_ERROR = "Sytnax Error: Incorect list of parameters. Correct syntax: 'GET NODE_NAME'";
-        public const string SET_ERROR = "Sytnax Error: Incorect list of parameters. Correct syntax: 'SET NODE_NAME PORT_IN PORT_OUT'";
-        public const string DELETE_ERROR = "Sytnax Error: Incorect list of parameters. Correct syntax: 'DELETE NODE_NAME PORT_IN PORT_OUT'";
+        public const string COMMAND_ERROR = "Sytnax Error: Incorect list of parameters. Click 'Help' button to get help.";
         public const string UNKNOWN_COMMAND_ERROR = "Unknown command!";
+        public const string UNKNOWN_NODE_ERROR = "Unknown node!";
         public const string NOT_REDIRECT = " do not redirect";
         public const string REDIRECT = " redirect to ";
         public const string MAX_DISTANCE = "maxDistance";

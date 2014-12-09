@@ -9,7 +9,7 @@ namespace NetworkNode
     {
         private List<String> portIn;
         private List<String> portOut;
-        private Dictionary<string[], string[]> commutation;
+        private Dictionary<string, string> commutation;
         private int distance;
         private Logs logs;
 
@@ -17,15 +17,14 @@ namespace NetworkNode
         {
             this.portIn = portIn;
             this.portOut = portOut;
-            this.commutation = new Dictionary<string[], string[]>();
+            this.commutation = new Dictionary<string, string>();
             this.logs = logs;
         }
 
-        //Syntax: PORT_OUT CARRIER SLOTS MSG
-        public string parseMsgToCloud(string portOut, string carrier, string slots,string distance, string msg, bool showLogs, bool more)
+        //NN -> NN Syntax: PORT_OUT CARRIER SLOTS DISTANCE MSG
+        //NN -> CN Syntax: PORT_OUT MSG
+        public string parseMsgToCloud(string portOut, string carrier, string slots, string distance, string msg, bool showLogs, bool more)
         {
-            
-
             if (showLogs && !more)
             {
                 logs.addLog(Constants.SENT_MSG + msg, 
@@ -44,7 +43,6 @@ namespace NetworkNode
                     logs.addLog(Constants.SENT_MSG + msg, 
                         false, Constants.LOG_TEXT, true);
                 }
-                Console.WriteLine(portOut + " " + carrier + " " + slots + " "+ distance + " "  + msg);
                 return portOut + " " + carrier + " " + slots + " " + distance + " "+ msg;
             }
             //MSG ON CLIENT OUTPUT PORT - GRAY SIGNAL
@@ -62,17 +60,18 @@ namespace NetworkNode
             }
         }
 
-        //Syntax: PORT_IN CARRIER SLOTS MSG
+        //NN -> NN Syntax: PORT_IN CARRIER SLOTS DISTANCE MSG
+        //CN -> NN Syntax: PORT_IN MSG
         public string[] parseMsgFromCloud(string signal, bool showLogs, bool more)
         {
             if (signal.Contains(' '))
             {
-                string[] signalWords = signal.Split(' ');   //[0] - portIn, [1] - carrier, [2] - slots, [3] - distance,[4] - msg
+                string[] signalWords = signal.Split(' ');
                 if (showLogs)
                 {
                     displayMsgFromCloud(signalWords, more);
                 }
-                return signalWords;
+                return forwardSignal(signalWords);
             }
             else
             {
@@ -80,100 +79,72 @@ namespace NetworkNode
             }
         }
 
-        //method used by AgentParser
-        public void updateCommutation(Dictionary<string[], string[]> commutation)
+        //NN -> NN Syntax: PORT_IN CARRIER SLOTS DISTANCE MSG
+        //CN -> NN Syntax: PORT_IN MSG
+        public string[] forwardSignal(string[] inputSignalWords)
         {
-            this.commutation = commutation;
-            
-        }
-        //method used by AgentParser
-        public void setDistance(int distance)
-        {
-            this.distance = distance;
-        }
-        //method used by AgentParser
-        public void updateDistance()
-        {
-            this.distance -= 1;
-        }
+            string[] outputSignalWords = null;
 
-
-        public string[] forwardSignal(string[] signalWords)
-        {
-
-            if (signalWords.Length == 5)
+            //NN -> NN Syntax: PORT_IN CARRIER SLOTS DISTANCE MSG
+            //signalWords : [0] portIn,[1] carrier,[2] slots,[3] distance,[4] msg
+            if (inputSignalWords.Length == 5)
             {
-                //signalWords : [0] portIn,[1] carrier,[2] slots,[3] distance,[4] msg
-                this.distance = Convert.ToInt32(signalWords[3]);
+                this.distance = Convert.ToInt32(inputSignalWords[3]);
                 updateDistance();
 
-
-                string[] inputSignal = { signalWords[0], signalWords[1], signalWords[2] };
-
-                //tutaj zmiana. SPRAWDZAMY CZY Istnieje taka komutacja. 
+                string inputSignal = inputSignalWords[0] + " " + inputSignalWords[1] + " " + inputSignalWords[2];
                 if (commutation.ContainsKey(inputSignal))
                 {
-                    string[] outputSignal = commutation[inputSignal];
-                    if (outputSignal.Length ==3)
+                    string outputSignal = commutation[inputSignal];
+                    //NN -> NN Syntax: PORT_OUT CARRIER SLOTS DISTANCE MSG
+                    if (outputSignal.Contains(" "))
                     {
-                        signalWords[0] = outputSignal[0];
-                        signalWords[1] = outputSignal[1];
-                        signalWords[2] = outputSignal[2];
-                        signalWords[3] = Convert.ToString(this.distance);
+                        outputSignalWords = new string[5];
+                        string[] outputSplited = outputSignal.Split(' ');
+                        outputSignalWords[0] = outputSplited[0];
+                        outputSignalWords[1] = outputSplited[1];
+                        outputSignalWords[2] = outputSplited[2];
+                        outputSignalWords[3] = Convert.ToString(this.distance);
+                        outputSignalWords[4] = inputSignalWords[4];
                     }
-                    else if (outputSignal.Length == 1)
+                    //NN -> CN Syntax: PORT_OUT MSG
+                    else
                     {
-                        signalWords[0] = outputSignal[0];
-                        signalWords[1] = signalWords[4];
+                        outputSignalWords = new string[2];
+                        outputSignalWords[0] = outputSignal;
+                        outputSignalWords[1] = inputSignalWords[4];
                     }
                 }
-                else
-                {
-                    signalWords[0] = Constants.COMMUTATION_NOT_EXIST;
-                }
-
-                return signalWords;
-
             }
-            else if (signalWords.Length == 2)
+            //CN -> NN Syntax: PORT_IN MSG
+            //signalWords : [0] portIn,[1] msg
+            else if (inputSignalWords.Length == 2)
             {
-                //signalWords : [0] portIn,[1] msg
-                Console.WriteLine("forwardSignal "+ signalWords[0]);
-                string[] ta = commutation.ElementAt(0).Key;
-                Console.WriteLine(ta.Length);
-                string[] coloredSignal = new string[5];
-                string[] inputSignal = { signalWords[0] };
-                if (this.commutation.ContainsKey(inputSignal)) ///////TUTTAJJJJ JEST COS ZLEEEE
+                string inputSignal = inputSignalWords[0]; ;
+                if (this.commutation.ContainsKey(inputSignal))
                 {
-                    string[] outputSignal = commutation[inputSignal];
-                    Console.WriteLine("znaleziono wpis w slowniku " + outputSignal);
-                    if (outputSignal.Length == 1)
-                    {//communication clien client using the same network node
-                        coloredSignal[0] = outputSignal[0];
-                        coloredSignal[1] = outputSignal[1];
+                    string outputSignal = commutation[inputSignal];
+                    
+                    if (outputSignal.Contains(" "))
+                    {
+                        outputSignalWords = new string[5];
+                        string[] outputSplited = outputSignal.Split(' ');
+                        outputSignalWords[0] = outputSplited[0];
+                        outputSignalWords[1] = outputSplited[1];
+                        outputSignalWords[2] = outputSplited[2];
+                        outputSignalWords[3] = Convert.ToString(this.distance);
+                        outputSignalWords[4] = inputSignalWords[1];
                     }
-                    else if (outputSignal.Length == 3)
-                    {//communication client - network node 
-
-                        coloredSignal[0] = outputSignal[0]; //port out
-                        coloredSignal[1] = outputSignal[1]; //carrier
-                        coloredSignal[2] = outputSignal[2]; //slots
-                        coloredSignal[3] = Convert.ToString(this.distance);
-                        coloredSignal[4] = signalWords[1]; // msg
+                    else
+                    {
+                        outputSignalWords = new string[2];
+                        outputSignalWords[0] = outputSignal;
+                        outputSignalWords[1] = inputSignalWords[1];
                     }
 
                 }
-                else
-                {
-                    Console.WriteLine("brak wpisu w tablicy");
-                }
-                return coloredSignal;
             }
-            else
-            {
-                Console.WriteLine("parser / forwardMsg zwraca null");
-                return null;
-            }
+            return outputSignalWords;
         }
 
         public void displayMsgFromCloud(string[] signalWords, bool more)
@@ -226,5 +197,21 @@ namespace NetworkNode
             double carNumber = 191.1 + Convert.ToDouble(carString) * 0.00625;
             return carNumber + " THz";
         }
+
+        //Start: Methods used by AgentParser
+        public void updateCommutation(Dictionary<string, string> commutation)
+        {
+            this.commutation = commutation;
+
+        }
+        public void setDistance(int distance)
+        {
+            this.distance = distance;
+        }
+        public void updateDistance()
+        {
+            this.distance -= 1;
+        }
+        //End: Methods used by AgentParser
     }
 }

@@ -117,6 +117,5 @@ namespace NetworkManager
                 return false;
             }
         }
-
     }
 }
