@@ -1,4 +1,4 @@
-SET NetworkNode1 CI1 QPSK NO3 1 10
+SET NetworkNode1 CI1 16QAM NO3 1 10
 SET NetworkNode1 NI1 1 10 CO1
 SET NetworkNode3 NI2 1 10 CO1
 SET NetworkNode3 CI1 BPSK NO2 1 10

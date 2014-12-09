@@ -90,10 +90,6 @@ namespace NetworkNode
             //signalWords : [0] portIn,[1] carrier,[2] slots,[3] distance,[4] msg
             if (inputSignalWords.Length == 5)
             {
-                setDistance(inputSignalWords[0], Convert.ToInt32(inputSignalWords[3]));
-                updateDistance(inputSignalWords[0]);
-                if (this.distance[inputSignalWords[0]] == 0)
-                    inputSignalWords[4] = "!@#!@";
 
                 string inputSignal = inputSignalWords[0] + " " + inputSignalWords[1] + " " + inputSignalWords[2];
                 if (commutation.ContainsKey(inputSignal))
@@ -155,6 +151,11 @@ namespace NetworkNode
             //MSG FROM NETWORK INPUT PORT - COLORED SIGNAL
             if (signalWords.Length == 5)
             {
+                setDistance(signalWords[0], Convert.ToInt32(signalWords[3]));
+                updateDistance(signalWords[0]);
+                if (this.distance[signalWords[0]] == 0)
+                    signalWords[4] = "!@#!@";
+
                 if(signalWords[0].Contains("NI"))
                 {
                     if (!more)
