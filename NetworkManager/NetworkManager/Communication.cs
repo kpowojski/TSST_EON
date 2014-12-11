@@ -80,6 +80,8 @@ namespace NetworkManager
                         if (commandValid == 2)
                         {
                             msg = commandChecker.replaceModulation(msg);
+                            if (msg[3] == Convert.ToChar(Constants.ERROR_MSG))
+                                return ret;
                         }
 
                         NetworkStream stream = null;
