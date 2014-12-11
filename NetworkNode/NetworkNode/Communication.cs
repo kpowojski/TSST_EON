@@ -31,34 +31,42 @@ namespace NetworkNode
 
         public bool connectToCloud(string ip, int port)
         {
-            client = new TcpClient();
-            IPAddress ipAddress;
-            if (ip.Contains(Constants.LOCALHOST))
-            {
-                ipAddress = IPAddress.Loopback;
-            }
-            else
-            {
-                ipAddress = IPAddress.Parse(ip);
-            }
             try
             {
-                client.Connect(new IPEndPoint(ipAddress, port));
+                client = new TcpClient();
+                IPAddress ipAddress;
+                if (ip.Contains(Constants.LOCALHOST))
+                {
+                    ipAddress = IPAddress.Loopback;
+                }
+                else
+                {
+                    ipAddress = IPAddress.Parse(ip);
+                }
+                try
+                {
+                    client.Connect(new IPEndPoint(ipAddress, port));
+                }
+                catch { }
+                if (client.Connected)
+                {
+                    stream = client.GetStream();
+                    clientThread = new Thread(new ThreadStart(displayMessageReceived));
+                    clientThread.Start();
+                    sendMyName();
+                    logs.addLog(Constants.CONNECTION_PASS, true, Constants.LOG_INFO, true);
+                    return true;
+                }
+                else
+                {
+                    client = null;
+                    logs.addLog(Constants.CONNECTION_FAILED, true, Constants.LOG_ERROR, true);
+                    return false;
+                }
             }
-            catch { }
-            if (client.Connected)
+            catch
             {
-                stream = client.GetStream();
-                clientThread = new Thread(new ThreadStart(displayMessageReceived));
-                clientThread.Start();
-                sendMyName();
-                logs.addLog(Constants.CONNECTION_PASS, true, Constants.LOG_INFO, true);
-                return true;
-            }
-            else
-            {
-                client = null;
-                logs.addLog(Constants.CONNECTION_FAILED, true, Constants.LOG_ERROR, true);
+                Console.WriteLine("Problems with connecting network node to cloud");
                 return false;
             }
         }
@@ -67,19 +75,27 @@ namespace NetworkNode
         {
             if (client != null)
             {
-                client.GetStream().Close();
-                client.Close();
-                client = null;
-                if (!error)
+                try
                 {
-                    logs.addLog(Constants.CONNECTION_STOP, true, Constants.LOG_INFO, true);
+                    client.GetStream().Close();
+                    client.Close();
+                    client = null;
+                    if (!error)
+                    {
+                        logs.addLog(Constants.CONNECTION_STOP, true, Constants.LOG_INFO, true);
+                    }
+                    else
+                    {
+                        logs.addLog(Constants.CONNECTION_ERROR, true, Constants.LOG_ERROR, true);
+                        form.Invoke(new MethodInvoker(delegate()
+                        {
+                            form.enableCloudButtons();
+                        }));
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    logs.addLog(Constants.CONNECTION_ERROR, true, Constants.LOG_ERROR, true);
-                    form.Invoke(new MethodInvoker(delegate() {
-                        form.enableCloudButtons();
-                    }));
+                    Console.WriteLine("Exception in disconnecting network node from cloud");
                 }
             }
         }

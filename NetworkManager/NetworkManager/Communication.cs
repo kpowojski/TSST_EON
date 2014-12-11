@@ -31,11 +31,19 @@ namespace NetworkManager
         {
             if (serverSocket == null && serverThread == null)
             {
-                this.serverSocket = new TcpListener(IPAddress.Any, port);
-                this.serverThread = new Thread(new ThreadStart(ListenForClients));
-                this.serverThread.Start();
-                logs.addLogFromAnotherThread(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
-                return true;
+                try
+                {
+                    this.serverSocket = new TcpListener(IPAddress.Any, port);
+                    this.serverThread = new Thread(new ThreadStart(ListenForClients));
+                    this.serverThread.Start();
+                    logs.addLogFromAnotherThread(Constants.NETWORK_STARTED_CORRECTLY, true, Constants.INFO);
+                    return true;
+                }
+                catch
+                {
+                    Console.WriteLine("Unable to start Manager");
+                    return false;
+                }
             }
             else
             {
@@ -49,13 +57,28 @@ namespace NetworkManager
         {
             foreach (TcpClient clientSocket in clientSockets.Keys.ToList())
             {
-                clientSocket.GetStream().Close();
-                clientSocket.Close();
-                clientSockets.Remove(clientSocket);
+                try
+                {
+                    clientSocket.GetStream().Close();
+                    clientSocket.Close();
+                    clientSockets.Remove(clientSocket);
+                }
+                catch
+                {
+                    Console.WriteLine("Problems with disconnecting client from manager");
+                }
             }
             if (serverSocket != null)
             {
-                serverSocket.Stop();
+                try
+                {
+                    serverSocket.Stop();
+                }
+                catch
+                {
+                    Console.WriteLine("Problemst with stopping manager");
+                }
+                
             }
             serverSocket = null;
             serverThread = null;

@@ -31,57 +31,72 @@ namespace NetworkNode
 
         public bool connectToManager(string ip, int port)
         {
-            client = new TcpClient();
-            IPAddress ipAddress;
-            if (ip.Contains("localhost"))
-            {
-                ipAddress = IPAddress.Loopback;
-            }
-            else
-            {
-                ipAddress = IPAddress.Parse(ip);
-            }
             try
             {
-                client.Connect(new IPEndPoint(ipAddress, port));
+                client = new TcpClient();
+                IPAddress ipAddress;
+                if (ip.Contains("localhost"))
+                {
+                    ipAddress = IPAddress.Loopback;
+                }
+                else
+                {
+                    ipAddress = IPAddress.Parse(ip);
+                }
+                try
+                {
+                    client.Connect(new IPEndPoint(ipAddress, port));
+                }
+                catch { }
+                if (client.Connected)
+                {
+                    stream = client.GetStream();
+                    clientThread = new Thread(new ThreadStart(displayMessageReceived));
+                    clientThread.Start();
+                    sendMyName();
+                    logs.addLog(Constants.AGENT_PASS, true, Constants.LOG_INFO, true);
+                    return true;
+                }
+                else
+                {
+                    client = null;
+                    logs.addLog(Constants.AGENT_FAILED, true, Constants.LOG_ERROR, true);
+                    return false;
+                }
             }
-            catch { }
-            if (client.Connected)
+            catch
             {
-                stream = client.GetStream();
-                clientThread = new Thread(new ThreadStart(displayMessageReceived));
-                clientThread.Start();
-                sendMyName();
-                logs.addLog(Constants.AGENT_PASS, true, Constants.LOG_INFO, true);
-                return true;
-            }
-            else
-            {
-                client = null;
-                logs.addLog(Constants.AGENT_FAILED, true, Constants.LOG_ERROR, true);
+                Console.WriteLine("Problems with connecting network node to manager");
                 return false;
             }
         }
 
         public void disconnectFromManager(bool error=false)
         {
-            if (client != null)
+            try
             {
-                client.GetStream().Close();
-                client.Close();
-                client = null;
-                if (!error)
+                if (client != null)
                 {
-                    logs.addLog(Constants.AGENT_DISCONNECTED, true, Constants.LOG_ERROR, true);
-                }
-                else
-                {
-                    logs.addLog(Constants.AGENT_ERROR, true, Constants.LOG_ERROR, true);
-                    form.Invoke(new MethodInvoker(delegate()
+                    client.GetStream().Close();
+                    client.Close();
+                    client = null;
+                    if (!error)
                     {
-                        form.enableAgentButtons();
-                    }));
+                        logs.addLog(Constants.AGENT_DISCONNECTED, true, Constants.LOG_ERROR, true);
+                    }
+                    else
+                    {
+                        logs.addLog(Constants.AGENT_ERROR, true, Constants.LOG_ERROR, true);
+                        form.Invoke(new MethodInvoker(delegate()
+                        {
+                            form.enableAgentButtons();
+                        }));
+                    }
                 }
+            }
+            catch
+            {
+                Console.WriteLine("Problems with disconnecting network node from manager");
             }
         }
 

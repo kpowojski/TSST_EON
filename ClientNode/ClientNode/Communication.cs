@@ -69,17 +69,24 @@ namespace ClientNode
         {
             if (client != null)
             {
-                client.GetStream().Close();
-                client.Close();
-                client = null;
-                if (!error)
+                try
                 {
-                    logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.LOG_INFO, true);
+                    client.GetStream().Close();
+                    client.Close();
+                    client = null;
+                    if (!error)
+                    {
+                        logs.addLog(Constants.CONNECTION_DISCONNECTED, true, Constants.LOG_INFO, true);
+                    }
+                    else
+                    {
+                        logs.addLog(Constants.CONNECTION_DISCONNECTED_ERROR, true, Constants.LOG_ERROR, true);
+                        form.Invoke(new MethodInvoker(delegate() { form.buttonsEnabled(); }));
+                    }
                 }
-                else
+                catch
                 {
-                    logs.addLog(Constants.CONNECTION_DISCONNECTED_ERROR, true, Constants.LOG_ERROR, true);
-                    form.Invoke(new MethodInvoker(delegate(){ form.buttonsEnabled(); }));
+                    Console.WriteLine("Problems with disconnecting from cloud");
                 }
             }
         }
